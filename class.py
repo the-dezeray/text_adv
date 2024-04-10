@@ -1,5 +1,4 @@
 class Dialogue:
 	def __init__(self):
-		self.array =[]
+		self.array =[None]*100
 		self.current =0
-	
