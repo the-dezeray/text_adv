@@ -1,0 +1,38 @@
+1a:
+  location: "The path Of light"
+  text: "you find yourself in a path dark and filled with death  you meet a shadowry figure How are you fellow"
+  choices:
+    - text: "remain quiet"
+      next_node: chapter2
+      function: 'fight(entity =Entities.generate(type = "snake",lvl =3 ))'
+    - text: "I am okay"
+      next_node: chapter2
+      function: null
+
+
+chapter2:
+  location: null
+  text: "you dont look well boy where are you heading in thi dark areas"
+  choices:
+    - text: "i seek wonders"
+      next_node: chapter3
+      function: null
+    - text: "i seek wonders"
+      next_node: reward
+      function: mull
+
+
+chapter3:
+  text: "he offer you great stuff and a lot of rings"
+  location: null
+  choices:
+    - text: "receive"
+      function: 'receive("gold")'
+
+
+chapter4:
+      text: "you met a large black snake"
+      choices:
+        - text: fight
+          next_node: null
+          function: null
