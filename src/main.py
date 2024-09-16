@@ -20,36 +20,46 @@ class Entities():
         entity_class()
     
 
-    
+def character_selection_layout():
+    return 0 
     
 def fight(entity = None,player= None):
     pass
     
-    
+class Option():
+    def __init__(self,text :str ="",func = None ) -> None:
+        self.text = text
+        self.func = func
 class Game():
     def __init__(self,interface = None) -> None:
         self.running = True
         self.story = load_yaml_file("story.yaml")
         self.chapter_id = "1a"
         self.interface =interface
+        self.options_displayed = True
 
-        self.options = ["new journey ","exsiting journey","exit",]
+        self.options = [Option("new journey",self.start_game)
+        ,Option("exsiting journey",self.continue_game),
+        Option("exit",self.exit_game)]
         self.selected_option = 0
         self.table = Table()
         self.refresh()
-
-    
+    def load_new_game(self):
+        self.layout = character_selection_layout()
+    def start_game(self):pass
+    def continue_game(self):pass
+    def exit_game(self):pass
     def refresh(self):
         self.table = Table(expand=True,show_edge=False,show_header=False)
         self.table.add_column()
                 
-        for i ,text in enumerate(self.options):    
+        for i ,option in enumerate(self.options):    
             style = "none"
             x = 40
             if i == self.selected_option:
                 style = "bold green"
                 x -= 5
-            self.table.add_row(Padding(Panel(text,border_style=style),pad =(0,x))) 
+            self.table.add_row(Padding(Panel(option.text,border_style=style),pad =(0,x))) 
                 
         self.interface["main"].update(self.table)
     def save_key(self,key):
@@ -72,8 +82,9 @@ class Game():
                 self.refresh()
             #RUN COMMAND
             case "Key.enter":
-                self.run_command()
-                self.current_entry_text = ""
+                if self.options_displayed:
+                    self.options[self.selected_option].func()
+
             #default
             case _:
                 pass   
