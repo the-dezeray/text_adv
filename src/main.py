@@ -1,3 +1,17 @@
+"""handles program launch"""
+import queue
+import time
+
+from pynput.keyboard  import Listener
+from rich.live import Live
+from rich.table import Table
+from rich.layout import Layout
+from rich.panel import Panel
+from rich.padding import Padding
+from rich.console import Console,Group
+from rich.spinner import Spinner
+
+
 from file_handler import load_yaml_file
 from rich.style import Style
 
@@ -20,16 +34,15 @@ class Entities():
         entity_class()
     
 
-def character_selection_layout():
-    return 0 
-    
+   
 def fight(entity = None,player= None):
     pass
     
 class Option():
-    def __init__(self,text :str ="",func = None ) -> None:
+    def __init__(self,text :str ="",func = None,preview =None ) -> None:
         self.text = text
         self.func = func
+        self.preview = preview
 class Game():
     def __init__(self,interface = None) -> None:
         self.running = True
@@ -38,13 +51,24 @@ class Game():
         self.interface =interface
         self.options_displayed = True
 
+
         self.options = [Option("new journey",self.start_game)
-        ,Option("exsiting journey",self.continue_game),
+        ,Option("exsiting journey",self.continue_game,lambda a = "desiree":self.display_preview(value = a)),
         Option("exit",self.exit_game)]
+
+        #other = [Option(text ="Desiree",preview= self.preview_character(name = "Desiree"))]
+        #self.options = other
         self.selected_option = 0
         self.table = Table()
         self.refresh()
+    def preview_character(self):
+        pass
+    def display_preview(self,value = None):
+        from main_layout import character_preview_layout
+        layout = character_preview_layout()
+        self.interface["preview"].update(layout)
     def load_new_game(self):
+        
         self.layout = character_selection_layout()
     def start_game(self):pass
     def continue_game(self):pass
@@ -55,13 +79,15 @@ class Game():
                 
         for i ,option in enumerate(self.options):    
             style = "none"
-            x = 40
+            x = 5
             if i == self.selected_option:
+                if self.options[i].preview:
+                    self.options[i].preview()
                 style = "bold green"
-                x -= 5
-            self.table.add_row(Padding(Panel(option.text,border_style=style),pad =(0,x))) 
-                
-        self.interface["main"].update(self.table)
+                x += 5
+            self.table.add_row(Padding(Panel(option.text,border_style=style),pad =(0,0,0,x))) 
+        
+        self.interface["options"].update(self.table)
     def save_key(self,key):
         """handles keyboard input"""
         input_string :str= str(key)
@@ -125,43 +151,12 @@ class Display():
 
 
 
-"""handles program launch"""
-import queue
-import time
-
-from pynput.keyboard  import Listener
-from rich.live import Live
-from rich.table import Table
-from rich.layout import Layout
-from rich.panel import Panel
-from rich.padding import Padding
-from rich.console import Console,Group
-from rich.spinner import Spinner
-
 console = Console()
 
-
-def make_layout() -> Layout:
-    """return a structured Layout object
-
-    Returns:
-        Layout: Layout object
-    """
-    layout = Layout(name="root") 
-    layout.split(
-    
-        Layout(name="main", ratio = 3),
-        
-
-    )
-    
-    
-    return layout
-
 def main():
-
+    from main_layout import make_layout,character_selection_layout
     """Program Launch"""
-    layout = make_layout()
+    layout =character_selection_layout()
     core = Game(interface = layout)
 
     #listens for keyboard key press
