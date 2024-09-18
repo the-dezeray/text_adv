@@ -36,3 +36,8 @@ def character_preview_layout():
     layout["char_preview"].update(table)
     return layout
 
+def gameplay_layout():
+    layout = Layout(name="repo")
+    return layout
+
+
