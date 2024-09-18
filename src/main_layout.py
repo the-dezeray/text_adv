@@ -38,6 +38,11 @@ def character_preview_layout():
 
 def gameplay_layout():
     layout = Layout(name="repo")
-    return layout
+    layout.split(Layout(name = "preview"))
 
+    return layout
+from rich.padding import Padding
+from rich.panel import Panel
+def  option_template(text :str = None)->Padding:
+    return Padding(Panel("de"))
 
