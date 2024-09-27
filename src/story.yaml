@@ -1,23 +1,25 @@
 1a:
   location: "The path Of light"
-  text: "you find yourself in a path dark and filled with death  you meet a shadowry figure How are you fellow"
+  text: "This place so where am i "
+  
   choices:
-    - text: "remain quiet"
+    - text: "explore"
       next_node: chapter2
-      function: 'fight(entity =Entities.generate(type = "snake",lvl =3 ))'
-    - text: "I am okay"
-      next_node: chapter2
+      function: null 
+# "fight(entity =Entities.generate(type = 'snake',lvl =3 ))"
+    - text: "stay "
+      next_node: 1a
       function: null
 
 
 chapter2:
   location: null
-  text: "you dont look well boy where are you heading in thi dark areas"
+  text: "Layer 1 welcome "
   choices:
-    - text: "i seek wonders"
+    - text: "go north "
       next_node: chapter3
       function: null
-    - text: "i seek wonders"
+    - text: "go south"
       next_node: reward
       function: mull
 
