@@ -7,6 +7,11 @@ from rich.console import Console
 from file_handler import load_yaml_file
 from options import Option
 from main_layout import character_selection_layout,character_preview_layout,gameplay_layout
+class Player():
+    def __init__(self):
+        self.turn = False
+    def show_actions(entity = False):
+        pass
 class Game():
     def __init__(self,interface = None) -> None:
         self.running = True
@@ -14,6 +19,7 @@ class Game():
         self.story = load_yaml_file("story.yaml")
         self.chapter_id = "1a"
         self.interface =character_selection_layout()
+
         self.options_displayed = True
         self.in_game = True
         self.love = None
@@ -22,13 +28,24 @@ class Game():
         self.table = Table()
         self.selected_option = 0
         self.others = []
+        self.player = Player()
+        self.player_turn = False
         self.options = [Option(text = "new journey",func=self.continue_game,)
         ,Option("exsiting journey",self.continue_game,lambda a = "desiree":self.display_preview(value = a)),
         Option("exit",self.exit_game)]
 
 
         self.refresh()
-    
+    def fight(self,entity):
+        self.options = []
+        self.player.turn = False
+        
+        while True:
+            if self.player.turn == False:
+                enitity.deal_damage(self.player)
+            else : 
+                player.show_actions(self.entity)
+        # "fight(entity =Entities.generate(type = 'snake',lvl =3 ))"
     def preview_character(self):
         pass
     def display_preview(self,value = None):
