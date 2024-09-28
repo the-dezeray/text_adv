@@ -18,7 +18,7 @@ chapter2:
   choices:
     - text: "go north "
       next_node: chapter3
-      function: null
+      function: "fight(entity =Entities.generate(type = 'snake',lvl =3 ))"
     - text: "go south"
       next_node: reward
       function: mull
