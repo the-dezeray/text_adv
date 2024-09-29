@@ -7,14 +7,15 @@ from pynput.keyboard  import Listener
 from game import Game
 from rich.console import Console
 from rich.live import Live
-console = Console()
 
+from keyboard import Keyboard_control
 def main():
     """Program Launch"""
-    
+     
     core = Game()
-
-    with Listener(on_press= core.save_key) as core.key_listener:
+    keyboard_controller = Keyboard_control(core = core)
+   # console.color_system =None
+    with Listener(on_press= keyboard_controller.execute_on_key) as core.key_listener:
         with Live(core.interface, refresh_per_second=10) as core.love:  # update 10  times a second to feel fluid
             
             while core.running: #if program has not been terminated
