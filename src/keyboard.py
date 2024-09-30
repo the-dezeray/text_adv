@@ -1,3 +1,4 @@
+'''Handles Keyboard key'''
 class Keyboard_control():
     def __init__(self,core):
         self.core = core

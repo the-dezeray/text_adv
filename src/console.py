@@ -1,3 +1,4 @@
+'''handle dispalying and printing on screen'''
 from rich.table import Table
 from rich.padding import Padding
 from rich.panel import Panel

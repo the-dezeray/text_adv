@@ -1,3 +1,4 @@
+'''handle Entity generation and creation'''
 from logger import Log
 class Entities():
  

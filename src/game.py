@@ -1,4 +1,4 @@
-
+'''core of the game'''
 from rich.panel import Panel
 from rich.table import Table
 from rich.padding import Padding
