@@ -4,7 +4,7 @@
   
   choices:
     - text: "explore"
-      next_node: chapter2
+      next_node: 2a
       function: null 
 # "fight(entity =Entities.generate(type = 'snake',lvl =3 ))"
     - text: "stay "
@@ -12,19 +12,19 @@
       function: null
 
 
-chapter2:
+2a:
   location: null
   text: "Layer 1 welcome "
   choices:
     - text: "go north "
-      next_node: chapter3
+      next_node: 3a 
       function: "fight(entity =Entities.generate(type = 'snake',lvl =3 ))"
     - text: "go south"
       next_node: reward
       function: mull
 
 
-chapter3:
+3a:
   text: "he offer you great stuff and a lot of rings"
   location: null
   choices:

@@ -6,7 +6,7 @@ from rich.layout import Layout
 from rich.console import Console
 from file_handler import load_yaml_file
 from options import Option
-from main_layout import character_selection_layout,character_preview_layout,gameplay_layout
+from main_layout import character_selection_layout,character_preview_layout,gameplay_layout, make_layout
 class Player():
     def __init__(self):
         self.turn = False
@@ -19,7 +19,6 @@ class Game():
         self.story = load_yaml_file("story.yaml")
         self.chapter_id = "1a"
         self.interface =character_selection_layout()
-
         self.options_displayed = True
         self.in_game = True
         self.love = None
