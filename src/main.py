@@ -18,7 +18,7 @@ def main():
     with Listener(on_press= keyboard_controller.execute_on_key) as core.key_listener:
         with Live(core.interface, refresh_per_second=10) as core.love:  # update 10  times a second to feel fluid
             
-            while core.running: #if program has not been terminatedaaaa
+            while core.running: #if program has not been terminatedaaaaa
                 pass
         core.key_listener.join()
     
