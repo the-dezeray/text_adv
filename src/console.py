@@ -11,7 +11,7 @@ class Console():
     def refresh(self):
         table = self.build_table()
         self.core.interface[self.core.s].update(table)
-        pass
+        
     def build_table(self):
         core = self.core
         self.table = Table(expand=True,show_edge=False,show_header=False)
@@ -52,4 +52,11 @@ def _option_button(text,style,x):
             pad = (0,10,0,x)
     )
     return instance
-
+def _display_player_weapons(player):
+    pass
+def _display_alernative():
+    pass
+def show_player_actions(player):
+    _display_player_weapons(player)
+    _display_alernative()
+    

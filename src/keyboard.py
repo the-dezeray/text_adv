@@ -1,4 +1,17 @@
 '''Handles Keyboard key'''
+from fight import fight
+from game import Game
+from entities import Entities
+def execute_yaml_function(func: dict, core: Game ):
+
+    if isinstance(func, dict):
+        target = func.get("target")
+        args = func.get("args", "")
+      
+        if target:
+            # Include core in the arguments
+            exec(f"{target}({args}, core=core)")
+
 class Keyboard_control():
     def __init__(self,core):
         self.core = core
@@ -44,15 +57,19 @@ class Keyboard_control():
                 if option.selected == True:
                     function = option
             if isinstance(function.func, str):
-                if len(function.func) > 1 and function.func != None:
-                    exec(function.func)
+                core = self.core
+                exec(function.func)
+                  
 
             elif callable(function.func):
-                function.func()
+               function.func()
+ 
+            if core.move_on == False:
+                core.next_node = function.next_node
 
-            if function.next_node != None:
-                self.chapter_id = function.next_node
-                for option in self.options:
+            if function.next_node != None and core.move_on != False :
+                core.chapter_id = function.next_node
+                for option in core.options:
                     option.selectable = False
                 core.game_loop()
 

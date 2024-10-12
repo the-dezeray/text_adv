@@ -7,21 +7,21 @@ from rich.console import Console
 from file_handler import load_yaml_file
 from options import Option
 from main_layout import character_selection_layout,character_preview_layout,gameplay_layout, make_layout
-class Player():
-    def __init__(self):
-        self.turn = False
-    def show_actions(entity = False):
-        pass
+from entities import Entities
+from fight import fight
+from player import Player
 class Game():
     def __init__(self,interface = None) -> None:
         self.running = True
         
         self.story = load_yaml_file("story.yaml")
-        self.chapter_id = "1a"
+        self.chapter_id = "2a"
         self.interface =character_selection_layout()
         self.options_displayed = True
         self.in_game = True
         self.love = None
+        self.move_on = True
+        self.entity = None
         self.key_listener = None
         self.s = 'options'
         self.table = Table()
@@ -29,6 +29,7 @@ class Game():
         self.others = []
         self.player = Player()
         self.player_turn = False
+        self.next_node = None
         from console import Console
       
         self.options = [Option(text = "new journey",func=self.continue_game,)

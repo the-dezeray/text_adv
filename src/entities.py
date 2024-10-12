@@ -13,8 +13,8 @@ class Entities():
             self.armor = level *1.5
             self.speed = level *3
             self.hp = level * 30
-            log.event()
-        def deal_damage(player = None):
+            Log.event()
+        def deal_damage(self,player = None):
             pass
     @classmethod
     def generate(cls,type :str = "",lvl :int = 0,entity_id : str = ""):

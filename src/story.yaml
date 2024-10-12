@@ -18,9 +18,9 @@
   choices:
     - text: "go north "
       next_node: 3a 
-      function: "fight(entity =Entities.generate(type = 'snake',lvl =3 ))"
+      function: "fight(entity =Entities.generate(type = 'snake',lvl =3 ),core=core)"
     - text: "go south"
-      next_node: reward
+      next_node: 4b
       function: mull
 
 
@@ -29,10 +29,18 @@
   location: null
   choices:
     - text: "receive"
+      next_node: 4a
       function: 'receive("gold")'
 
 
-chapter4:
+chapter4a:
+      text: "you met a large black snake"
+      choices:
+        - text: fight
+          next_node: null
+          function: null
+
+chapter4b:
       text: "you met a large black snake"
       choices:
         - text: fight
