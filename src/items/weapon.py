@@ -1,5 +1,5 @@
-from logger import Log
-from item import Item
+from util.logger import Log
+from items.item import Item
 class Weapon():
     
     class weapon(Item):

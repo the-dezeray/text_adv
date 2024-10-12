@@ -4,17 +4,19 @@ from rich.table import Table
 from rich.padding import Padding
 from rich.layout import Layout
 from rich.console import Console
-from file_handler import load_yaml_file
-from options import Option
-from main_layout import character_selection_layout,character_preview_layout,gameplay_layout, make_layout
-from entities import Entities
-from fight import fight
-from player import Player
+from util.file_handler import load_yaml_file
+from ui.options import Option
+from ui.main_layout import character_selection_layout,character_preview_layout,gameplay_layout, make_layout
+from core.entities import Entities
+from core.fight import fight
+from core.player import Player
+
+from ui.console import Console
 class Game():
     def __init__(self,interface = None) -> None:
         self.running = True
         
-        self.story = load_yaml_file("story.yaml")
+        self.story = load_yaml_file("config/story.yaml")
         self.chapter_id = "2a"
         self.interface =character_selection_layout()
         self.options_displayed = True
@@ -30,7 +32,6 @@ class Game():
         self.player = Player()
         self.player_turn = False
         self.next_node = None
-        from console import Console
       
         self.options = [Option(text = "new journey",func=self.continue_game,)
         ,Option("exsiting journey",self.continue_game,lambda a = "desiree":self.display_preview(value = a)),

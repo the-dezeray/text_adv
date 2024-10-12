@@ -1,5 +1,5 @@
-from logger import Log
-from options import Option,WeaponOption
+from util.logger import Log
+from ui.options import Option,WeaponOption
 def fight(entity = None,core = None):
     if entity == None:
         print("entity is required")

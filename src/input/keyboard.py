@@ -1,7 +1,7 @@
 '''Handles Keyboard key'''
-from fight import fight
-from game import Game
-from entities import Entities
+from core.fight import fight
+from core.game import Game
+from core.entities import Entities
 def execute_yaml_function(func: dict, core: Game ):
 
     if isinstance(func, dict):

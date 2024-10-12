@@ -1,5 +1,5 @@
-from inventory import Inventory
-from weapon import Weapon
+from items.inventory import Inventory
+from items.weapon import Weapon
 class Player():
     def __init__(self):
         self.hp = 100

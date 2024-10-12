@@ -1,5 +1,5 @@
 '''handle Entity generation and creation'''
-from logger import Log
+from util.logger import Log
 class Entities():
  
     mapa ={

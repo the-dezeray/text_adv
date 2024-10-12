@@ -2,13 +2,13 @@
 import queue
 import time
 
-from main_layout import character_preview_layout,gameplay_layout,character_selection_layout
+from ui.main_layout import character_preview_layout,gameplay_layout,character_selection_layout
 from pynput.keyboard  import Listener
-from game import Game
+from core.game import Game
 from rich.console import Console
 from rich.live import Live
 
-from keyboard import Keyboard_control
+from input.keyboard import Keyboard_control
 def main():
     """Program Launch"""
      
