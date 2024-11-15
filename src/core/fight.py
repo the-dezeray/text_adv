@@ -1,5 +1,9 @@
 from util.logger import Log
 from ui.options import Option,WeaponOption
+def deal_damage(core,weapon):
+    core.entity.hp -= weapon.damage
+    core.options.append(Option(text = f"dealt {weapon.damage} damage",func=lambda : None,selectable = False))
+    _fight(core)
 def fight(entity = None,core = None):
     if entity == None:
         print("entity is required")
@@ -21,7 +25,7 @@ def _fight(core):
     
     if player.turn == True:
         for weapon in player.inventory.weapons():
-            core.options.append(WeaponOption(weapon = weapon,func=lambda : _fight(core)))
+            core.options.append(WeaponOption(weapon = weapon,func=lambda : deal_damage(core,weapon)))
           
         core.console.refresh()
         #player.show_actions(entity)
