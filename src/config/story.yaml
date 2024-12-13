@@ -1,6 +1,6 @@
 1a:
   location: "The path Of light"
-  text: "This place so where am i "
+  text: "You wake up and you find yourself lost in a place you have never been to This place so where am i "
   
   choices:
     - text: "explore"
@@ -14,7 +14,7 @@
 
 2a:
   location: null
-  text: "Layer 1 welcome "
+  text: "Layer 1 welcome to the most scary place"
   choices:
     - text: "go north "
       next_node: 3a 

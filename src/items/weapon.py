@@ -27,7 +27,7 @@ class Weapon():
         def deal_damage(self,player = None):
             pass
     class sword(weapon):
-        def __init__(self) -> None:
+        def __init__(self,level = 0) -> None:
             super().__init__()
             self.name = "sword"
             self.damage = 10

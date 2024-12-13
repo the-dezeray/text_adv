@@ -1,8 +1,10 @@
 '''Handles Keyboard key'''
 from core.fight import fight
-from core.game import Game
 from core.entities import Entities
-def execute_yaml_function(func: dict, core: Game ):
+def get_selectable_options(options : list):
+    return [option for option in options  if option.selectable == True ]
+
+def execute_yaml_function(func: dict, core ):
 
     if isinstance(func, dict):
         target = func.get("target")
@@ -15,6 +17,8 @@ def execute_yaml_function(func: dict, core: Game ):
 class Keyboard_control():
     def __init__(self,core):
         self.core = core
+        
+        
     def execute_on_key(self,key):
         core = self.core
         """handles keyboard input"""
@@ -33,44 +37,46 @@ class Keyboard_control():
                 self.scroll_options(-1)         
             #RUN COMMAND
             case "Key.enter":
+                core.selected_option = 1    
                 self.execute_selected_option() 
             #default
             case _:
                 pass 
         core.console.refresh() 
+        
     def scroll_options(self,value : int):
         core = self.core
         core.selected_option -= value
-        selectable_options = len([option for option in core.options  if option.selectable == True ])
-        if core.selected_option < 0 : core.selected_option = selectable_options-1
-        if core.selected_option > selectable_options : core.selected_option = 0
-        a= [option for option in core.options if option.selectable == True]
-        for i,option in enumerate (a) :
-            option.selected =False
-            if i == core.selected_option :
-                option.selected=True
+        selectable_options = get_selectable_options(core.options)
+        options_len= len(selectable_options)
+        if core.selected_option < 0 : core.selected_option = options_len-1
+        if core.selected_option > options_len : core.selected_option = 0
+        
+        
+        for i,option in enumerate (selectable_options) :
+            option.selected = False
+            if i == core.selected_option : option.selected=True
                 
     def execute_selected_option(self):
         core = self.core 
         if core.options_displayed:
             for option in core.options:
                 if option.selected == True:
-                    function = option
-            if isinstance(function.func, str):
-                core = self.core
-                exec(function.func)
-                  
+    
+                    if isinstance(option.func, str):
+                        core = self.core
+                        exec(option.func)
+                        
+                    elif callable(option.func):
+                        option.func()
+        
+                    if core.move_on == False:
+                        core.next_node = option.next_node
 
-            elif callable(function.func):
-               function.func()
- 
-            if core.move_on == False:
-                core.next_node = function.next_node
-
-            if function.next_node != None and core.move_on != False :
-                core.chapter_id = function.next_node
-                for option in core.options:
-                    option.selectable = False
-                core.game_loop()
+                    if option.next_node != None and core.move_on != False :
+                        core.chapter_id = option.next_node
+                        for option in core.options:
+                            option.selectable = False
+                        core.game_loop()
 
 
