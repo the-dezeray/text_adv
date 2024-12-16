@@ -1,17 +1,30 @@
 from util.logger import Log
-from ui.options import Option,WeaponOption
+from ui.options import Option, WeaponOption
+from core.player import Player
 
+def deal_damage(core, weapon):
+    """
+    Deals damage to the entity and updates the options list with the damage dealt.
 
-def deal_damage(core,weapon):
+    Args:
+        core: The core game object containing game state.
+        weapon: The weapon used to deal damage.
+    """
     core.entity.hp -= weapon.damage
-    core.options.append(Option(text = f"dealt {weapon.damage} damage",type = "header",func=lambda : None,selectable = False))
+    core.options.append(Option(text=f"[yellow]dealt[/yellow] {weapon.damage} damage", type="header", func=lambda: None, selectable=False))
     _fight(core)
 
-def fight(entity = None,core = None):
-    if entity == None:
+def fight(entity=None, core=None):
+    """
+    Initiates a fight sequence.
+
+    Args:
+        entity: The entity to fight against.
+        core: The core game object containing game state.
+    """
+    if entity is None:
         print("entity is required")
         Log.error("entity is required")
-        
     else:
         core.options = []
         core.console.refresh()
@@ -20,61 +33,68 @@ def fight(entity = None,core = None):
         core.player.turn = True
         core.in_fight = True
         _fight(core)
+
 def get_head_count(array):
-    count = 0
-    for i in array:
-        if i.type == "header":
-            count += 1
-    return count
+    """
+    Counts the number of header options in the given array.
+
+    Args:
+        array: The array of options.
+
+    Returns:
+        int: The count of header options.
+    """
+    return sum(1 for i in array if i.type == "header")
+
 def _fight(core):
-  
+    """
+    Handles the fight logic, alternating turns between the player and the entity.
+
+    Args:
+        core: The core game object containing game state.
+    """
     for option in core.options:
         option.selectable = False
-    player = core.player
-    console = core.console
-    entity  = core.entity
+
+    player: Player = core.player
+    entity = core.entity
+
     if len(core.options) > 1:
         last = core.options[-1]
+
     core.options = []
-    core.options.append(Option(type= "header",text= f"❤ {player.hp}/50     ⚔ 5      🛡 100 "))
-    core.options.append(Option(type= "header",text= f"❤ {entity.hp}/50     ⚔ 5      🛡 100 "))    
+    core.options.append(Option(type="entity_profile", text=f"Player ❤ {player.hp}/50     ⚔ 5      🛡 100 "))
+    core.options.append(Option(type="entity_profile", text=f"SNAKE ❤ {entity.hp}/50     ⚔ 5      🛡 100 "))
 
-    if player.turn == True:
-     
-
+    if player.turn:
         core.options += core.ant
         core.ant = []
-        for weapon in player.inventory.weapons():
-            core.options.append(WeaponOption(weapon = weapon,func=lambda : deal_damage(core,weapon)))
-          
-        
-        #player.show_actions(entity)
+        for weapon in player.inventory.weapons(type = "attack"):
+            core.options.append(WeaponOption(weapon=weapon, func=lambda w=weapon: deal_damage(core, w)))
         player.turn = False
         entity.turn = True
     else:
         core.options.append(last)
-        core.options.append(Option(type= "header",text= "You prepare to defend "))
-        for weapon in player.inventory.weapons():
-           core.options.append(WeaponOption(weapon = weapon,func=lambda : deal_damage(core,weapon)))
+        core.options.append(Option(type="header", text="You prepare to defend "))
+        for weapon in player.inventory.weapons(type="defence"):
+            core.options.append(WeaponOption(weapon=weapon, func=lambda w=weapon: deal_damage(core, w)))
         entity.deal_damage(player)
         entity.turn = False
         player.turn = True
+
     if player.hp <= 0:
         if player.is_revivable():
             player.revive()
         else:
-            pass
-            #console.print("you lose")
-    core.console.refresh()
+            pass  # console.print("you lose")
 
     if entity.hp <= 0:
-        
         print("you win")
         core.move_on = True
-        if core.next_node != None and core.move_on != False :
+        if core.next_node is not None and core.move_on:
             core.chapter_id = core.next_node
             for option in core.options:
                 option.selectable = False
             core.game_loop()
 
-        
+    core.console.refresh()

@@ -4,7 +4,9 @@ from rich.padding import Padding
 from rich.panel import Panel
 from rich.align import Align
 from ui.options import Option
+from rich.rule import Rule
 from rich import box
+from rich.console import Group,group
 class Console():
 
     def __init__(self,core):
@@ -54,21 +56,20 @@ class Console():
             #self.table.add_row(Padding(Panel(option.text,border_style=style),pad =(0,0,0,x)))
             if option.type == 'header' :
                 renderable  = _dialogue_text(text = option.text,style = style)
-            elif option.type == "enemy_health_bar":
-                renderable  = _enemy_health_bar(text = option.text,style = style)
-            elif option.type.endswith("profile"):
-                
-                if option.type == "enemy_profile": 
-                    horizontal_align = "left"
-                else :
-                    horizontal_align = "left"
-                renderable  = _dialogue_text(text = option.text,style = style)
+            elif option.type == "entity_profile":
+                renderable = get_player_display(option)
             else: 
                 renderable = _option_button(text = option.text,style = style,left_padding=left_padding)
 
             
             self.table.add_row(Align((renderable),align =horizontal_align))
+            
         return self.table 
+@group()
+def get_player_display(option):
+    yield _dialogue_text(text = option.text,style = 'none')
+    yield Rule(style='bold red')
+
 def _dialogue_text(text,style):
     instance : Padding = Padding ( text,pad =(2,0,0,0)
     )
