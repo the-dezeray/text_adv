@@ -32,7 +32,7 @@ class sword(WeaponItem):
     def __init__(self,level = 0) -> None:
         super().__init__()
         self.name = "sword"
-        self.damage = 10
+        self.damage = 30
         self.crit = 23
         self.description = "simple sword "
     

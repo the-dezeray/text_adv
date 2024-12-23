@@ -49,34 +49,35 @@ class Keyboard_control():
         core.selected_option -= value
         selectable_options = get_selectable_options(core.options)
         options_len= len(selectable_options)
-        if core.selected_option < 0 : core.selected_option = options_len-1
-        if core.selected_option > options_len : core.selected_option = 0
+        if core.selected_option < 0 :
+             core.selected_option = options_len-1
+        elif core.selected_option >= options_len :
+             core.selected_option = 0
         
         
         for i,option in enumerate (selectable_options) :
             option.selected = False
-            if i == core.selected_option : option.selected=True
+            if i == core.selected_option :
+                option.selected=True
                 
     def execute_selected_option(self):
-        core = self.core 
-        if core.options_displayed:
-            for option in core.options:
-                if option.selected == True:
-    
-                    if isinstance(option.func, str):
-                        core = self.core
-                        exec(option.func)
-                        
-                    elif callable(option.func):
-                        option.func()
-        
-                    if core.move_on == False:
-                        core.next_node = option.next_node
+        from core.core import Core
+        core :  Core = self.core 
 
-                    if option.next_node != None and core.move_on != False :
-                        core.chapter_id = option.next_node
-                        for option in core.options:
-                            option.selectable = False
-                        core.game_loop()
+        for option in core.options:
+            if option.selected == True:
+
+                if isinstance(option.func, str):
+                    core = self.core
+                    exec(option.func)
+                    
+                elif callable(option.func):
+                    option.func()
+    
+                    core.next_node = option.next_node
+                else:
+                    core.chapter_id = option.next_node
+                    core.continue_game()
+
 
 
