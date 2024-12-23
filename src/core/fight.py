@@ -89,12 +89,11 @@ def _fight(core):
             pass  # console.print("you lose")
 
     if entity.hp <= 0:
-        print("you win")
-        core.move_on = True
-        if core.next_node is not None and core.move_on:
-            core.chapter_id = core.next_node
-            for option in core.options:
-                option.selectable = False
-            core.game_loop()
+        core.options = []
+        core.options.append(Option(type = 'header',text="you attained the [red]sword of death![/]", selectable=False))
+        core.options.append(Option(text="You win!", selectable=True,func=lambda core = core: move_on(core)))
 
-    core.console.refresh()
+
+def move_on(core):
+    core.chatper_id = core.next_node
+    core.continue_game()

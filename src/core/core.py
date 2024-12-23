@@ -16,9 +16,9 @@ class Core():
         self.ant =[]
         self.in_fight = False
         self.story = load_yaml_file("config/story.yaml")
-        self.chapter_id = "2a"
+        self.chapter_id = "1a"
         self.interface =main_layout()
-        self.options_displayed = True
+ 
         self.in_game = True
         self.love = None
         self.move_on = True
@@ -55,6 +55,7 @@ class Core():
     def continue_game(self):
 
         current_chapter = self.story[self.chapter_id]
+        self.options = []
         self.options.append(Option(text = current_chapter['text'],selectable = False,type ="header"))
         for index,choice in enumerate(current_chapter["choices"]):    
             

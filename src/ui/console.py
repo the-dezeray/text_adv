@@ -7,37 +7,53 @@ from ui.options import Option
 from rich.rule import Rule
 from rich import box
 from rich.console import Group,group
+from rich.spinner import Spinner
 class Console():
 
     def __init__(self,core):
         self.core = core
         self.layout = None
         self.table = None
+
+    
+    
         
     def refresh(self):
         table = self.build_table()
-        self.core.interface['main'].update(Padding(table,pad=(0,0,0,0)))
+        a= Group( Align(align='center' ,renderable= Spinner("toggle")) 
+        , Padding(table,pad=(0,0,0,0))
+        )
+        self.core.interface['main'].update(a)
         self.core.love.update(self.core.interface)
         
         
     def build_table(self):
         core = self.core
+        
+        
+        
 
-        self.table = Table(expand=True,show_edge=True,show_header=False,style='bold red',box=box.ROUNDED )
+        self.table = Table(expand=True,caption=" -",show_edge=True,show_header=False,style='bold red1',box=box.ROUNDED )
         self.table.add_column(justify="center")
-
+         
         options : list = core.options
         
         if len(options) > 9 :
             options = options[9:]
         v = True
-        for option in options:
-            if option.selected:
+
+
+
+        selectatble_options = [option for option in options if option.selectable == True]
+        for option in selectatble_options:
+            if option.selected == True:
                 v = False
                 
         if v == True:
             if options:
-                options[0].selected = True
+                core.selected_option = 0
+                if selectatble_options:
+                    selectatble_options[0].selected = True
 
         for index in range(0,len(options)):  
          
