@@ -1,0 +1,25 @@
+{
+    "sword": {
+        "name": "sword",
+        "damage": 30,
+        "crit": 23,
+        "description": "simple sword"
+    },
+    "shield": {
+        "name": "shield",
+        "damage": 0,
+        "crit": 0,
+        "defence": 10,
+        "description": "a simple shield"
+    },
+    "bat": {
+        "name": "bat",
+        "damage": 10,
+        "condition": 10,
+        "crit": 10,
+        "defence": -1,
+        "img": "bat",
+        "cursed": false,
+        "description": "bat"
+    }
+}

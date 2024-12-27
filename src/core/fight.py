@@ -91,9 +91,8 @@ def _fight(core):
     if entity.hp <= 0:
         core.options = []
         core.options.append(Option(type = 'header',text="you attained the [red]sword of death![/]", selectable=False))
-        core.options.append(Option(text="You win!", selectable=True,func=lambda core = core: move_on(core)))
+        core.options.append(Option(text="You win!", selectable=True,func= core.goto_next ))
+      
+      
 
 
-def move_on(core):
-    core.chatper_id = core.next_node
-    core.continue_game()

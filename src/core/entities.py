@@ -17,7 +17,7 @@ class Entities():
             self.turn = False
             Log.event()
         def deal_damage(self,player = None):
-            print("in fight")
+       
             if player != None :
                  player.hp -= self.dmg
         def heal_self(self,player = None):

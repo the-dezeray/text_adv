@@ -33,7 +33,7 @@ class Console():
         
         
 
-        self.table = Table(expand=True,caption=" -",show_edge=True,show_header=False,style='bold red1',box=box.ROUNDED )
+        self.table = Table(expand=True,caption=" -",show_edge=False,show_header=False,style='bold red1',box=box.ROUNDED )
         self.table.add_column(justify="center")
          
         options : list = core.options

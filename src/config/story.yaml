@@ -30,17 +30,17 @@
   choices:
     - text: "receive"
       next_node: 4a
-      function: 'receive("gold")'
+      function: 'receive(item = Items.generate(name  = "gold",amount = 1000),core=core)'
 
 
-chapter4a:
-      text: "you met a large black snake"
+4a:
+      text: "you met a [red1]large black snake[/]"
       choices:
         - text: fight
           next_node: null
           function: null
 
-chapter4b:
+4b:
       text: "you met a large black snake"
       choices:
         - text: fight

@@ -69,14 +69,25 @@ class Keyboard_control():
 
                 if isinstance(option.func, str):
                     core = self.core
-                    exec(option.func)
+                    core.next_node = option.next_node
+
+                    core.execute_yaml_function(option.func)
+                    
                     
                 elif callable(option.func):
+                    
+                    if option.next_node is not None: 
+                  
+                        core.next_node =  option.next_node
                     option.func()
     
-                    core.next_node = option.next_node
+
                 else:
-                    core.chapter_id = option.next_node
+             
+                    if option.next_node is not None:
+                        core.chapter_id = option.next_node
+                    else:
+                        core.chapter_id = core.next_node
                     core.continue_game()
 
 

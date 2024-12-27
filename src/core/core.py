@@ -5,6 +5,8 @@ from util.file_handler import load_yaml_file
 from ui.options import Option
 from ui.layouts import main_layout
 from core.entities import Entities
+from items.item import Items
+from core.functions import receive
 from core.fight import fight
 from core.player import Player
 
@@ -26,7 +28,7 @@ class Core():
         self.key_listener = None
 
         self.s = 'options'
-   
+
         self.table = Table()
         self.selected_option = 0
         self.others = []
@@ -41,20 +43,14 @@ class Core():
         self.console = Console(core = self)
 
    
-   
-    def fight(self,entity):
-        self.options = []
-        self.player.turn = False
-        
-        while True:
-            if self.player.turn == False:
-                entity.deal_damage(self.player)
-            else : 
-                self.player.show_actions(self.entity)
+    def execute_yaml_function(self,func: callable):
+            core = self
+            exec(func)
  
     def continue_game(self):
 
         current_chapter = self.story[self.chapter_id]
+
         self.options = []
         self.options.append(Option(text = current_chapter['text'],selectable = False,type ="header"))
         for index,choice in enumerate(current_chapter["choices"]):    
@@ -64,8 +60,7 @@ class Core():
         self.love.update(self.interface)
         self.console.refresh()
 
-
-
-           
-
-
+    def goto_next(self):
+        
+        self.chapter_id = self.next_node
+        self.continue_game()
