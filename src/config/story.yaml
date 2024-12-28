@@ -80,4 +80,12 @@
       next_node: 4a
       function: 'receive(item = Items.generate(name  = "gold",amount = 1000),core=core)'
 
+8a:
+  text: "he offer you great stuff and a lot of rings"
+  location: null
+  choices:
+    - text: "receive"
+      next_node: 4a
+      function: 'receive(item = Items.generate(name  = "gold",amount = 1000),core=core)'
+
           
