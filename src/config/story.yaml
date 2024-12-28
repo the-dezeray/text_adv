@@ -46,3 +46,38 @@
         - text: fight
           next_node: null
           function: null
+5a:
+  location: "The path Of light"
+  text: "You wake up and you find yourself lost in a place you have never been to This place so where am i "
+  
+  choices:
+    - text: "explore"
+      next_node: 2a
+      function: null 
+# "fight(entity =Entities.generate(type = 'snake',lvl =3 ))"
+    - text: "stay "
+      next_node: 1a
+      function: null
+
+
+6a:
+  location: null
+  text: "Layer 1 welcome to the most scary place"
+  choices:
+    - text: "go north "
+      next_node: 3a 
+      function: "fight(entity =Entities.generate(type = 'snake',lvl =3 ),core=core)"
+    - text: "go south"
+      next_node: 4b
+      function: mull
+
+
+7a:
+  text: "he offer you great stuff and a lot of rings"
+  location: null
+  choices:
+    - text: "receive"
+      next_node: 4a
+      function: 'receive(item = Items.generate(name  = "gold",amount = 1000),core=core)'
+
+          
