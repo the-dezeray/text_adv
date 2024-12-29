@@ -68,7 +68,7 @@
       next_node: 3a 
       function: "fight(entity =Entities.generate(type = 'snake',lvl =3 ),core=core)"
     - text: "go south"
-      next_node: 4b
+      next_node: 4a
       function: mull
 
 
@@ -77,7 +77,7 @@
   location: null
   choices:
     - text: "receive"
-      next_node: 4a
+      next_node: 4b
       function: 'receive(item = Items.generate(name  = "gold",amount = 1000),core=core)'
 
 8a:
@@ -85,7 +85,4 @@
   location: null
   choices:
     - text: "receive"
-      next_node: 4a
-      function: 'receive(item = Items.generate(name  = "gold",amount = 1000),core=core)'
-
-          
+      next_node: 4b
