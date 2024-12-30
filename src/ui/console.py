@@ -10,10 +10,62 @@ from rich.spinner import Spinner
 from ui.options import Option
 
 class Console:
+    """
+    A class to represent the console user interface.
+    Attributes
+    ----------
+    core : object
+        The core object that contains the main logic and data of the application.
+    layout : None
+        Placeholder for the layout of the console.
+    table : None
+        Placeholder for the table to be displayed in the console.
+    Methods
+    -------
+    refresh():
+        Refreshes the console display with updated content.
+    build_table():
+        Builds and returns a table with the current options.
+    get_renderable(option, style, left_padding):
+        Returns a renderable object based on the option type.
+    """
+        """
+        Constructs all the necessary attributes for the Console object.
+        Parameters
+        ----------
+        core : object
+            The core object that contains the main logic and data of the application.
+        """
+        """
+        Refreshes the console display with updated content.
+        """
+        """
+        Builds and returns a table with the current options.
+        Returns
+        -------
+        Table
+            A table object populated with the current options.
+        """
+        """
+        Returns a renderable object based on the option type.
+        Parameters
+        ----------
+        option : object
+            The option object containing the details to be rendered.
+        style : str
+            The style to be applied to the renderable object.
+        left_padding : int
+            The amount of left padding to be applied to the renderable object.
+        Returns
+        -------
+        Renderable
+            A renderable object based on the option type.
+        """
     def __init__(self, core):
         self.core = core
         self.layout = None
         self.table = None
+        
 
     def refresh(self):
         table = self.build_table()
