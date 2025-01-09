@@ -1,7 +1,7 @@
 from util.logger import Log
 from ui.options import Option, WeaponOption
 from core.player import Player
-
+from ui.options import Choices
 def deal_damage(core, weapon):
     """
     Deals damage to the entity and updates the options list with the damage dealt.
@@ -69,15 +69,16 @@ def _fight(core):
     if player.turn:
         core.options += core.ant
         core.ant = []
-        for weapon in player.inventory.weapons(type = "attack"):
-            core.options.append(WeaponOption(weapon=weapon, func=lambda w=weapon: deal_damage(core, w)))
+        ary = player.inventory.weapons(type = "attack")
+
+        core.options.append(Choices(ary,core))
         player.turn = False
         entity.turn = True
     else:
         core.options.append(last)
         core.options.append(Option(type="header", text="You prepare to defend "))
-        for weapon in player.inventory.weapons(type="defence"):
-            core.options.append(WeaponOption(weapon=weapon, func=lambda w=weapon: deal_damage(core, w)))
+        ary =player.inventory.weapons(type="defence")
+        core.options.append(Choices(ary,core))
         entity.deal_damage(player)
         entity.turn = False
         player.turn = True
@@ -91,7 +92,7 @@ def _fight(core):
     if entity.hp <= 0:
         core.options = []
         core.options.append(Option(type = 'header',text="you attained the [red]sword of death![/]", selectable=False))
-        core.options.append(Option(text="You win!", selectable=True,func= core.goto_next ))
+        core.options.append(Choices(renderable = Option(text="You win!", selectable=True,func= core.goto_next )))
       
       
 

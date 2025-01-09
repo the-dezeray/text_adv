@@ -1,9 +1,17 @@
 '''Handles Keyboard key'''
+from __future__ import annotations
+
+from ui.options import Choices, Option
+from core.core import Core
+
+#this are referenced in the exec function
 from core.fight import fight
 from core.entities import Entities
 
 def get_selectable_options(options: list):
-    return [option for option in options if option.selectable]
+    for i in options:
+        if isinstance(i, Choices):
+            return i.ary
 
 def execute_yaml_function(func: dict, core):
     if isinstance(func, dict):
@@ -13,9 +21,11 @@ def execute_yaml_function(func: dict, core):
             exec(f"{target}({args}, core=core)")
 
 class KeyboardControl:
-    def __init__(self, core):
+    def __init__(self, core : Core):
         self.core = core
+
         self.current_entry_text = ""
+
 
     def execute_on_key(self, key):
         core = self.core
@@ -45,23 +55,25 @@ class KeyboardControl:
 
     def scroll_options(self, value: int):
         core = self.core
-        core.selected_option -= value
         selectable_options = get_selectable_options(core.options)
         options_len = len(selectable_options)
         
-        if core.selected_option < 0:
-            core.selected_option = options_len - 1
-        elif core.selected_option >= options_len:
-            core.selected_option = 0
-        
+        if options_len == 0:  # No selectable options; return early.
+            return
+
+        # Update selected option using modulo arithmetic for circular behavior.
+        core.selected_option = (core.selected_option - value) % options_len
+
+        # Update the selected status of each option.
         for i, option in enumerate(selectable_options):
             option.selected = (i == core.selected_option)
 
+
     def execute_selected_option(self):
-        from core.core import Core
+        
         core: Core = self.core
 
-        for option in core.options:
+        for option in get_selectable_options(core.options):
             if option.selected:
                 if isinstance(option.func, str):
                     core.next_node = option.next_node

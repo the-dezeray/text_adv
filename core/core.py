@@ -2,8 +2,8 @@
 from rich.table import Table
 from rich.console import Console
 from util.file_handler import load_yaml_file
-from ui.options import Option
-from ui.layouts import main_layout
+from ui.options import Option ,Choices
+from rich.layout import Layout
 from core.entities import Entities
 from items.item import Items
 from core.functions import receive
@@ -11,7 +11,11 @@ from core.fight import fight
 from core.player import Player
 
 from ui.console import Console
-
+def get_selectable_options(options: list):
+    for i in options:
+        if isinstance(i, Choices):
+            return i.ary
+        
 class Core():
     def __init__(self,interface = None) -> None:
         self.running = True
@@ -19,7 +23,7 @@ class Core():
         self.in_fight = False
         self.story = load_yaml_file("config/story.yaml")
         self.chapter_id = "1a"
-        self.interface =main_layout()
+        self.interface =Layout("des")
  
         self.in_game = True
         self.love = None
@@ -50,12 +54,12 @@ class Core():
     def continue_game(self):
 
         current_chapter = self.story[self.chapter_id]
-
+        self.selected_option = 0
+       
         self.options = []
         self.options.append(Option(text = current_chapter['text'],selectable = False,type ="header"))
-        for index,choice in enumerate(current_chapter["choices"]):    
-            
-            self.options.append(Option(text = choice['text'],func=choice['function'],next_node = choice['next_node'],selectable = True))
+        #or index,choice in enumerate(current_chapter["choices"]):    
+        self.options.append(Choices(current_chapter["choices"]))
             
         self.love.update(self.interface)
         self.console.refresh()

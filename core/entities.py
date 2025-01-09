@@ -13,7 +13,7 @@ class Entities():
             self.dmg = level * 2
             self.armor = level *1.5
             self.speed = level *3
-            self.hp = level * 30
+            self.hp = level * 40
             self.turn = False
             Log.event()
         def deal_damage(self,player = None):
