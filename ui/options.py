@@ -1,3 +1,6 @@
+
+
+
 class Option():
     def __init__(self,text :str ="",func = None,preview =None,next_node = None,selectable = True ,type :str = "",h_allign = "center",v_allign = "middle") -> None:
         self.text = text
@@ -24,7 +27,7 @@ class Choices():
             for weapon in self.ary:    
                 array.append(WeaponOption(weapon=weapon, func=lambda w=weapon: deal_damage(core, w)))
         else:
-            for choice in self.ary:    
+            for choice in self.ary:     
         
                 array.append(Option(text = choice['text'],func=choice['function'],next_node = choice['next_node'],selectable = True))
         self.ary = array

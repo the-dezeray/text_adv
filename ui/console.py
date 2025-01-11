@@ -39,7 +39,8 @@ class Console:
     def build_table(self) -> Table:
         core = self.core
         self.table = Table(
-            expand=True, caption=" -",
+            expand=True,
+            caption=" -",
             show_edge=False,
             show_header=False,
             style='bold red1',

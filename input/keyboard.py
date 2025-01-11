@@ -9,7 +9,7 @@ from core.fight import fight
 from core.entities import Entities
 
 def get_selectable_options(options: list):
-    for i in options:
+    for i in reversed(options):
         if isinstance(i, Choices):
             return i.ary
 

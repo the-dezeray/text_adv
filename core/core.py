@@ -9,8 +9,9 @@ from items.item import Items
 from core.functions import receive
 from core.fight import fight
 from core.player import Player
-
 from ui.console import Console
+from core.read import read
+
 def get_selectable_options(options: list):
     for i in options:
         if isinstance(i, Choices):
@@ -22,7 +23,7 @@ class Core():
         self.ant =[]
         self.in_fight = False
         self.story = load_yaml_file("config/story.yaml")
-        self.chapter_id = "1a"
+        self.chapter_id = "5a"
         self.interface =Layout("des")
  
         self.in_game = True
@@ -48,6 +49,7 @@ class Core():
 
    
     def execute_yaml_function(self,func: callable):
+
             core = self
             exec(func)
  

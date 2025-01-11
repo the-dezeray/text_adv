@@ -15,7 +15,7 @@ def main():
     try:
         # Start the keyboard listener
         with Listener(on_press=keyboard_controller.execute_on_key) as core.key_listener:
-            with Live(core.interface, refresh_per_second=10,screen=True) as core.love:
+            with Live(core.interface, refresh_per_second=10,screen=False) as core.love:
                 core.continue_game()
                 # Main game loop
                 while core.running:
