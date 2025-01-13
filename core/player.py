@@ -7,6 +7,7 @@ class Player():
         self.attack = 10
         self.defense = 10
         self.speed = 10
+        self.name = "default-name"
         self.luck = 10
         self.turn = False
         self.inventory = Inventory()
