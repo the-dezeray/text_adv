@@ -29,12 +29,31 @@ class Console:
         self.core = core
         self.layout = None
         self.table = None
-        
-    def refresh(self):
-        table = self.build_table()
-        content = Group( Align(align='center', renderable=Spinner("toggle")), Padding(table, pad=(0, 0, 0, 0)) )
-        self.core.interface.update(content)
-        self.core.love.update(self.core.interface)
+        self.current_layout = None
+    def refresh(self,layout = None):
+        class Op:
+            def __init__(self):
+                self.selected = False
+        if layout !=None:
+            self.current_layout = layout
+            self.options = [Op() for _ in range(4)]
+
+        if self.current_layout == None:
+            table = self.build_table()
+            content = Group( Align(align='center', renderable=Spinner("toggle")), Padding(table, pad=(0, 0, 0, 0)) )
+            layout= Layout("des")
+            layout.update(content)
+            self.core.love.update(layout)
+        else:
+            layout = Layout()
+            layout.split(Layout(name="View",ratio=10),Layout(name="control"))
+            layout["View"].split_row(Layout(name="Picture"),Layout(name="Stats"))
+           
+            grid = [Panel("") for _ in range(4)]
+            grid[self.core.selected_option] = Panel(renderable="",style="bold red")
+            from rich.columns import Columns
+            layout["control"].update(Columns( renderables=grid,align="center"))
+            self.core.love.update(layout)
 
     def build_table(self) -> Table:
         core = self.core

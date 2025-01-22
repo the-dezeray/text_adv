@@ -10,6 +10,7 @@ from core.entities import Entities
 
 def get_selectable_options(options: list):
     for i in reversed(options):
+
         if isinstance(i, Choices):
             return i.ary
 
@@ -54,19 +55,19 @@ class KeyboardControl:
         self.execute_selected_option()
 
     def scroll_options(self, value: int):
-        core = self.core
-        selectable_options = get_selectable_options(core.options)
+        
+        selectable_options =self.core.options #get_selectable_options(self.core.options)
         options_len = len(selectable_options)
         
         if options_len == 0:  # No selectable options; return early.
             return
 
         # Update selected option using modulo arithmetic for circular behavior.
-        core.selected_option = (core.selected_option - value) % options_len
+        self.core.selected_option = (self.core.selected_option - value) % options_len
 
         # Update the selected status of each option.
-        for i, option in enumerate(selectable_options):
-            option.selected = (i == core.selected_option)
+        for i, option in enumerate(self.core.options):
+            option.selected = (i == self.core.selected_option)
 
 
     def execute_selected_option(self):

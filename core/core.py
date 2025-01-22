@@ -23,7 +23,7 @@ class Core():
         self.ant =[]
         self.in_fight = False
         self.story = load_yaml_file("config/story.yaml")
-        self.chapter_id = "5a"
+        self.chapter_id = -1
         self.interface =Layout("des")
  
         self.in_game = True
@@ -54,17 +54,23 @@ class Core():
             exec(func)
  
     def continue_game(self):
-
-        current_chapter = self.story[self.chapter_id]
+        #set the selected option to 0
         self.selected_option = 0
-       
-        self.options = []
-        self.options.append(Option(text = current_chapter['text'],selectable = False,type ="header"))
-        #or index,choice in enumerate(current_chapter["choices"]):    
-        self.options.append(Choices(current_chapter["choices"]))
-            
-        self.love.update(self.interface)
-        self.console.refresh()
+
+        
+        if self.chapter_id == -1:
+             
+            self.console.refresh(layout="charactor")
+           
+        else:
+            current_chapter = self.story[self.chapter_id]
+            self.options = []
+            self.options.append(Option(text = current_chapter['text'],selectable = False,type ="header"))
+            #or index,choice in enumerate(current_chapter["choices"]):    
+            self.options.append(Choices(current_chapter["choices"]))
+                
+            self.love.update(self.interface)
+            self.console.refresh()
 
     def goto_next(self):
         
