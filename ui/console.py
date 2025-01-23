@@ -1,5 +1,4 @@
-
-
+''' This module is responsible for rendering the game's UI. It uses the rich library to create a console-based UI. '''  
 from __future__ import annotations
 
 from rich.table import Table

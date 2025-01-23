@@ -1,3 +1,4 @@
+'''This module contains the Option class and Choices class. The Option class is used to create an option object that can be used in the Choices class. The Choices class is used to create a list of options that can be used in the UI. The WeaponOption function is used to create an option object for weapons. The _dialogue_text function is used to create a text object for the UI.'''
 from rich.padding import Padding
 
 class Option():
@@ -28,7 +29,6 @@ class Choices():
                 array.append(WeaponOption(weapon=weapon, func=lambda w=weapon: deal_damage(core, w)))
         else:
             for choice in self.ary:     
-        
                 array.append(Option(text = choice['text'],func=choice['function'],next_node = choice['next_node'],selectable = True))
         self.ary = array
 
