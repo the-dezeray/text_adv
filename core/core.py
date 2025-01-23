@@ -25,15 +25,12 @@ class Core():
         self.story = load_yaml_file("config/story.yaml")
         self.chapter_id = -1
         self.interface =Layout("des")
- 
         self.in_game = True
         self.love = None
         self.move_on = True
         self.entity = None
         self.key_listener = None
-
         self.s = 'options'
-
         self.table = Table()
         self.selected_option = 0
         self.others = []
@@ -41,38 +38,26 @@ class Core():
         self.player_turn = False
         self.next_node = None
         self.options = []
-        #self.options = [Option(text = "new journey",func=self.continue_game,)
-        #,Option("exsiting journey",self.continue_game,lambda a = "desiree":self.display_preview(value = a)),
-        #Option("exit",self.exit_game)]
-
         self.console = Console(core = self)
 
-   
     def execute_yaml_function(self,func: callable):
-
-            core = self
-            exec(func)
+        core = self
+        exec(func)
  
     def continue_game(self):
         #set the selected option to 0
         self.selected_option = 0
-
-        
         if self.chapter_id == -1:
-             
             self.console.refresh(layout="charactor")
-           
         else:
             current_chapter = self.story[self.chapter_id]
             self.options = []
             self.options.append(Option(text = current_chapter['text'],selectable = False,type ="header"))
             #or index,choice in enumerate(current_chapter["choices"]):    
-            self.options.append(Choices(current_chapter["choices"]))
-                
+            self.options.append(Choices(current_chapter["choices"]))    
             self.love.update(self.interface)
             self.console.refresh()
 
     def goto_next(self):
-        
         self.chapter_id = self.next_node
         self.continue_game()
