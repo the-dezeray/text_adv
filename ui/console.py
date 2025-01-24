@@ -29,13 +29,19 @@ class Console:
         self.layout = None
         self.table = None
         self.current_layout = None
+    def clean(self):
+        self.core.chapter_id = "1a"
+        self.core.continue_game()
+
     def refresh(self,layout = None):
         class Op:
             def __init__(self):
                 self.selected = False
+                self.func = "core.clean()"
+        
         if layout !=None:
             self.current_layout = layout
-            self.options = [Op() for _ in range(4)]
+            self.core.options = [Op() for _ in range(4)]
 
         if self.current_layout == None:
             table = self.build_table()
@@ -49,7 +55,7 @@ class Console:
             layout["View"].split_row(Layout(name="Picture"),Layout(name="Stats"))
            
             grid = [Panel("") for _ in range(4)]
-            grid[self.core.selected_option] = Panel(renderable="",style="bold red")
+            grid[self.core.selected_option] = Panel(renderable="",style="bold red",height=2,width=7)
             from rich.columns import Columns
             layout["control"].update(Columns( renderables=grid,align="center"))
             self.core.love.update(layout)

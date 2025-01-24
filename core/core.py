@@ -43,7 +43,8 @@ class Core():
     def execute_yaml_function(self,func: callable):
         core = self
         exec(func)
- 
+    def clean(self):
+        self.console.clean()
     def continue_game(self):
         #set the selected option to 0
         self.selected_option = 0

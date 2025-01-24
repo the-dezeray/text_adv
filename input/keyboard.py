@@ -56,7 +56,7 @@ class KeyboardControl:
 
     def scroll_options(self, value: int):
         
-        selectable_options =self.core.options #get_selectable_options(self.core.options)
+        selectable_options = self.core.options #get_selectable_options(self.core.options)
         options_len = len(selectable_options)
         
         if options_len == 0:  # No selectable options; return early.
