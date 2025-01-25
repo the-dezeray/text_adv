@@ -15,7 +15,11 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from core.core import Core
-
+class Op:
+    def __init__(self):
+        self.selected = False
+        self.next_node = "1a"
+        self.func = "core.clean()"
 def get_grid(colomuns:int = 1)->Table:
     grid = Table.grid()
     for _ in range(colomuns):
@@ -34,14 +38,11 @@ class Console:
         self.core.continue_game()
 
     def refresh(self,layout = None):
-        class Op:
-            def __init__(self):
-                self.selected = False
-                self.func = "core.clean()"
-        
+
+
         if layout !=None:
             self.current_layout = layout
-            self.core.options = [Op() for _ in range(4)]
+            self.core.options = [Choices(ary = [Op() for _ in range(4)],do_build=False) ]
 
         if self.current_layout == None:
             table = self.build_table()
@@ -56,6 +57,7 @@ class Console:
            
             grid = [Panel("") for _ in range(4)]
             grid[self.core.selected_option] = Panel(renderable="",style="bold red",height=2,width=7)
+            
             from rich.columns import Columns
             layout["control"].update(Columns( renderables=grid,align="center"))
             self.core.love.update(layout)

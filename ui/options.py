@@ -14,9 +14,10 @@ class Option():
         self.h_allign = v_allign
 
 class Choices():
-    def __init__(self,ary :list = None ,core = None,renderable = None,selectable = True):
+    def __init__(self,ary :list = None ,core = None,renderable = None,selectable = True,do_build=True):
         self.ary = ary
-        self.build(core,renderable)
+        if do_build == True:
+            self.build(core,renderable)
 
     def build(self,core,renderable ):
         from core.fight import deal_damage

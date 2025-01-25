@@ -11,12 +11,17 @@ from core.fight import fight
 from core.player import Player
 from ui.console import Console
 from core.read import read
-
+from ui.console import Op
 def get_selectable_options(options: list):
+    a =[]
     for i in options:
-        if isinstance(i, Choices):
-            return i.ary
-        
+        if isinstance(i, Op):
+            a.append(i)
+    if len(a) == 0:
+        for i in options:
+            if isinstance(i, Choices):
+                return i.ary
+            
 class Core():
     def __init__(self,interface = None) -> None:
         self.running = True
@@ -44,7 +49,10 @@ class Core():
         core = self
         exec(func)
     def clean(self):
-        self.console.clean()
+        self.console.current_chapter  =None
+        self.chapter_id = "1a"
+
+        self.continue_game()
     def continue_game(self):
         #set the selected option to 0
         self.selected_option = 0

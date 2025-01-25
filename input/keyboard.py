@@ -7,12 +7,12 @@ from core.core import Core
 #this are referenced in the exec function
 from core.fight import fight
 from core.entities import Entities
-
+from ui.console import Op
 def get_selectable_options(options: list):
-    for i in reversed(options):
 
-        if isinstance(i, Choices):
-            return i.ary
+        for i in options:
+            if isinstance(i, Choices):
+                return i.ary
 
 def execute_yaml_function(func: dict, core):
     if isinstance(func, dict):
@@ -56,7 +56,7 @@ class KeyboardControl:
 
     def scroll_options(self, value: int):
         
-        selectable_options = self.core.options #get_selectable_options(self.core.options)
+        selectable_options = get_selectable_options(self.core.options)
         options_len = len(selectable_options)
         
         if options_len == 0:  # No selectable options; return early.
@@ -66,7 +66,7 @@ class KeyboardControl:
         self.core.selected_option = (self.core.selected_option - value) % options_len
 
         # Update the selected status of each option.
-        for i, option in enumerate(self.core.options):
+        for i, option in enumerate(selectable_options):
             option.selected = (i == self.core.selected_option)
 
 
