@@ -32,5 +32,6 @@ def main():
         print("Exiting program...")
         core.key_listener.stop()  # Ensure the listener is stopped
 
+
 if __name__ == "__main__":
     main()

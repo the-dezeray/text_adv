@@ -56,6 +56,8 @@ class KeyboardControl:
 
     def scroll_options(self, value: int):
         
+
+
         selectable_options = get_selectable_options(self.core.options)
         options_len = len(selectable_options)
         
@@ -75,7 +77,7 @@ class KeyboardControl:
         core: Core = self.core
 
         for option in get_selectable_options(core.options):
-            if option.selected:
+            if option.selected == True:
                 if isinstance(option.func, str):
                     core.next_node = option.next_node
                     core.execute_yaml_function(option.func)

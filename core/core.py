@@ -49,9 +49,9 @@ class Core():
         core = self
         exec(func)
     def clean(self):
-        self.console.current_chapter  =None
+        self.console.current_layout =None
         self.chapter_id = "1a"
-
+        print("wirjubg")
         self.continue_game()
     def continue_game(self):
         #set the selected option to 0

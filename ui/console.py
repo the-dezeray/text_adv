@@ -43,6 +43,7 @@ class Console:
         if layout !=None:
             self.current_layout = layout
             self.core.options = [Choices(ary = [Op() for _ in range(4)],do_build=False) ]
+            self.core.options[0].ary[0].selected = True
 
         if self.current_layout == None:
             table = self.build_table()
