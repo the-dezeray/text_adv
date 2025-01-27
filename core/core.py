@@ -28,7 +28,7 @@ class Core():
         self.ant =[]
         self.in_fight = False
         self.story = load_yaml_file("config/story.yaml")
-        self.chapter_id = "1a" if chapter_id is None else chapter_id
+        self._chapter_id = "1a" if chapter_id is None else chapter_id
         self.interface =Layout("des")
         self.in_game = True
         self.love = None
@@ -44,7 +44,15 @@ class Core():
         self.next_node = None
         self.options = []
         self.console = Console(core = self)
-
+    
+    @property
+    def chapter_id(self):
+        return self._chapter_id
+    
+    @chapter_id.setter
+    def chapter_id(self,value):
+        self._chapter_id = value
+        
     def execute_yaml_function(self,func: str):
         core = self
         exec(func)

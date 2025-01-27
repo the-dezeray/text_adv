@@ -9,7 +9,7 @@ from rich.traceback import install
 
 def main(chapter_id = None):
     console = Console()
-    core = Core()
+    core = Core(chapter_id=chapter_id)
     keyboard_controller = KeyboardControl(core=core)
 
     try:
