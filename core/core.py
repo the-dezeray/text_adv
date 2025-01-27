@@ -23,12 +23,12 @@ def get_selectable_options(options: list):
                 return i.ary
             
 class Core():
-    def __init__(self,interface = None) -> None:
+    def __init__(self,interface = None,chapter_id=None) -> None:
         self.running = True
         self.ant =[]
         self.in_fight = False
         self.story = load_yaml_file("config/story.yaml")
-        self.chapter_id = -1
+        self.chapter_id = "1a" if chapter_id is None else chapter_id
         self.interface =Layout("des")
         self.in_game = True
         self.love = None
@@ -45,13 +45,14 @@ class Core():
         self.options = []
         self.console = Console(core = self)
 
-    def execute_yaml_function(self,func: callable):
+    def execute_yaml_function(self,func: str):
         core = self
         exec(func)
+        
     def clean(self):
         self.console.current_layout =None
         self.chapter_id = "1a"
-        print("wirjubg")
+
         self.continue_game()
     def continue_game(self):
         #set the selected option to 0

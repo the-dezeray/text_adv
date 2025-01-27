@@ -5,10 +5,10 @@ from core.core import Core
 from input.keyboard import KeyboardControl
 from rich.traceback import install
 
-console = Console()
 
 
-def main():
+def main(chapter_id = None):
+    console = Console()
     core = Core()
     keyboard_controller = KeyboardControl(core=core)
 
