@@ -1,4 +1,4 @@
-from util.logger import Log 
+
 from util.file_handler import load_json_file
 from items.item import Item
 
@@ -22,7 +22,7 @@ class WeaponItem(Item):
         self.noise = kwargs.pop("noise", None)  # Extract 'noise' from kwargs
         self.effect = kwargs.pop("effect", None)  # Extract 'effect' from kwargs
     
-        Log.event()  # log the create event to the logger
+
 
     def deal_damage(self, player=None) -> None:
         pass

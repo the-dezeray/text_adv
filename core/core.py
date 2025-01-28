@@ -12,6 +12,10 @@ from core.player import Player
 from ui.console import Console
 from core.read import read
 from ui.console import Op
+from util.logger import logger
+
+import datetime
+
 def get_selectable_options(options: list):
     a =[]
     for i in options:
@@ -23,12 +27,12 @@ def get_selectable_options(options: list):
                 return i.ary
             
 class Core():
-    def __init__(self,interface = None,chapter_id=None) -> None:
+    def __init__(self) -> None:
         self.running = True
         self.ant =[]
         self.in_fight = False
         self.story = load_yaml_file("config/story.yaml")
-        self._chapter_id = "1a" if chapter_id is None else chapter_id
+        self._chapter_id = "1a" #default value
         self.interface =Layout("des")
         self.in_game = True
         self.love = None
@@ -44,19 +48,31 @@ class Core():
         self.next_node = None
         self.options = []
         self.console = Console(core = self)
+        self.post_initialize()
+    def post_initialize(self):
+        current_time = datetime.datetime.now()
+        logger.info(f"New game instance {current_time}")
+        self.check_story()
+
+
     
+    def check_story(self):
+        print("Checking story")
     @property
     def chapter_id(self):
         return self._chapter_id
     
     @chapter_id.setter
     def chapter_id(self,value):
+        if value not in self.story:
+            raise ValueError(f"The chapter '{value}' is not defined.")
         self._chapter_id = value
-        
+
+
     def execute_yaml_function(self,func: str):
         core = self
         exec(func)
-        
+
     def clean(self):
         self.console.current_layout =None
         self.chapter_id = "1a"

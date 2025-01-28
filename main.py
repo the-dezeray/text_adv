@@ -3,13 +3,15 @@ from pynput.keyboard import Listener
 from rich.console import Console
 from core.core import Core
 from input.keyboard import KeyboardControl
-from rich.traceback import install
 
+from rich.traceback import install
+install(show_locals=True)
 
 
 def main(chapter_id = None):
     console = Console()
-    core = Core(chapter_id=chapter_id)
+    core = Core()
+    core.chapter_id = chapter_id
     keyboard_controller = KeyboardControl(core=core)
 
     try:

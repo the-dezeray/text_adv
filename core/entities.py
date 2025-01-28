@@ -1,5 +1,5 @@
 '''handle Entity generation and creation'''
-from util.logger import Log
+
 class Entities():
  
     mapa ={
@@ -15,7 +15,7 @@ class Entities():
             self.speed = level *3
             self.hp = level * 40
             self.turn = False
-            Log.event()
+          
         def deal_damage(self,player = None):
        
             if player != None :

@@ -1,4 +1,4 @@
-from util.logger import Log
+
 from ui.options import Option, WeaponOption
 from core.player import Player
 from ui.options import Choices
@@ -24,7 +24,7 @@ def fight(entity=None, core=None):
     """
     if entity is None:
         print("entity is required")
-        Log.error("entity is required")
+        
     else:
         core.options = []
         core.console.refresh()
