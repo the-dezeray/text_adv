@@ -1,0 +1,22 @@
+forest_light:
+  1a:
+    location: null
+    text: "You enter into a forest but no this is to small to be a forest . its a room but how can it be be its an illusion you must escape"
+    choices:
+      - text: "prepare for combat "
+        next_node: 2a
+        function: null
+      - text: "escape"
+        next_node: 1b
+        function: null
+  1b:
+    mode: "Warning"
+    text: "there is know where to run you must fight"
+  2a:
+    location: null
+    text: "You come face to face with a monster"
+    choices:
+      - text: "fight"
+        next_node: 3a
+        function: "fight(entity = Entities.generate(type = 'monster', lvl = 5), core = core)"
+

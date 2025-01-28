@@ -36,7 +36,8 @@ class Console:
     def clean(self):
         self.core.chapter_id = "1a"
         self.core.continue_game()
-
+    def show_error():
+        pass
     def refresh(self,layout = None):
 
 

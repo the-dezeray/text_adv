@@ -28,6 +28,7 @@ def get_selectable_options(options: list):
             
 class Core():
     def __init__(self) -> None:
+        self.rich_console = None
         self.running = True
         self.ant =[]
         self.in_fight = False
@@ -69,9 +70,16 @@ class Core():
         self._chapter_id = value
 
 
-    def execute_yaml_function(self,func: str):
+    def execute_yaml_function(self, func: str):
         core = self
-        exec(func)
+        logger.info(f"Executing function: {func}")
+
+        local_scope = {"core": core}  # Define the scope where 'core' is available
+        
+        try:
+            exec(func, globals(), local_scope)
+        except Exception as e:
+            logger.error(f"Error executing function: {func} - {e}")
 
     def clean(self):
         self.console.current_layout =None

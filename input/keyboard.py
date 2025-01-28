@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from ui.options import Choices, Option
 from core.core import Core
-
+from util.logger import logger
 #this are referenced in the exec function
 from core.fight import fight
 from core.entities import Entities
@@ -15,11 +15,11 @@ def get_selectable_options(options: list):
                 return i.ary
 
 def execute_yaml_function(func: dict, core):
-    if isinstance(func, dict):
-        target = func.get("target")
-        args = func.get("args", "")
-        if target:
-            exec(f"{target}({args}, core=core)")
+        if isinstance(func, dict):
+            target = func.get("target")
+            args = func.get("args", "")
+            if target:
+                exec(f"{target}({args}, core=core)")
 
 class KeyboardControl:
     def __init__(self, core : Core):
@@ -39,9 +39,11 @@ class KeyboardControl:
             "Key.down": lambda: self.scroll_options(-1),
             "Key.enter": self.handle_enter
         }
-        
-        action = key_actions.get(input_string, lambda: None)
-        action()
+        try:
+            action = key_actions.get(input_string, lambda: None)
+            action()
+        except Exception :
+            logger.error(f"Unhandled exception in execute_on_key: {Exception}")
         core.console.refresh()
 
     def handle_space(self):

@@ -9,8 +9,9 @@ install(show_locals=True)
 
 
 def main(chapter_id = None):
-    console = Console()
+    
     core = Core()
+    core.rich_console = Console()
     core.chapter_id = chapter_id
     keyboard_controller = KeyboardControl(core=core)
 
@@ -28,7 +29,7 @@ def main(chapter_id = None):
         print("\nProgram interrupted by the user.")
         core.running = False  # Optionally set `core.running` to False to cleanly exit the loop
     except Exception:
-        console.print_exception(show_locals=True)
+        core.rich_console.print_exception(show_locals=True)
     finally:
         # Optional cleanup if needed
         print("Exiting program...")
