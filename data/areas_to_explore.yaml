@@ -18,5 +18,5 @@ forest_light:
     choices:
       - text: "fight"
         next_node: 3a
-        function: "fight(entity = Entities.generate(type = 'monster', lvl = 5), core = core)"
+        function: "fight(entity = Entities.generate(type = 'monster', lvl = 5), core = core,repeat=3)"
 
