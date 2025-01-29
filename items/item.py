@@ -7,7 +7,7 @@ class Item():
         
         
 class Items:        
-    ITEM_DICT = load_json_file("config/items.json")
+    ITEM_DICT = load_json_file("data/items.json")
     @classmethod
     def generate(cls,**kwargs):
         name = kwargs.pop("name",None)

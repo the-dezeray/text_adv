@@ -30,7 +30,7 @@ class WeaponItem(Item):
 
     
 class Weapon:
-    WEAPON_DICT = load_json_file("config/weapons.json")
+    WEAPON_DICT = load_json_file("data/weapons.json")
 
     @classmethod
     def generate(cls, name) -> WeaponItem:
