@@ -3,13 +3,13 @@ from pynput.keyboard import Listener
 from rich.console import Console
 from core.core import Core
 from input.keyboard import KeyboardControl
-
 from rich.traceback import install
-install(show_locals=True)
+import time
 
 
-def main(chapter_id = None):
-    
+def main(chapter_id = "5b"):
+
+    install(show_locals=True)
     core = Core()
     core.rich_console = Console()
     core.chapter_id = chapter_id
@@ -22,7 +22,7 @@ def main(chapter_id = None):
                 core.continue_game()
                 # Main game loop
                 while core.running:
-                    pass  # Keep the game running until the condition is met
+                    time.sleep(1)
             core.key_listener.join()
 
     except KeyboardInterrupt:
