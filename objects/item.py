@@ -1,4 +1,4 @@
-from util.file_handler import load_json_file
+from util.file_handler import load_yaml_file
 class Item():
     def __init__(self,**kwargs):
         self.type = kwargs.pop("type",None)
@@ -7,13 +7,12 @@ class Item():
         
         
 class Items:        
-    ITEM_DICT = load_json_file("data/items.json")
+    ITEM_DICT = load_yaml_file("data/items.yaml")
     @classmethod
     def generate(cls,**kwargs):
         name = kwargs.pop("name",None)
         amount = kwargs.pop("amount",1)
         item : dict = cls.ITEM_DICT[name]
-        
         item_instance  = Item(**item)
         item_instance.amount = amount
         return item_instance

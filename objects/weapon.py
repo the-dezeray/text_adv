@@ -1,6 +1,6 @@
 
-from util.file_handler import load_json_file
-from items.item import Item
+from util.file_handler import load_yaml_file
+from objects.item import Item
 
 class WeaponItem(Item):
     def __init__(self, **kwargs) -> None:
@@ -21,7 +21,7 @@ class WeaponItem(Item):
         self.skill_req =kwargs.pop("skill_req", None)  # Extract 'skill_req' from kwargs
         self.noise = kwargs.pop("noise", None)  # Extract 'noise' from kwargs
         self.effect = kwargs.pop("effect", None)  # Extract 'effect' from kwargs
-    
+        
 
 
     def deal_damage(self, player=None) -> None:
@@ -30,7 +30,7 @@ class WeaponItem(Item):
 
     
 class Weapon:
-    WEAPON_DICT = load_json_file("data/weapons.json")
+    WEAPON_DICT = load_yaml_file("data/weapons.yaml")
 
     @classmethod
     def generate(cls, name) -> WeaponItem:

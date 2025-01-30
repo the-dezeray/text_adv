@@ -1,7 +1,8 @@
 
 from ui.options import Option, WeaponOption
-from core.player import Player
+from objects.player import Player
 from ui.options import Choices
+from util.logger import logger
 def deal_damage(core, weapon):
     """
     Deals damage to the entity and updates the options list with the damage dealt.
@@ -14,7 +15,7 @@ def deal_damage(core, weapon):
     core.options.append(Option(text=f"[yellow]dealt[/yellow] {weapon.damage} damage", type="header", func=lambda: None, selectable=False))
     _fight(core)
 
-def fight(entity=None, core=None):
+def fight(entity=None, core=None,repeat = 0):
     """
     Initiates a fight sequence.
 
@@ -23,7 +24,7 @@ def fight(entity=None, core=None):
         core: The core game object containing game state.
     """
     if entity is None:
-        print("entity is required")
+        logger.info("entity is not defined in fight")
         
     else:
         core.options = []
@@ -34,10 +35,9 @@ def fight(entity=None, core=None):
         core.in_fight = True
         _fight(core)
 
-def get_head_count(array):
+def get_head_count(array:list):
     """
     Counts the number of header options in the given array.
-
     Args:
         array: The array of options.
 

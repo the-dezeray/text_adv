@@ -2,12 +2,11 @@ from rich.live import Live
 from pynput.keyboard import Listener
 from rich.console import Console
 from core.core import Core
-from input.keyboard import KeyboardControl
+from core.keyboard import KeyboardControl
 from rich.traceback import install
 import time
 
-
-def main(chapter_id = "5b"):
+def main(chapter_id = "4a"):
 
     install(show_locals=True)
     core = Core()
@@ -34,7 +33,6 @@ def main(chapter_id = "5b"):
         # Optional cleanup if needed
         print("Exiting program...")
         core.key_listener.stop()  # Ensure the listener is stopped
-
 
 if __name__ == "__main__":
     main()

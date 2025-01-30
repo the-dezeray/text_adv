@@ -1,20 +1,34 @@
 '''core of the game'''
-from rich.table import Table
-from rich.console import Console
+
+import datetime
+
 from util.file_handler import load_yaml_file
 from ui.options import Option ,Choices
 from rich.layout import Layout
-from core.entities import Entities
-from items.item import Items
-from core.functions import receive
-from core.fight import fight
-from core.player import Player
+from objects.entities import Entities
+from objects.item import Items
+from objects.player import Player
 from ui.console import Console
-from core.read import read
 from ui.console import Op
 from util.logger import logger
 
-import datetime
+from core.events.explore import explore
+from core.events.read import read
+from core.functions import receive
+from core.events.fight import fight
+from core.events.rest import rest
+from core.events.read import read
+from core.events.meditate import meditate
+from core.events.run import run
+from core.events.search import search
+from core.events.trap import trap
+from core.events.sneak import sneak
+from core.events.encounter import encounter
+from core.events.goto import goto
+from core.events.haverst import harvest
+from core.events.interact import interact
+from core.events.investigate import investigate
+from core.events.place import place 
 
 def get_selectable_options(options: list):
     a =[]
@@ -32,16 +46,18 @@ class Core():
         self.running = True
         self.ant =[]
         self.in_fight = False
-        self.story = load_yaml_file("config/story.yaml")
+        self.story = load_yaml_file("data/story.yaml")
+
         self._chapter_id = "1a" #default value
         self.interface =Layout("des")
         self.in_game = True
         self.love = None
+        self.temp_story = None
         self.move_on = True
         self.entity = None
         self.key_listener = None
         self.s = 'options'
-        self.table = Table()
+
         self.selected_option = 0
         self.others = []
         self.player = Player()
@@ -65,8 +81,9 @@ class Core():
     
     @chapter_id.setter
     def chapter_id(self,value):
-        if value not in self.story:
-            raise ValueError(f"The chapter '{value}' is not defined.")
+        story = self.story if self.temp_story == None else self.temp_story
+        if value not in story:
+            raise ValueError(f"The chapter '{value}' is not defined in the default yaml file. check if defined in yaml")
         self._chapter_id = value
 
 
@@ -79,7 +96,7 @@ class Core():
         try:
             exec(func, globals(), local_scope)
         except Exception as e:
-            logger.error(f"Error executing function: {func} - {e}")
+            logger.error(f"Error executing function: {func} - {e} : function exists in yaml file however execution failed mostly likely to the function not defined as  a local or global variable")
 
     def clean(self):
         self.console.current_layout =None
@@ -92,6 +109,10 @@ class Core():
         if self.chapter_id == -1:
             self.console.refresh(layout="charactor")
         else:
+            if  self.temp_story != None:
+                story = self.story
+            else:
+                story = self.temp_story
             current_chapter = self.story[self.chapter_id]
             self.options = []
             self.options.append(Option(text = current_chapter['text'],selectable = False,type ="header"))

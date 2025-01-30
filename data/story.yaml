@@ -36,7 +36,7 @@
   choices:
     - text: "Fight"
       next_node: 5a
-      function: "fight(entity = Entities.generate(type = 'snake', lvl = 5), core = core)"
+      function: "fight(entity = Entities.generate(type = 'snake', level = 5), core = core)"
     - text: "Run"
       next_node: 6a
       function: "run(core = core)"

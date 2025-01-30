@@ -1,10 +1,12 @@
+from util.logger import logger
 class Inventory():
     def __init__(self):
         self.items = []
     
     def add(self,item):
         self.items.append(item)
-    
+        logger.info(f"Added {item.name} to inventory")
+         
     def weapons(self,type = "none"):
         if type == "defence":
             list_of_weapons = [item for item in self.items if item.type == "weapon" and item.defence > 0]

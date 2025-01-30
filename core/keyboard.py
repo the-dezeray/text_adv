@@ -1,37 +1,23 @@
 '''Handles Keyboard key'''
 from __future__ import annotations
 
-from ui.options import Choices, Option
+from ui.options import Choices
 from core.core import Core
 from util.logger import logger
-#this are referenced in the exec function
-from core.fight import fight
-from core.entities import Entities
-from ui.console import Op
-def get_selectable_options(options: list):
 
+def get_selectable_options(options: list):
         for i in options:
             if isinstance(i, Choices):
                 return i.ary
 
-def execute_yaml_function(func: dict, core):
-        if isinstance(func, dict):
-            target = func.get("target")
-            args = func.get("args", "")
-            if target:
-                exec(f"{target}({args}, core=core)")
-
 class KeyboardControl:
     def __init__(self, core : Core):
         self.core = core
-
         self.current_entry_text = ""
-
 
     def execute_on_key(self, key):
         core = self.core
         input_string = str(key).replace("'", "")
-        
         key_actions = {
             "Key.space": self.handle_space,
             "Key.backspace": self.handle_backspace,
@@ -58,8 +44,6 @@ class KeyboardControl:
 
     def scroll_options(self, value: int):
         
-
-
         selectable_options = get_selectable_options(self.core.options)
         options_len = len(selectable_options)
         

@@ -20,9 +20,11 @@ class Choices():
             self.build(core,renderable)
 
     def build(self,core,renderable ):
-        from core.fight import deal_damage
+        
+        from core.events.fight import deal_damage # dont remove this prevents circular import
+        
         array = []
-        from items.weapon import WeaponItem
+        from objects.weapon import WeaponItem
         if renderable != None:
             array.append(renderable)
         elif isinstance(self.ary[0],WeaponItem):
