@@ -47,7 +47,6 @@ class Core():
         self.ant =[]
         self.in_fight = False
         self.story = load_yaml_file("data/story.yaml")
-
         self._chapter_id = "1a" #default value
         self.interface =Layout("des")
         self.in_game = True
@@ -57,7 +56,6 @@ class Core():
         self.entity = None
         self.key_listener = None
         self.s = 'options'
-
         self.selected_option = 0
         self.others = []
         self.player = Player()
@@ -66,13 +64,12 @@ class Core():
         self.options = []
         self.console = Console(core = self)
         self.post_initialize()
+
     def post_initialize(self):
         current_time = datetime.datetime.now()
         logger.info(f"New game instance {current_time}")
         self.check_story()
 
-
-    
     def check_story(self):
         print("Checking story")
     @property
@@ -86,13 +83,10 @@ class Core():
             raise ValueError(f"The chapter '{value}' is not defined in the default yaml file. check if defined in yaml")
         self._chapter_id = value
 
-
     def execute_yaml_function(self, func: str):
         core = self
         logger.info(f"Executing function: {func}")
-
         local_scope = {"core": core}  # Define the scope where 'core' is available
-        
         try:
             exec(func, globals(), local_scope)
         except Exception as e:

@@ -14,5 +14,4 @@ class Inventory():
             list_of_weapons = [item for item in self.items if item.type == "weapon" and item.damage > 0]
         else:
           list_of_weapons = [item for item in self.items if item.type == "weapon"]
-
         return list_of_weapons

@@ -17,10 +17,13 @@ class Player():
         self.description = ""
         self.skills = {}
         self.resistance = {}
-
+        
         self.inventory = Inventory()
         self.add_basic_weapons()
+        self.add_basic_skills()
+        self.add_basic_resistance()
         
+
     def add_basic_weapons(self):
         self.inventory.add(Weapon.generate(name ="shield"))
         self.inventory.add(Weapon.generate(name ="sword"))
