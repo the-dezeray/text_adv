@@ -1,5 +1,6 @@
 from objects.inventory import Inventory
 from objects.weapon import Weapon
+from util.logger import logger
 class Player():
     def __init__(self):
         self.hp = 100
@@ -17,11 +18,11 @@ class Player():
         self.description = ""
         self.skills = {}
         self.resistance = {}
-        
         self.inventory = Inventory()
         self.add_basic_weapons()
         self.add_basic_skills()
         self.add_basic_resistance()
+        logger.info("Player created")
         
 
     def add_basic_weapons(self):
