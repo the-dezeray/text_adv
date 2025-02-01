@@ -1,5 +1,6 @@
 
 from util.file_handler import load_yaml_file
+from util.logger import logger
 from objects.item import Item
 
 class WeaponItem(Item):
@@ -34,4 +35,5 @@ class Weapon:
 
     @classmethod
     def generate(cls, name) -> WeaponItem:
+        logger.info(f"Generating weapon {name}")
         return WeaponItem(**cls.WEAPON_DICT[name])
