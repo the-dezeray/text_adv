@@ -23,8 +23,11 @@ class Player():
         self.add_basic_skills()
         self.add_basic_resistance()
         logger.info("Player created")
-        
-
+    
+    def add_basic_resistance(self):
+        pass    
+    def add_basic_skills(self):
+        pass
     def add_basic_weapons(self):
         self.inventory.add(Weapon.generate(name ="shield"))
         self.inventory.add(Weapon.generate(name ="sword"))

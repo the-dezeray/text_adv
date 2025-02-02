@@ -6,7 +6,7 @@ from core.core import Core
 from util.logger import logger
 
 def get_selectable_options(options: list):
-        for i in options:
+        for i in reversed(options):
             if isinstance(i, Choices):
                 return i.ary
 

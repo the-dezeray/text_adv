@@ -7,13 +7,12 @@ from rich.traceback import install
 import time
 
 def main(chapter_id = "4a"):
-
+    
     install(show_locals=True)
     core = Core()
     core.rich_console = Console()
     core.chapter_id = chapter_id
     keyboard_controller = KeyboardControl(core=core)
-
     try:
         # Start the keyboard listener
         with Listener(on_press=keyboard_controller.execute_on_key) as core.key_listener:
