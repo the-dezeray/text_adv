@@ -30,15 +30,7 @@ from core.events.interact import interact
 from core.events.investigate import investigate
 from core.events.place import place 
 
-def get_selectable_options(options: list):
-    a =[]
-    for i in options:
-        if isinstance(i, Op):
-            a.append(i)
-    if len(a) == 0:
-        for i in options:
-            if isinstance(i, Choices):
-                return i.ary
+
             
 class Core():
     def __init__(self) -> None:
@@ -79,8 +71,11 @@ class Core():
     @chapter_id.setter
     def chapter_id(self,value):
         story = self.story if self.temp_story == None else self.temp_story
-        if value not in story:
+        if value == "-1":
+            value = -1
+        elif value not in story:
             raise ValueError(f"The chapter '{value}' is not defined in the default yaml file. check if defined in yaml")
+
         self._chapter_id = value
 
     def execute_yaml_function(self, func: str):
@@ -116,5 +111,6 @@ class Core():
             self.console.refresh()
 
     def goto_next(self):
+        logger.info("Going to next node")
         self.chapter_id = self.next_node
         self.continue_game()
