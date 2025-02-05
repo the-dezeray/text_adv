@@ -23,7 +23,11 @@ class Player():
         self.add_basic_skills()
         self.add_basic_resistance()
         logger.info("Player created")
-    
+    def trap_interaction(self,trap: dict):
+        #attempt escape
+        if trap != None:
+            logger.info(f"trap invalid -CURRENT CHAPTER - {self.chapter_id}")
+        pass
     def add_basic_resistance(self):
         pass    
     def add_basic_skills(self):
