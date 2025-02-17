@@ -114,9 +114,9 @@
     - text: "Go to the treasure location"
       next_node: 10a
       function: "navigate(location = 'treasure_site', core = core)"
-    - text: "Ignore the scroll"
+    - text: "You see a shop ENTER "
       next_node: 8a
-      function: null
+      function: "shop(level = 'normal',core= core)"
 
 7b:
   location: "The Quiet Clearing"
@@ -179,7 +179,14 @@
   choices:
     - text: "Fight the monster"
       next_node: 11a
-      function: "fight(entity = Entities.generate(type = 'monster', lvl = 10), core = core)"
+      function: "fight(entity = Entities.generate(type = 'snake', lvl = 10), core = core)"
     - text: "Try to sneak past"
       next_node: 11b
       function: "sneak(core = core)"
+
+11a:
+  text: "You have reached  great adventures"
+  choices:
+    - text: "End"
+      next_node: null
+      function: "core.chpater_complete()"

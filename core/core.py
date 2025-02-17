@@ -1,6 +1,7 @@
 '''core of the game'''
 '''random temp comment'''
 import datetime
+import sys
 
 from util.file_handler import load_yaml_file
 from ui.options import Option ,Choices
@@ -10,8 +11,9 @@ from objects.item import Items
 from objects.player import Player
 from ui.console import Console
 from ui.console import Op
-from util.logger import logger
 
+from util.logger import logger
+from core.events.navigate import navigate
 from core.events.explore import explore
 from core.events.read import read
 from core.functions import receive
@@ -29,7 +31,7 @@ from core.events.haverst import harvest
 from core.events.interact import interact
 from core.events.investigate import investigate
 from core.events.place import place 
-
+from core.events.shop import shop
 
             
 class Core():
@@ -39,7 +41,7 @@ class Core():
         self.ant =[]
         self.in_fight = False
         self.story = load_yaml_file("data/story.yaml")
-        self._chapter_id = "1a" #default value
+        self._chapter_id = -1 #default value
         self.interface =Layout("des")
         self.in_game = True
         self.love = None
@@ -50,28 +52,34 @@ class Core():
         self.s = 'options'
         self.selected_option = 0
         self.others = []
+        self._layout = Layout()
         self.player = Player()
         self.player_turn = False
         self.next_node = None
         self.options = []
         self.console = Console(core = self)
-        self.post_initialize()
-
-    def post_initialize(self):
+        self._post_initialize()
+        
+    def exit():
+        sys.exit()
+    def _post_initialize(self):
         current_time = datetime.datetime.now()
         logger.info(f"New game instance {current_time}")
         self.check_story()
 
     def check_story(self):
         print("Checking story")
+
     @property
     def chapter_id(self):
         return self._chapter_id
-    
+    @chapter_id.getter
+    def chapter_id(self):
+        return self._chapter_id
     @chapter_id.setter
     def chapter_id(self,value):
         story = self.story if self.temp_story == None else self.temp_story
-        if value == "-1":
+        if value == "-1"or value == -1:
             value = -1
         elif value not in story:
             raise ValueError(f"The chapter '{value}' is not defined in the default yaml file. check if defined in yaml")
@@ -85,18 +93,25 @@ class Core():
         try:
             exec(func, globals(), local_scope)
         except Exception as e:
+            logger.error(f"chapter : {self.chapter_id}")
             logger.error(f"Error executing function: {func} - {e} : function exists in yaml file however execution failed mostly likely to the function not defined as  a local or global variable")
 
     def clean(self):
-        self.console.current_layout =None
         self.chapter_id = "1a"
+        self.console.layout = "INGAME"
+    def TERMINATE(self):
+        self.running = False
+        self.console.options = []
+        quit()
+
 
         self.continue_game()
     def continue_game(self):
         #set the selected option to 0
         self.selected_option = 0
         if self.chapter_id == -1:
-            self.console.refresh(layout="charactor")
+            self.console.layout =  "CHARACTER_SELECTION"
+            self.console.refresh()
         else:
             if  self.temp_story != None:
                 story = self.story
@@ -114,3 +129,9 @@ class Core():
         logger.info("Going to next node")
         self.chapter_id = self.next_node
         self.continue_game()
+    def clear_logs():
+        ...
+    def restart():
+        ...
+    def raw_exec():
+        ...

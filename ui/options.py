@@ -1,6 +1,6 @@
 '''This module contains the Option class and Choices class. The Option class is used to create an option object that can be used in the Choices class. The Choices class is used to create a list of options that can be used in the UI. The WeaponOption function is used to create an option object for weapons. The _dialogue_text function is used to create a text object for the UI.'''
 from rich.padding import Padding
-
+from rich.panel import Panel
 class Option():
     def __init__(self,text :str ="",func = None,preview =None,next_node = None,selectable = True ,type :str = "",h_allign = "center",v_allign = "middle") -> None:
         self.text = text
@@ -30,14 +30,18 @@ class Choices():
         elif isinstance(self.ary[0],WeaponItem):
             for weapon in self.ary:    
                 array.append(WeaponOption(weapon=weapon, func=lambda w=weapon: deal_damage(core, w)))
-        else:
+        elif isinstance(self.ary[0],dict):
             for choice in self.ary:     
                 array.append(Option(text = choice['text'],func=choice['function'],next_node = choice['next_node'],selectable = True))
+        elif isinstance(self.ary[0],(Panel,Padding,Option)):
+            for option in self.ary:
+                array.append(option)
+
         self.ary = array
 
 def _dialogue_text(text,style):
     instance : Padding = Padding (
-        text,
+        Panel(text,padding=(0,0),style="on red"),
         pad =(4,0,0,0)
     )
     return instance

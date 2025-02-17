@@ -13,7 +13,8 @@
             "console": "integratedTerminal",
             "args": [
                 "${command:pickArgs}"
-            ]
+            ],
+            "env": { "PYTHONPATH": "${workspaceRoot}"}
         }
     ]
 }
