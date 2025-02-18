@@ -1,4 +1,5 @@
 from rich.live import Live
+from rich.layout import Layout
 from rich.console import Console
 from rich.traceback import install
 from readchar import readkey
@@ -9,9 +10,10 @@ from core.keyboard import KeyboardControl
 
 
 def main(chapter_id="4a"):
-    install(show_locals=True)
+    
     core = Core()
     core.rich_console = Console()
+    install(show_locals=True,console=core.rich_console)
     core.rich_console.force_terminal = True
     core.rich_console.force_interactive = True
     core.rich_console.stderr = True
@@ -22,11 +24,11 @@ def main(chapter_id="4a"):
 
     try:
         with Live(
-            core.interface,
-            refresh_per_second=10,
+            Layout("ds"),
             screen=True,
+            auto_refresh=True,
             console=core.rich_console,
-        ) as core.love:
+        ) as core.rich_live_instance:
             core.continue_game()
             while core.running:
                 ke = readkey()
@@ -35,10 +37,8 @@ def main(chapter_id="4a"):
                 else:
                     time.sleep(1)
     except KeyboardInterrupt:
-        print("\nProgram interrupted by the user.")
-        core.running = (
-            False  # Optionally set `core.running` to False to cleanly exit the loop
-        )
+        print("keyboard interrupt  pressed")
+        core.TERMINATE()
     except Exception:
         core.rich_console.print_exception(show_locals=True)
     finally:
