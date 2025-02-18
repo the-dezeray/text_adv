@@ -32,7 +32,12 @@ from core.events.interact import interact
 from core.events.investigate import investigate
 from core.events.place import place 
 from core.events.shop import shop
+from core.events.search_in import search_in
 
+from rich.padding import Padding
+from rich.panel import Panel
+def _dialogue_text(text, style) -> Padding:
+    return Padding(Panel(text,border_style=style), pad=(2, 0, 0, 0))
             
 class Core():
     def __init__(self) -> None:
@@ -42,9 +47,9 @@ class Core():
         self.in_fight = False
         self.story = load_yaml_file("data/story.yaml")
         self._chapter_id = -1 #default value
-        self.interface =Layout("des")
+ 
         self.in_game = True
-        self.love = None
+        self.rich_live_instance = None
         self.temp_story = None
         self.move_on = True
         self.entity = None
@@ -82,6 +87,7 @@ class Core():
         if value == "-1"or value == -1:
             value = -1
         elif value not in story:
+            logger.critical(f"The chapter '{value}' is not defined in the default yaml file. check if defined in yaml")
             raise ValueError(f"The chapter '{value}' is not defined in the default yaml file. check if defined in yaml")
 
         self._chapter_id = value
@@ -111,7 +117,7 @@ class Core():
         self.selected_option = 0
         if self.chapter_id == -1:
             self.console.layout =  "CHARACTER_SELECTION"
-            self.console.refresh()
+        
         else:
             if  self.temp_story != None:
                 story = self.story
@@ -119,14 +125,16 @@ class Core():
                 story = self.temp_story
             current_chapter = self.story[self.chapter_id]
             self.options = []
+            
             self.options.append(Option(text = current_chapter['text'],selectable = False,type ="header"))
             #or index,choice in enumerate(current_chapter["choices"]):    
             self.options.append(Choices(current_chapter["choices"]))    
-            self.love.update(self.interface)
-            self.console.refresh()
+        self.console.refresh()
 
-    def goto_next(self):
+    def goto_next(self)->None:
+        '''Go to the next node in the story'''
         logger.info("Going to next node")
+
         self.chapter_id = self.next_node
         self.continue_game()
     def clear_logs():

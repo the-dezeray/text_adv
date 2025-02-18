@@ -1,6 +1,8 @@
 from ui.options import Option, Choices
-from util.logger import logger
+from util.logger import logger,event_logger
 from util.file_handler import load_yaml_file
+
+@event_logger
 def explore(core= None,area= None):
     stories = load_yaml_file("data/areas_to_explore.yaml")
 

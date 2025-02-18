@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from core.core import Core
 
 @event_logger
-def sneak(core : 'Core' = None,place : str = None)->None:
+def search_in(core : 'Core' = None,place : str = None)->None:
     if core is None:
         raise ValueError("Core is None")
     if place is None:

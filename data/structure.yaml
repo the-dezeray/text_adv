@@ -1,0 +1,78 @@
+# Story Generation Framework v1.0
+
+schema:
+  node_structure:
+    - node_id: "Unique identifier (e.g., 1a, 3b)"
+    - location: "Optional location descriptor"
+    - text: "Main narrative text with [color]tags[/]"
+    - choices:
+      - text: "Choice description"
+        next_node: "Linked node ID"
+        function: "Optional function call"
+
+function_catalog:
+  combat:
+    - fight(entity=<Entity>, core=<Core>):
+      "Initiates combat sequence"
+      params:
+        entity: "Generated via Entities.generate(type, level)"
+        core: "Game state reference"
+
+  inventory:
+    - receive(item=<Item>, core=<Core>):
+      "Adds item to player inventory"
+      params:
+        item: "Generated via Items.generate(name, amount)"
+
+  movement:
+    - explore(area=<String>, core=<Core>):
+      "Triggers area exploration"
+    - run(core=<Core>):
+      "Attempt to flee from combat"
+
+generation_rules:
+  1. All nodes require:
+     - node_id (format: Number+Letter)
+     - text (40-120 characters)
+     - At least 2 choices
+  2. Functions must:
+     - Use exact parameter names
+     - Reference valid entity/item types
+     - Include core parameter
+  3. Location optional but recommended for continuity
+  4. Choice paths must link to existing nodee
+
+worldbuilding_context:
+  theme: "Dark fantasy with horror elements"
+  locations: ["Abandoned temples", "Cursed forests", "Underground labyrinths"]
+  entities:
+    - types: ["snake", "specter", "bandit", "wraith"]
+      levels: 1-10
+  items:
+    - currency: ["gold", "soul shards"]
+    - equipment: ["rusted sword", "enchanted ring"]
+    - consumables: ["healing vial", "night vision potion"]
+
+example_structure: |
+  1a:
+    location: "Path of Broken Statues"
+    text: "You hear whispers from crumbling stone faces. [red]Blood drips[/] from their eyes."
+    choices:
+      - text: "Touch the nearest statue"
+        next_node: "2c"
+        function: "receive(item=Items.generate(name='curse', amount=1), core=core)"
+      - text: "Back away slowly"
+        next_node: "3d"
+        function: null
+
+core_system:
+  object: "Contains game state including:"
+    - current_node
+    - player:
+        hp: 100
+        inventory: []
+        level: 1
+    - story_state: {}
+  helpers:
+    - Entities.generate(type, level): "Creates enemy NPCs"
+    - Items.generate(name, amount): "Creates inventory items"

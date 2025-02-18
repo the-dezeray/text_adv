@@ -37,9 +37,11 @@
     - text: "Fight"
       next_node: 5a
       function: "fight(entity = Entities.generate(type = 'snake', level = 5), core = core)"
-    - text: "Run"
+    - text: "Ruan"
       next_node: 6a
       function: "run(core = core)"
+
+      
 
 4b:
   location: null
@@ -146,7 +148,7 @@
   choices:
     - text: "Search the hut"
       next_node: 10b
-      function: "search(area = 'hut', core = core)"
+      function: "search_in(area = 'hut', core = core)"
     - text: "Ignore the hut"
       next_node: 9e
       function: null

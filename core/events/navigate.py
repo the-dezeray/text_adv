@@ -1,4 +1,7 @@
 from ui.options import Option, Choices
+from util.logger import logger,event_logger
+
+@event_logger
 def navigate(core= None,location = "treasure"):
     core.options = []
     text = "you have enter a treasure room now there is a chance death awaits y ou in the chest or great wealth"

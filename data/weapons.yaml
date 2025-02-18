@@ -18,3 +18,151 @@ bat:
     img: bat
     cursed: false
     description: bat
+rusted_shiv:
+    name: "Prison Shiv"
+    damage: 12
+    crit: 10
+    effects: ["bleed"]
+    description: "Sharpened bed spring. Sticky with old infections."
+    rarity: 1
+
+bone_club:
+    name: "Thighbone Crusher"
+    damage: 15
+    crit: 5
+    effects: []
+    description: "Femur wrapped in chain. Still bears teeth marks."
+    rarity: 0
+
+gate_shield:
+    name: "Cell Door"
+    damage: 8
+    defence: 12
+    effects: ["slow"]
+    description: "Ripped dungeon hinges. Makes movement ponderous."
+    rarity: 2
+
+whip:
+    name: "Flayer's Tongue"
+    damage: 10
+    crit: 25
+    effects: []
+    description: "Braided leather strips. Cracks like gunshots."
+    rarity: 1
+
+# MEDIUM (7)
+barbed_flail:
+    name: "Chain of Tears"
+    damage: 28
+    crit: 15
+    effects: ["bleed", "slow"]
+    description: "Spiked ball drips anticoagulant. Whimpers when still."
+    rarity: 4
+
+furnace_poker:
+    name: "Incinerator's Rod"
+    damage: 22
+    crit: 20
+    effects: ["burn"]
+    description: "Glowing tip leaves smoldering wounds. Smells of barbecue."
+    rarity: 5
+
+warden_mace:
+    name: "Jailer's Fist"
+    damage: 32
+    crit: 10
+    effects: ["stun"]
+    description: "Cast iron head shaped like screaming face. Humiliates armor."
+    rarity: 6
+
+plague_spear:
+    name: "Blight Lancet"
+    damage: 18
+    crit: 30
+    effects: ["poison"]
+    description: "Green-crusted tip. Carries ancient diseases."
+    rarity: 4
+
+voltaic_chain:
+    name: "Storm Lash"
+    damage: 25
+    crit: 25
+    effects: ["shock"]
+    description: "Crackling copper links. Makes hair stand on end."
+    rarity: 5
+
+confessor_axe:
+    name: "Penitent's Edge"
+    damage: 35
+    crit: 15
+    effects: ["holy"]
+    description: "Engraved with martyr prayers. Burns heretics."
+    rarity: 6
+
+marrow_bow:
+    name: "Screaming Spine"
+    damage: 20
+    crit: 40
+    effects: []
+    description: "Bowstring from tendons. Arrows of sharpened bone."
+    rarity: 4
+
+# RARE (7)
+bloodking_sword:
+    name: "Hemogoblet"
+    damage: 45
+    crit: 20
+    effects: ["vamperism", "cursed"]
+    cursed: true
+    description: "Blade drinks blood to grow heavier. Addictive warmth."
+    rarity: 8
+
+void_scythe:
+    name: "Starving Void"
+    damage: 50
+    crit: 25
+    effects: ["shock", "slow"]
+    description: "Harvests light and sound. Leaves silent wounds."
+    rarity: 9
+
+martyr_spike:
+    name: "Sacred Impaler"
+    damage: 38
+    crit: 35
+    effects: ["holy", "burn"]
+    description: "Glows with trapped saint. Screams on impact."
+    rarity: 7
+
+black_chorus:
+    name: "Plaguebearer"
+    damage: 30
+    crit: 20
+    effects: ["poison", "bleed"]
+    description: "Oozes black pus. Spreads gangrenous rot."
+    rarity: 8
+
+tormentor:
+    name: "Nerveflayer"
+    damage: 28
+    crit: 50
+    effects: ["stun", "slow"]
+    description: "Needle-covered whip. Causes neural overload."
+    rarity: 9
+
+sunken_crown:
+    name: "Drowned King's Scepter"
+    damage: 40
+    crit: 15
+    effects: ["vamperism", "cursed"]
+    cursed: true
+    description: "Weighted with coral growths. Pulls wielder downward."
+    rarity: 10
+
+oblivion_dagger:
+    name: "Memory Razor"
+    damage: 15
+    crit: 100
+    effects: ["cursed"]
+    cursed: true
+    description: "Steals memories with each cut. Leaves existential wounds."
+    rarity: 10

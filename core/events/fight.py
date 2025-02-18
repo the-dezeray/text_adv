@@ -2,7 +2,8 @@
 from ui.options import Option, WeaponOption
 from objects.player import Player
 from ui.options import Choices
-from util.logger import logger
+from util.logger import logger ,event_logger
+
 def deal_damage(core, weapon):
     """
     Deals damage to the entity and updates the options list with the damage dealt.
@@ -14,7 +15,7 @@ def deal_damage(core, weapon):
     core.entity.hp -= weapon.damage
     core.options.append(Option(text=f"[yellow]dealt[/yellow] {weapon.damage} damage", type="header", func=lambda: None, selectable=False))
     _fight(core)
-
+@event_logger
 def fight(entity=None, core=None,repeat = 0):
     """
     Initiates a fight sequence.
