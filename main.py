@@ -9,7 +9,12 @@ from core.core import Core
 from core.keyboard import KeyboardControl
 
 
-def main(chapter_id="4a"):
+def main(**kwargs):
+    chapter_id = kwargs.get("chapter_id", '4a') # 4a as the default
+    story = kwargs.get("story", "story.yaml")
+    mute = kwargs.get("mute", False)
+    tank = kwargs.get("tank", False)
+    subchapter = kwargs.get("subchapter", "areas_to_explore.yaml")
     
     core = Core()
     core.rich_console = Console()
