@@ -1,0 +1,97 @@
+1a:
+  location: "floor1"
+  text: "You wake up and find yourself lost in a place you've never been to. This place is unfamiliar. So, where am I?"
+  choices:
+    - text: "Explore"
+      next_node: 2a
+      function: null
+    - text: "Stay"
+      next_node: 1a
+      function: "stay(core=core,limit = 2,next_node = 1c,text = 'you sleep for a while and wake up')"
+2a:
+  location: "hall1"
+  text: "Layer 1: You seem to be in a hall."
+  choices:
+    - text: "see more"
+      next_node: 2b
+      function: null
+2b:
+  text: "You find stairs going down"
+  choices:
+    - text: "yell"
+      next_node: 2c
+      function: null
+    - text: "you find a  pit"
+      next_node: 2d
+      function: null      
+2c:
+
+  text: "suprise fight you cant  determine the level of this guy"
+  choices:
+    - text: "fight"
+      next_node: 3a
+      function: fight(core = core,entity = Entities.generate(type = 'snake', lvl = 3))
+2d:
+  text: "you more stairs going down"
+  choices:
+    - text: "look down"
+      next_node: 3a
+      function: null
+3a:
+
+  text: "another spatial room big vast and empty"
+  choices:
+    - text: "sleep"
+      next_node: 3b
+      function: null
+    - text: "continue walking"
+      next_node: 4a
+      function: null
+
+3b:
+  location: "dreams"
+  text: "you in your dreams and you dream about stuff, and wondering if you should wake up or you will gain somehting "
+  choices:
+    - text: "wake up"
+      next_node: 4a
+      function: null
+    - text: "continue"  
+      next_node: 3c
+      function: null
+4a:
+  location : floor3
+  text: "a new floor"
+  choices:
+    - text: "look around"
+      next_node: 4b
+      function: null
+    - text: "walk"
+      next_node: 4c
+      function: null
+4b:
+  text: "you find a  skeleton"
+  choices:
+    - text: "search"
+      next_node: 5a
+      function: null
+    - text: "leave"
+      next_node: 5a
+      function: null
+4c:
+  text: "you find a  loot"
+  choices:
+    - text: "leave"
+      next_node: 5b
+      function: null
+    - text: "take a look"
+      next_node: 5b
+      function: null
+5a:
+  text: "strange a gate appears and it wasnt there an entity shows up "
+  choices:
+    - text: "attack"
+      next_node: 6a
+      function: null
+    - text: "refuse to attack"
+      next_node: 6a
+      function: null
