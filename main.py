@@ -1,3 +1,4 @@
+'''random documentation'''
 from rich.live import Live
 from rich.layout import Layout
 from rich.console import Console
