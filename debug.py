@@ -3,6 +3,7 @@ import argparse
 from main import main
 
 parser = argparse.ArgumentParser()
+parser.add_argument("-r","return",help = "enable return to previous node funtionality ")
 parser.add_argument('-d', "--dev", help="run in dev therefore constant reloading of config files and story files " )
 parser.add_argument('-c', "--chatper", help="Chapter to start from")
 parser.add_argument('-p', "--place", help="Chapter to start from")
