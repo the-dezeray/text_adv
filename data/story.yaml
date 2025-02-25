@@ -79,10 +79,10 @@
   text: "You successfully escape the snake but find yourself in a shadowy and eerie plain, where dark figures flicker in the periphery of your vision."
   choices:
     - text: "Search for shelter"
-      next_node: 8b
+      next_node: 6b
       function: "search(core = core)"
     - text: "Move onward"
-      next_node: 9a
+      next_node: 6c
       function: null
 
 6b:
@@ -90,7 +90,7 @@
   text: "The cave is dark and cold. Whispers echo around you, carried by an unseen force, their words just beyond comprehension."
   choices:
     - text: "Investigate the whispers"
-      next_node: 8c
+      next_node: 7a
       function: "investigate(source = 'whispers', core = core)"
     - text: "Leave the cave"
       next_node: 4b
@@ -101,10 +101,10 @@
   text: "You find a grove illuminated by mushrooms that glow with an ethereal light, casting long shadows along the ground."
   choices:
     - text: "Harvest the mushrooms"
-      next_node: 8d
+      next_node: 7a
       function: "harvest(item = 'glowing_mushrooms', core = core)"
     - text: "Rest in the grove"
-      next_node: 9b
+      next_node: 7b
       function: "rest(core = core)"
 6d:
   location: null
@@ -119,10 +119,10 @@
   text: "The scroll unfurls, revealing a map to a hidden treasure site, the ink shifting as if alive."
   choices:
     - text: "Go to the treasure location"
-      next_node: 10a
+      next_node: 11a
       function: "navigate(location = 'treasure_site', core = core)"
     - text: "You see a shop. ENTER"
-      next_node: 8a
+      next_node: 7b
       function: "shop(level = 'normal', core = core)"
 
 7b:
@@ -140,5 +140,5 @@
   text: "You have reached great adventures. The echoes of your journey resonate in the vast unknown."
   choices:
     - text: "End"
-      next_node: null
+      next_node: 1a
       function: "core.TERMINATE()"
