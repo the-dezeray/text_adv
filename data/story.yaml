@@ -1,6 +1,6 @@
 1a:
   location: "The Path of Light"
-  text: "You wake up and find yourself lost in a place you've never been to. This place is unfamiliar. So, where am I?"
+  text: "You wake up and find yourself lost in a place you've never been to. This place is unfamiliar. The air is thick with an eerie silence, and the soft glow of an unknown light source flickers in the distance. So, where am I?"
   choices:
     - text: "Explore"
       next_node: 2a
@@ -11,7 +11,7 @@
 
 2a:
   location: null
-  text: "Layer 1: Welcome to the most scary place."
+  text: "Layer 1: Welcome to the most terrifying place you've ever set foot in. Shadows dance along the cracked walls, whispering secrets of those who came before."
   choices:
     - text: "Go north"
       next_node: 3a
@@ -22,7 +22,7 @@
 
 3a:
   location: null
-  text: "He offers you great stuff and a lot of rings."
+  text: "A mysterious figure approaches. He offers you great treasures—glimmering rings of untold power and riches beyond imagination. His grin is unsettling."
   choices:
     - text: "Receive"
       next_node: 4a
@@ -32,20 +32,18 @@
       function: null
 
 4a:
-  text: "You met a [red1]large black snake[/]."
+  text: "You met a [red1]large black snake[/]. Its eyes glow with an unnatural hunger, coiling and preparing to strike."
   choices:
     - text: "Fight"
       next_node: 5a
       function: "fight(entity = Entities.generate(type = 'snake', level = 5), core = core)"
-    - text: "Ruan"
+    - text: "Run"
       next_node: 6a
       function: "run(core = core)"
 
-      
-
 4b:
   location: null
-  text: "You stumble upon a mysterious cave."
+  text: "You stumble upon a mysterious cave, its entrance yawning open like the mouth of a beast. A faint, chilling breeze rushes past you."
   choices:
     - text: "Enter the cave"
       next_node: 6b
@@ -56,18 +54,18 @@
 
 5a:
   location: null
-  text: "The snake is defeated, and you find a mysterious scroll."
+  text: "The snake is defeated, its body dissolving into a wisp of smoke. Among the remains, you find a mysterious scroll covered in arcane symbols."
   choices:
     - text: "Read the scroll"
       next_node: 7a
       function: "read(scroll = 'ancient_scroll', core = core)"
     - text: "Keep it for later"
-      next_node: 8a
+      next_node: 6d
       function: null
 
 5b:
   location: null
-  text: "You leave the rings behind and move deeper into the forest."
+  text: "You leave the rings behind, resisting the temptation. The path ahead leads you deeper into the forest, where unseen eyes seem to follow your every move."
   choices:
     - text: "Follow the light"
       next_node: 6c
@@ -78,7 +76,7 @@
 
 6a:
   location: "The Shadowed Plains"
-  text: "You successfully escape the snake but find yourself in a shadowy and eerie plain."
+  text: "You successfully escape the snake but find yourself in a shadowy and eerie plain, where dark figures flicker in the periphery of your vision."
   choices:
     - text: "Search for shelter"
       next_node: 8b
@@ -89,7 +87,7 @@
 
 6b:
   location: "The Cave of Whispers"
-  text: "The cave is dark and cold. You hear whispers echoing around you."
+  text: "The cave is dark and cold. Whispers echo around you, carried by an unseen force, their words just beyond comprehension."
   choices:
     - text: "Investigate the whispers"
       next_node: 8c
@@ -100,7 +98,7 @@
 
 6c:
   location: "The Glowing Grove"
-  text: "You find a grove illuminated by glowing mushrooms."
+  text: "You find a grove illuminated by mushrooms that glow with an ethereal light, casting long shadows along the ground."
   choices:
     - text: "Harvest the mushrooms"
       next_node: 8d
@@ -108,87 +106,39 @@
     - text: "Rest in the grove"
       next_node: 9b
       function: "rest(core = core)"
+6d:
+  location: null
+  text: "You are head on with a snake."
+  choices:
+    - text: "engage"
+      next_node: 7b
+      function: "fight(core=core,entity  = Entities.generate(type = 'snake', level = 5))"
 
 7a:
   location: null
-  text: "The scroll reveals the location of a hidden treasure."
+  text: "The scroll unfurls, revealing a map to a hidden treasure site, the ink shifting as if alive."
   choices:
     - text: "Go to the treasure location"
       next_node: 10a
       function: "navigate(location = 'treasure_site', core = core)"
-    - text: "You see a shop ENTER "
+    - text: "You see a shop. ENTER"
       next_node: 8a
-      function: "shop(level = 'normal',core= core)"
+      function: "shop(level = 'normal', core = core)"
 
 7b:
   location: "The Quiet Clearing"
-  text: "You take a moment to rest in a quiet clearing."
+  text: "You take a moment to rest in a quiet clearing, where the air is thick with the scent of wildflowers and the distant hoot of an owl."
   choices:
     - text: "Meditate"
-      next_node: 8e
+      next_node: 11a
       function: "meditate(core = core)"
     - text: "Continue your journey"
-      next_node: 9c
-      function: null
-
-8a:
-  location: null
-  text: "You keep moving, unsure of where to go next."
-  choices:
-    - text: "Head east"
-      next_node: 9d
-      function: null
-    - text: "Head west"
-      next_node: 10a
-      function: "navigate(direction = 'west', core = core)"
-
-8b:
-  location: null
-  text: "You find an abandoned hut."
-  choices:
-    - text: "Search the hut"
-      next_node: 10b
-      function: "search_in(area = 'hut', core = core)"
-    - text: "Ignore the hut"
-      next_node: 9e
-      function: null
-
-9a:
-  location: "The Dark Forest"
-  text: "The forest is dense and filled with strange noises."
-  choices:
-    - text: "Investigate the noises"
-      next_node: 10c
-      function: "investigate(source = 'noises', core = core)"
-    - text: "Avoid the noises"
-      next_node: 10d
-      function: null
-
-9b:
-  location: null
-  text: "You feel refreshed after resting in the glowing grove."
-  choices:
-    - text: "Continue exploring"
-      next_node: 10e
-      function: "explore(area = 'grove', core = core)"
-    - text: "Leave the grove"
-      next_node: 8a
-      function: null
-
-10a:
-  location: "The Treasure Site"
-  text: "You find the hidden treasure, but it's guarded by a fierce monster."
-  choices:
-    - text: "Fight the monster"
       next_node: 11a
-      function: "fight(entity = Entities.generate(type = 'snake', lvl = 10), core = core)"
-    - text: "Try to sneak past"
-      next_node: 11b
-      function: "sneak(core = core)"
+      function: null
 
 11a:
-  text: "You have reached  great adventures"
+  text: "You have reached great adventures. The echoes of your journey resonate in the vast unknown."
   choices:
     - text: "End"
       next_node: null
-      function: "core.chpater_complete()"
+      function: "core.TERMINATE()"

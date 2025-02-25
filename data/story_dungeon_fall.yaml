@@ -93,5 +93,65 @@
       next_node: 6a
       function: null
     - text: "refuse to attack"
-      next_node: 6a
+      next_node: 6b
+      function: null
+    - test: "take dagger"
+      next_node: to the shop
+      function: null
+6a:
+  text: "you attack the entity and it was a trap"
+  choices:
+    - text: "fight"
+      next_node: 7a
+      function: fight(core = core,entity = Entities.generate(type = 'snake', lvl = 3))
+    - text: "run"
+      next_node: 7b
+      function: null
+6b:
+  text: "you refuse to attack and the entity disappears and the dungeon starts to eat your memories"
+  choices:
+    - text: "attempt a run"
+      next_node: 7a
+      function: null
+7a:
+  text: "you find your self in a room of blood draining your blood"
+  choices:
+    - text: "try to leave"
+      next_node: 8a
+      function: null
+    - text: "wait"
+      next_node: 8b
+      function: null
+    - text: "use weaon"
+      next_node: 8c
+      function: null
+
+8c:
+  text: "you use your weapon and you find a way out you are now in a room"
+  choices:
+    - text: "door 1"
+      next_node: 9a
+      function: null
+    - text: "door 2"
+      next_node: 9b
+      function: null
+
+9a:
+  text: "you find a room with the slayer"
+  choices:
+    - text: "fight"
+      next_node: 10a
+      function: null
+9b:
+  text: "you have enter a shop"
+  choices:
+    - text: "continue "
+      next_node: 10a
+      function: null
+
+10a:
+  text: "a new floor you see vast waters"
+  choices:
+    - text: "swim across"
+      next_node: 11a
       function: null
