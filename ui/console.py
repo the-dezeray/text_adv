@@ -6,32 +6,18 @@ from rich.padding import Padding
 from rich.panel import Panel
 from rich.align import Align
 from rich.rule import Rule
-from rich import box
+
 from rich.layout import Layout
 
 from ui.options import Op
-from ui.options import Option, Choices
+from ui.options import richTable
+from ui.options import Option
 from ui.layouts import LayoutInGame, LayoutDefault,Lsd
 
 from typing import TYPE_CHECKING, Tuple
 
 from enum import Enum
 
-
-
-
-def richTable()->Table:
-    '''This function creates a rich Table object with the specified properties.'''
-    table : Table = Table(
-        expand=True,
-        caption=" -",
-        show_edge=False,
-        show_header=False,
-        style="bold red1",
-        box=box.ROUNDED,
-    )
-    table.add_column(justify="center")
-    return table
 
 LAYOUTS = {
     "INGAME": LayoutInGame(),

@@ -33,7 +33,10 @@ class KeyboardControl:
 
         key_actions = {
             KEY.BACKSPACE: self.handle_backspace,
+            KEY.LEFT : lambda: self.scroll_options(1),
+            KEY.RIGHT: lambda: self.scroll_options(-1),
             KEY.UP: lambda: self.scroll_options(1),
+            KEY.BACKSPACE: self.handle_backspace,
             KEY.DOWN: lambda: self.scroll_options(-1),
             KEY.ENTER: self.handle_enter,
             "q": self.handle_escape,

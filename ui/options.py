@@ -6,7 +6,7 @@ from rich.table import Table
 from rich.align import Align
 from rich.console import Group, group
 from rich.rule import Rule
-
+from rich import box
 class Option():
     def __init__(self, text: str = "", func=None, preview=None, next_node=None, selectable=True, type: str = "", h_allign="center", v_allign="middle") -> None:
         self.text = text
@@ -26,7 +26,7 @@ class Option():
         elif option.type == "entity_profile":
             return get_player_display(option)
         else:
-            return _option_button(option.text, style, left_padding=left_padding)
+            return _option_button(option.text, style, left_padding=left_padding, )
 
 class Choices():
     def __init__(self, ary: list = None, core=None, renderable=None, selectable=True, do_build=True):
@@ -63,7 +63,7 @@ class Choices():
                 )
             else:
                 grid.add_row(Align(renderables[i], align="center"))
-        return grid
+        return Padding(grid,pad=(1,0,0,0))
 
     def build(self, core, renderable):
         from core.events.fight import deal_damage  # don't remove this prevents circular import
@@ -83,7 +83,7 @@ class Choices():
         self.ary = array
 
 def get_grid(colomuns: int = 1) -> Table:
-    grid = Table()
+    grid = Table.grid()
     for _ in range(colomuns):
         grid.add_column()
     return grid
@@ -100,8 +100,12 @@ def get_player_display(option):
     yield Rule(style="bold red")
 
 def _option_button(text, style, top_padding=0, right_padding=0, bottom_padding=0, left_padding=0) -> Padding:
+    height = 3
+    if left_padding !=0:height = 4 
+    left_padding = 0
+    from rich.text import Text
     return Padding(
-        Panel(text, width=15, border_style=style),
+        Panel(text, width=15,height=height , border_style=style),
         pad=(top_padding, right_padding, bottom_padding, left_padding),
     )
 
@@ -126,3 +130,18 @@ class Op:
         self.preview = None
         self.type = None
         self.text = "d"
+
+
+def richTable()->Table:
+    '''This function creates a rich Table object with the specified properties.'''
+    table : Table = Table(
+        expand=True,
+        caption=" -",
+        show_edge=False,
+        show_lines=False,
+        show_header=False,
+        style="bold red1",
+        box=box.ROUNDED,
+    )
+    table.add_column(justify="center")
+    return table
