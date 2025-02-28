@@ -1,60 +1,66 @@
-'''core of the game'''
-'''random temp comment'''
-import datetime
-import sys
+"""core of the game"""
 
-from util.file_handler import load_yaml_file
-from ui.options import Option ,Choices
+from util.file_handler import load_yaml_file  # pylint: disable=unused-import
+from ui.options import Option, Choices
 from rich.layout import Layout
-from objects.entities import Entities
+from objects.entities import Entities  # pylint: disable=unused-import
 from objects.item import Items
 from objects.player import Player
 from ui.console import Console
 from ui.console import Op
-
 from util.logger import logger
-from core.events.navigate import navigate
-from core.events.explore import explore
-from core.events.read import read
-from core.functions import receive
-from core.events.fight import fight
-from core.events.rest import rest
-from core.events.read import read
-from core.events.meditate import meditate
-from core.events.run import run
-from core.events.search import search
-from core.events.trap import trap
-from core.events.sneak import sneak
-from core.events.encounter import encounter
-from core.events.goto import goto
-from core.events.haverst import harvest
-from core.events.interact import interact
-from core.events.investigate import investigate
-from core.events.place import place 
-from core.events.shop import shop
-from core.events.search_in import search_in
+
+# Unused functions called using the exec functions
+from core.events.navigate import navigate  # noqa: F401  # type: ignore
+from core.events.explore import explore  # noqa: F401
+from core.functions import receive  # noqa: F401  # type: ignore
+from core.events.fight import fight  # noqa: F401  # type: ignorei
+from core.events.rest import rest  # noqa: F401  # type: ignore
+from core.events.read import read  # noqa: F401  # type: ignore
+from core.events.meditate import meditate  # noqa: F401  # type: ignore
+from core.events.run import run  # noqa: F401  # type: ignore
+from core.events.search import search  # noqa: F401  # type: ignore
+from core.events.trap import trap  # noqa: F401  # type: ignore
+from core.events.sneak import sneak  # noqa: F401  # type: ignore
+from core.events.encounter import encounter  # noqa: F401  # type: ignore
+from core.events.goto import goto  # noqa: F401  # type: ignore
+from core.events.haverst import harvest  # noqa: F401  # type: ignore
+from core.events.interact import interact  # noqa: F401  # type: ignore
+from core.events.investigate import investigate  # noqa: F401  # type: ignore
+from core.events.place import place  # noqa: F401  # type: ignore
+from core.events.shop import shop  # noqa: F401  # type: ignore
+from core.events.search_in import search_in  # noqa: F401  # type: ignore
 
 from rich.padding import Padding
 from rich.panel import Panel
+from typing import TYPE_CHECKING
+import datetime
+import sys
+
+if TYPE_CHECKING:
+    ...
+
+
 def _dialogue_text(text, style) -> Padding:
-    return Padding(Panel(text,border_style=style), pad=(2, 0, 0, 0))
-            
-class Core():
+    return Padding(Panel(text, border_style=style), pad=(2, 0, 0, 0))
+
+
+class Core:
     def __init__(self) -> None:
         self.rich_console = None
         self.running = True
-        self.ant =[]
+        self.ant = []
         self.in_fight = False
         self.story = load_yaml_file("data/story.yaml")
-        self._chapter_id = -1 #default value
- 
+        self._chapter_id = -1  # default value
+
         self.in_game = True
         self.rich_live_instance = None
         self.temp_story = None
         self.move_on = True
         self.entity = None
         self.key_listener = None
-        self.s = 'options'
+        self.s = "options"
         self.selected_option = 0
         self.others = []
         self._layout = Layout()
@@ -62,11 +68,20 @@ class Core():
         self.player_turn = False
         self.next_node = None
         self.options = []
-        self.console = Console(core = self)
+        self.console = Console(core=self)
         self._post_initialize()
-        
+
+    def _get_next_nodes():
+        story = load_yaml_file("data/story.yaml")
+        ary = []
+        for _chapter in story.items():
+            for i in _chapter[1]["choices"]:
+                ary.append(i["next_node"])
+        print(ary)
+
     def exit():
         sys.exit()
+
     def _post_initialize(self):
         current_time = datetime.datetime.now()
         logger.info(f"New game instance {current_time}")
@@ -78,17 +93,23 @@ class Core():
     @property
     def chapter_id(self):
         return self._chapter_id
+
     @chapter_id.getter
     def chapter_id(self):
         return self._chapter_id
+
     @chapter_id.setter
-    def chapter_id(self,value):
+    def chapter_id(self, value):
         story = self.story if self.temp_story == None else self.temp_story
-        if value == "-1"or value == -1:
+        if value == "-1" or value == -1:
             value = -1
         elif value not in story:
-            logger.critical(f"The chapter '{value}' is not defined in the default yaml file. check if defined in yaml")
-            raise ValueError(f"The chapter '{value}' is not defined in the default yaml file. check if defined in yaml")
+            logger.critical(
+                f"The chapter '{value}' is not defined in the default yaml file. check if defined in yaml"
+            )
+            raise ValueError(
+                f"The chapter '{value}' is not defined in the default yaml file. check if defined in yaml"
+            )
 
         self._chapter_id = value
 
@@ -100,46 +121,49 @@ class Core():
             exec(func, globals(), local_scope)
         except Exception as e:
             logger.error(f"chapter : {self.chapter_id}")
-            logger.error(f"Error executing function: {func} - {e} : function exists in yaml file however execution failed mostly likely to the function not defined as  a local or global variable")
+            logger.error(
+                f"Error executing function: {func} - {e} : function exists in yaml file however execution failed mostly likely to the function not defined as  a local or global variable"
+            )
 
     def clean(self):
         self.chapter_id = "1a"
         self.console.layout = "INGAME"
+
     def TERMINATE(self):
         self.running = False
         self.console.options = []
         quit()
 
-
         self.continue_game()
+
     def continue_game(self):
-        #set the selected option to 0
+        # set the selected option to 0
         self.selected_option = 0
         if self.chapter_id == -1:
-            self.console.layout =  "CHARACTER_SELECTION"
-        
+            self.console.layout = "CHARACTER_SELECTION"
+
         else:
-            if  self.temp_story != None:
+            if self.temp_story != None:
                 story = self.story
             else:
                 story = self.temp_story
             current_chapter = self.story[self.chapter_id]
             self.options = []
-            
-            self.options.append(Option(text = current_chapter['text'],selectable = False,type ="header"))
-            #or index,choice in enumerate(current_chapter["choices"]):    
-            self.options.append(Choices(current_chapter["choices"]))    
+
+            self.options.append(
+                Option(text=current_chapter["text"], selectable=False, type="header")
+            )
+            # or index,choice in enumerate(current_chapter["choices"]):
+            self.options.append(Choices(current_chapter["choices"]))
         self.console.refresh()
 
-    def goto_next(self)->None:
-        '''Go to the next node in the story'''
+    def goto_next(self) -> None:
+        """Go to the next node in the story"""
         logger.info("Going to next node")
 
         self.chapter_id = self.next_node
         self.continue_game()
-    def clear_logs():
-        ...
-    def restart():
-        ...
-    def raw_exec():
-        ...
+
+    def clear_logs(): ...
+    def restart(): ...
+    def raw_exec(): ...
