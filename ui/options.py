@@ -1,14 +1,28 @@
 '''This module contains the Option class and Choices class. The Option class is used to create an option object that can be used in the Choices class. The Choices class is used to create a list of options that can be used in the UI. The WeaponOption function is used to create an option object for weapons. The _dialogue_text function is used to create a text object for the UI.'''
-
+from typing import Callable, Optional ,Literal
 from rich.padding import Padding
 from rich.panel import Panel
 from rich.table import Table
 from rich.align import Align
-from rich.console import Group, group
+from rich.console import  group
 from rich.rule import Rule
 from rich import box
-class Option():
-    def __init__(self, text: str = "", func=None, preview=None, next_node=None, selectable=True, type: str = "", h_allign="center", v_allign="middle") -> None:
+
+
+
+
+class Option:
+    def __init__(
+        self, 
+        text: str = "", 
+        func: Optional[Callable] = None, 
+        preview: Optional[str] = None, 
+        next_node: Optional[str] = None, 
+        selectable: bool = True, 
+        type: Literal ["header","entity_profile","note"] = "", 
+        h_allign: str = "center", 
+        v_allign: str = "middle"
+    ) -> None:
         self.text = text
         self.func = func
         self.preview = preview
@@ -16,15 +30,17 @@ class Option():
         self.selectable = selectable
         self.selected = False
         self.type = type
-        self.v_allign = v_allign
-        self.h_allign = v_allign
-
-    def build_renderable(self, style, left_padding) -> Padding:
-        option = self
+        self.v_allign= v_allign
+        self.h_allign = h_allign  # Fixed incorrect assignment from v_allign
+    def build_renderable(self, style: str= "", left_padding: int= 0,core = None) -> Padding:
+        option : Option = self
+        
         if option.type == "header":
             return _dialogue_text(option.text, style)
         elif option.type == "entity_profile":
             return get_player_display(option)
+        elif option.type == "note":
+            return richNote(option.text,core)
         else:
             return _option_button(option.text, style, left_padding=left_padding, )
 
@@ -101,9 +117,9 @@ def get_player_display(option):
 
 def _option_button(text, style, top_padding=0, right_padding=0, bottom_padding=0, left_padding=0) -> Padding:
     height = 3
-    if left_padding !=0:height = 4 
+    if left_padding !=0 : height = 4 
     left_padding = 0
-    from rich.text import Text
+
     return Padding(
         Panel(text, width=15,height=height , border_style=style),
         pad=(top_padding, right_padding, bottom_padding, left_padding),
@@ -145,3 +161,10 @@ def richTable()->Table:
     )
     table.add_column(justify="center")
     return table
+
+
+def richNote(text:str,core)->Padding:
+    from rich.text import Text  
+    text_renderable = Text(text,no_wrap=False)
+
+    return Padding(Panel(text_renderable), pad=(2, 4, 0, 4),expand=False)
