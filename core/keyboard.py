@@ -30,7 +30,7 @@ class KeyboardControl:
         core = self.core
         from readchar import readkey
         from readchar import key as KEY
-
+      
         key_actions = {
             KEY.BACKSPACE: self.handle_backspace,
             KEY.LEFT : lambda: self.scroll_options(1),

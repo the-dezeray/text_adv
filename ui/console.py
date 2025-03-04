@@ -42,6 +42,8 @@ class Console:
         self._layout = Layout()
         self.right = ""
         self.left_tab :Optional[ConsoleRenderable] = ""
+       
+    def s(self):
         grid = Table.grid(expand=True)
         grid.add_column()
         stat_grid =  Table.grid(expand=True)
@@ -55,12 +57,9 @@ class Console:
         stat_grid.add_row("[bright_yellow]> LEVEL[/bright_yellow] 5")
         grid.add_row(Panel(renderable="",title="HP",title_align="right",border_style="bold bright_green"))
         grid.add_row(Panel(renderable=stat_grid,title="Stats",title_align="right",border_style="bold bright_yellow"))
-        a = self.core.job_progress
-        job1 = self.core.job_progress.add_task("[green]Cooking")
         grid.add_row(self.core.job_progress)
         grid.add_row(Panel(renderable="",title="inventory",title_align="right"))
-        self.left_tab = grid
-
+        return grid
     def clean(self):
         self.core.chapter_id = "1a"
         self.core.continue_game()

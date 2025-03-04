@@ -67,7 +67,7 @@ class LayoutInGame:
             Layout(name= "middle",ratio= 3),
             Layout(name= "right",ratio= 1,visible=True)
             )
-        layout["left"].update(self.core.console.left_tab)
+        layout["left"].update(self.core.console.s())
         layout["right"].update(self.core.console.right)
         layout["middle"].update(Panel(content,padding = (0,0)))
         layout.update(content)
