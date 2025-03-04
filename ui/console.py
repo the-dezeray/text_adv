@@ -9,12 +9,13 @@ from rich.rule import Rule
 
 from rich.layout import Layout
 
-from ui.options import Op
+
 from ui.options import richTable
 from ui.options import Option
 from ui.layouts import LayoutInGame, LayoutDefault,Lsd
 
-from typing import TYPE_CHECKING, Tuple
+from rich.console import ConsoleRenderable, Group, RichCast
+from typing import TYPE_CHECKING, Tuple, Optional
 
 from enum import Enum
 
@@ -34,12 +35,31 @@ LAYOUTS = {
 }
 
 
-
 class Console:
     def __init__(self, core):
         self.core = core
         self.table = None
         self._layout = Layout()
+        self.right = ""
+        self.left_tab :Optional[ConsoleRenderable] = ""
+        grid = Table.grid(expand=True)
+        grid.add_column()
+        stat_grid =  Table.grid(expand=True)
+        
+        stat_grid.add_row("[bright_yellow]> vitality[/bright_yellow] [bold yellow1]1[/bold yellow1]")
+        stat_grid.add_row("[bright_yellow]> strength[/bright_yellow] 2")
+        stat_grid.add_row("[bright_yellow]> speed[/bright_yellow] 2")
+        stat_grid.add_row("[bright_yellow]> mana[/bright_yellow] 6")
+        stat_grid.add_row("[bright_yellow]> luck[/bright_yellow] 2")
+        stat_grid.add_row("[bright_yellow]> exp [/bright_yellow] 232/1000")
+        stat_grid.add_row("[bright_yellow]> LEVEL[/bright_yellow] 5")
+        grid.add_row(Panel(renderable="",title="HP",title_align="right",border_style="bold bright_green"))
+        grid.add_row(Panel(renderable=stat_grid,title="Stats",title_align="right",border_style="bold bright_yellow"))
+        a = self.core.job_progress
+        job1 = self.core.job_progress.add_task("[green]Cooking")
+        grid.add_row(self.core.job_progress)
+        grid.add_row(Panel(renderable="",title="inventory",title_align="right"))
+        self.left_tab = grid
 
     def clean(self):
         self.core.chapter_id = "1a"
@@ -56,14 +76,17 @@ class Console:
             raise ValueError("Expected a value, but got None")
         else:
             _layout.initialize(core=self.core)
+            
             self.current_layout = _layout
 
     def refresh(self)->None:
         '''Refresh the console layout by updating the rich live object with the current layout'''
         _layout : Layout = self.current_layout.update()
+            
         self.core.rich_live_instance.update(_layout)
 
     def fill_richTable(self) -> Table:
+      
         '''returns rich table after filling it with options'''
         _core = self.core
         table = richTable()
@@ -71,8 +94,9 @@ class Console:
         
         for option in options:
             if  isinstance(option, Option):
-                renderable = option.build_renderable( style="none", left_padding=0)
+                renderable = option.build_renderable( style="none", left_padding=0,core = _core)
                 table.add_row(Align(renderable, align="center"))
+  
             elif isinstance(option,Padding):
                 table.add_row(Align(option, align="center"))
             else:

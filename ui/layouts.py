@@ -10,19 +10,20 @@ from ui.options import Op
 from ui.options import Option, Choices
 from rich.layout import Layout
 from typing import TYPE_CHECKING, Tuple
-
+if TYPE_CHECKING:
+    from core.core import Core
 class CustomLayout:
     def initialize(self, core):
         ...
     def update(self):
         ...
 class LayoutCharacterSelection(CustomLayout):
-    def initialize(self, core):
+    def initialize(self, core: "Core"):
         self.core = core
         core.options = [Choices(ary=[Op() for _ in range(4)], do_build=False)]
         core.options[0].ary[0].selected = True
 
-    def update(self):
+    def update(self)->Layout:
         table = self.core.console.fill_richTable()
         content = Padding(table, pad=(0, 0, 0, 0))
         layout = Layout("des")
@@ -54,11 +55,11 @@ class Lsd:
         return layout
 
 class LayoutInGame:
-    def initialize(self, core):
+    def initialize(self, core : "Core"):
         self.core = core
 
     def update(self):
-        table = self.core.console.fill_richTable()
+        table : Table = self.core.console.fill_richTable()
         content = table
         layout = Layout()   
         layout.split_row(
@@ -66,8 +67,8 @@ class LayoutInGame:
             Layout(name= "middle",ratio= 3),
             Layout(name= "right",ratio= 1,visible=True)
             )
-        layout["left"].update("")
-        layout["right"].update("")
+        layout["left"].update(self.core.console.left_tab)
+        layout["right"].update(self.core.console.right)
         layout["middle"].update(Panel(content,padding = (0,0)))
         layout.update(content)
         return layout

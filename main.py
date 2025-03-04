@@ -5,10 +5,10 @@ from rich.console import Console
 from rich.traceback import install
 from readchar import readkey
 import time
-
+from util.logger import logger
 from core.core import Core
 from core.keyboard import KeyboardControl
-
+from rich.progress import Progress
 
 def main(**kwargs):
     chapter_id = kwargs.get("chapter_id", '4a') # 4a as the default
@@ -37,11 +37,19 @@ def main(**kwargs):
         ) as core.rich_live_instance:
             core.continue_game()
             while core.running:
+                job1 = core.job_progress.add_task("[green]Cooking")
+                job2 = core.job_progress.add_task("[magenta]Baking", total=200)
+                job3 = core.job_progress.add_task("[cyan]Mixing", total=400)
+                ary = core.job_progress.tasks
+                for job in ary:
+                    if not job.finished:
+                       ...
                 ke = readkey()
+
                 if ke != "":
+                    logger.info(f"Key pressed: {ke}") 
                     keyboard_controller.execute_on_key(ke)
-                else:
-                    time.sleep(1)
+                core.rich_console.print("d")
     except KeyboardInterrupt:
         print("keyboard interrupt  pressed")
         core.TERMINATE()

@@ -7,7 +7,7 @@ from objects.entities import Entities  # pylint: disable=unused-import
 from objects.item import Items
 from objects.player import Player
 from ui.console import Console
-from ui.console import Op
+
 from util.logger import logger
 
 # Unused functions called using the exec functions
@@ -33,6 +33,7 @@ from core.events.search_in import search_in  # noqa: F401  # type: ignore
 
 from rich.padding import Padding
 from rich.panel import Panel
+from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
 from typing import TYPE_CHECKING
 import datetime
 import sys
@@ -53,7 +54,7 @@ class Core:
         self.in_fight = False
         self.story = load_yaml_file("data/story.yaml")
         self._chapter_id = -1  # default value
-
+        self.progress = Progress()
         self.in_game = True
         self.rich_live_instance = None
         self.temp_story = None
@@ -68,9 +69,22 @@ class Core:
         self.player_turn = False
         self.next_node = None
         self.options = []
-        self.console = Console(core=self)
+        self.job_progress = Progress(
+            "{task.description}",
+            SpinnerColumn(),
+            BarColumn(),
+            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+        )
+        self.console  = Console(core=self)
         self._post_initialize()
-
+        self.job_progress = Progress(
+            "{task.description}",
+            SpinnerColumn(),
+            BarColumn(),
+            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+        )
+        self.overall_progress = Progress()
+        self.overall_task = self.overall_progress.add_task("All Jobs", total=int(1000))
     def _get_next_nodes():
         story = load_yaml_file("data/story.yaml")
         ary = []
@@ -137,6 +151,7 @@ class Core:
         self.continue_game()
 
     def continue_game(self):
+       
         # set the selected option to 0
         self.selected_option = 0
         if self.chapter_id == -1:

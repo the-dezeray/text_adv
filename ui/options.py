@@ -7,7 +7,7 @@ from rich.align import Align
 from rich.console import  group
 from rich.rule import Rule
 from rich import box
-
+from rich.console import ConsoleRenderable
 
 
 
@@ -32,7 +32,7 @@ class Option:
         self.type = type
         self.v_allign= v_allign
         self.h_allign = h_allign  # Fixed incorrect assignment from v_allign
-    def build_renderable(self, style: str= "", left_padding: int= 0,core = None) -> Padding:
+    def build_renderable(self, style: str= "", left_padding: int= 0,core = None) -> Padding | ConsoleRenderable:
         option : Option = self
         
         if option.type == "header":
@@ -50,7 +50,7 @@ class Choices():
         if do_build:
             self.build(core, renderable)
 
-    def build_renderable(option):
+    def build_renderable(option: Option)->Padding:
         ch = False
         for i in option.ary:
             if i.selected:
@@ -81,7 +81,7 @@ class Choices():
                 grid.add_row(Align(renderables[i], align="center"))
         return Padding(grid,pad=(1,0,0,0))
 
-    def build(self, core, renderable):
+    def build(self, core, renderable)->None:
         from core.events.fight import deal_damage  # don't remove this prevents circular import
         array = []
         from objects.weapon import WeaponItem
