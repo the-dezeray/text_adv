@@ -49,9 +49,9 @@ class KeyboardControl:
             logger.error(f"Unhandled exception in execute_on_key: {Exception}")
         core.console.refresh()
 
-    def handle_command_mode():
-        # TODO handle command and in dev mode
-        ...
+    def handle_command_mode(self):
+        self.core.command_mode = True
+        
 
     def handle_escape(self):
         self.core.TERMINATE()
