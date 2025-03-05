@@ -36,7 +36,6 @@ class WeaponItem(Item):
     def deal_damage(self, player=None) -> None:
         pass
 
-
     
 class Weapon:
     WEAPON_DICT = load_yaml_file("data/weapons.yaml")
