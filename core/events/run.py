@@ -1,3 +1,5 @@
+
+""" This module contains the run event. """
 from ui.options import Option, Choices
 from util.logger import logger,event_logger
 from random import randint
