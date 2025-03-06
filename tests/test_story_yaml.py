@@ -39,3 +39,8 @@ def test_all_next_node_exist():
     for node in nodes:
         assert node in story
 
+def test_node_function_():
+    story = _load_yaml_file("data/story.yaml")
+    nodes = _get_next_nodes(story)
+    for node in nodes:
+        assert node in story

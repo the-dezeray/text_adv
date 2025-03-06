@@ -39,7 +39,7 @@ import datetime
 import sys
 
 if TYPE_CHECKING:
-    ...
+    from ui.console import Console
 
 
 def _dialogue_text(text, style) -> Padding:
@@ -49,10 +49,10 @@ def _dialogue_text(text, style) -> Padding:
 class Core:
     def __init__(self) -> None:
         self.rich_console = None
-        self.running = True
+        self.running : bool= True
         self.ant = []
-        self.in_fight = False
-        self.story = load_yaml_file("data/story.yaml")
+        self.in_fight: bool = False
+        self.story : dict= load_yaml_file("data/story.yaml")
         self._chapter_id = -1  # default value
         self.progress = Progress()
         self.in_game = True
@@ -66,16 +66,17 @@ class Core:
         self.others = []
         self._layout = Layout()
         self.player = Player()
-        self.player_turn = False
-        self.next_node = None
+        self.player_turn : bool= False
+        self.next_node : str= None
         self.options = []
+        self._command_mode : bool = False
         self.job_progress = Progress(
             "{task.description}",
             SpinnerColumn(),
             BarColumn(),
             TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
         )
-        self.console  = Console(core=self)
+        self.console  : Console = Console(core=self)
         self._post_initialize()
         self.job_progress = Progress(
             "{task.description}",
@@ -138,7 +139,19 @@ class Core:
             logger.error(
                 f"Error executing function: {func} - {e} : function exists in yaml file however execution failed mostly likely to the function not defined as  a local or global variable"
             )
+    @property
+    def command_mode(self):
+        return self._command_mode
+    @command_mode.getter
+    def command_mode(self):
+        return self._command_mode
+    @command_mode.setter
+    def command_mode(self):
+        if not core._disable_command_mode:
+            self._command_mode = not self._command_mode
 
+            if self._command_mode:
+                self.console.initialize_command_mode()
     def clean(self):
         self.chapter_id = "1a"
         self.console.layout = "INGAME"
@@ -182,3 +195,4 @@ class Core:
     def clear_logs(): ...
     def restart(): ...
     def raw_exec(): ...
+    
