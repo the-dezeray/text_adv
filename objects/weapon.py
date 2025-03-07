@@ -39,7 +39,7 @@ class WeaponItem(Item):
     
 class Weapon:
     WEAPON_DICT = load_yaml_file("data/weapons.yaml")
-
+  
     @classmethod
     def generate(cls, name) -> WeaponItem:
         logger.info(f"Generating weapon {name}")

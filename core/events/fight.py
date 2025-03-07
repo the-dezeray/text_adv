@@ -1,9 +1,11 @@
 
 from ui.options import Option, WeaponOption
 from objects.player import Player
-from ui.options import Choices
+from ui.options import Choices,Reward
 from util.logger import logger ,event_logger
-
+from typing import TYPE_CHECKING, Literal
+if TYPE_CHECKING:
+    from objects.item import Item
 def deal_damage(core, weapon):
     """
     Deals damage to the entity and updates the options list with the damage dealt.
@@ -16,7 +18,7 @@ def deal_damage(core, weapon):
     core.options.append(Option(text=f"[yellow]dealt[/yellow] {weapon.damage} damage", type="header", func=lambda: None, selectable=False))
     _fight(core)
 @event_logger
-def fight(entity=None, core=None,repeat = 0):
+def fight(entity=None, core=None,repeat = 0,reward : Literal["auto",None,"Item"]=None ):
     """
     Initiates a fight sequence.
 
@@ -91,9 +93,14 @@ def _fight(core):
             pass  # console.print("you lose")
 
     if entity.hp <= 0:
+        
         core.options = []
         core.options.append(Option(type = 'header',text="you attained the [red]sword of death![/]", selectable=False))
+        from objects.weapon import Weapon
+        w = Weapon.generate(name = "sword")
+        core.options.append(Choices(ary=[w,w]))
         core.options.append(Choices(renderable = Option(text="You win!", selectable=True,func= core.goto_next )))
+
       
       
 
