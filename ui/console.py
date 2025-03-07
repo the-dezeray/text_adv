@@ -7,7 +7,7 @@ from rich.align import Align
 from rich.rule import Rule
 from rich.layout import Layout
 from ui.options import richTable
-from ui.options import Option
+from ui.options import Option,get_selectable_options
 from ui.layouts import LayoutInGame, LayoutDefault,Lsd
 from rich.console import ConsoleRenderable, Group, RichCast
 
@@ -35,7 +35,7 @@ def command_mode_layout():
     from rich.table import Table
     grid = Table.grid()
     grid.add_column()
-    grid.add_row(Panle("core.command_handler.input"))
+    grid.add_row(Panel("core.command_handler.input"))
     return grid
 class Console:
     def __init__(self, core: "Core"):
@@ -95,7 +95,6 @@ class Console:
     def refresh(self)->None:
         '''Refresh the console layout by updating the rich live object with the current layout'''
         _layout : Layout = self.current_layout.update()
-            
         self.core.rich_live_instance.update(_layout)
 
     def fill_richTable(self) -> Table:
@@ -110,9 +109,23 @@ class Console:
                 renderable = option.build_renderable( style="none", left_padding=0,core = _core)
                 table.add_row(Align(renderable, align="center"))
   
-            elif isinstance(option,Padding):
+            elif isinstance(option,(Padding,Panel)):
                 table.add_row(Align(option, align="center"))
             else:
                 grid = option.build_renderable()
                 table.add_row(Align(grid, align="center"))
+        ary = get_selectable_options(_core.options)
+        if ary:
+            ch = True
+            for i in ary:
+                if i.selected:
+                    ch = False
+            if  ch:
+                ary[0].selected = True
+                return self.fill_richTable()
+            
         return table
+
+
+            
+        

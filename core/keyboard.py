@@ -5,12 +5,7 @@ from __future__ import annotations
 from ui.options import Choices
 from core.core import Core
 from util.logger import logger
-
-
-def get_selectable_options(options: list):
-    for i in reversed(options):
-        if isinstance(i, Choices):
-            return i.ary
+from ui.options import get_selectable_options
 
 
 class KeyboardControl:

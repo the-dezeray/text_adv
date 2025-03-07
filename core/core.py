@@ -115,7 +115,7 @@ class Core:
 
     @chapter_id.setter
     def chapter_id(self, value):
-        story = self.story if self.temp_story == None else self.temp_story
+        story = self.story if self.temp_story is None else self.temp_story
         if value == "-1" or value == -1:
             value = -1
         elif value not in story:
@@ -147,7 +147,7 @@ class Core:
         return self._command_mode
     @command_mode.setter
     def command_mode(self):
-        if not core._disable_command_mode:
+        if not self._disable_command_mode:
             self._command_mode = not self._command_mode
 
             if self._command_mode:
@@ -171,7 +171,7 @@ class Core:
             self.console.layout = "CHARACTER_SELECTION"
 
         else:
-            if self.temp_story != None:
+            if self.temp_story is not None:
                 story = self.story
             else:
                 story = self.temp_story

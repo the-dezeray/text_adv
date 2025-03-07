@@ -4,6 +4,7 @@ from rich.padding import Padding
 from rich.panel import Panel
 from rich.table import Table
 from rich.align import Align
+from rich.layout import Layout
 from rich.console import  group
 from rich.rule import Rule
 from rich.text import Text 
@@ -13,6 +14,7 @@ from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING :
     from core import Core
+    from objects.weapon import Weapon
 class Option:
     def __init__(
         self, 
@@ -34,6 +36,8 @@ class Option:
         self.type = type
         self.v_allign= v_allign
         self.h_allign = h_allign  # Fixed incorrect assignment from v_allign
+
+
     def build_renderable(self, style: str= "", left_padding: int= 0,core = None) -> Padding | ConsoleRenderable:
         option : Option = self
         
@@ -53,12 +57,7 @@ class Choices():
             self.build(core, renderable)
 
     def build_renderable(option:Option)->Padding:
-        ch = False
-        for i in option.ary:
-            if i.selected:
-                ch = True
-        if not ch:
-            option.ary[0].selected = True
+
         renderables = []
         for option in option.ary:
             style = "none"
@@ -83,7 +82,7 @@ class Choices():
                 grid.add_row(Align(renderables[i], align="center"))
         return Padding(grid,pad=(1,0,0,0))
 
-    def build(self, core: Optional, renderable: ConsoleRenderable )->None:
+    def build(self, core: "Core", renderable: ConsoleRenderable )->None:
         from core.events.fight import deal_damage  # don't remove this prevents circular import
         array = []
         from objects.weapon import WeaponItem
@@ -106,10 +105,10 @@ def get_grid(colomuns: int = 1) -> Table:
         grid.add_column()
     return grid
 
-def _dialogue_text(text, style) -> Padding:
+def _dialogue_text(text:str, style:str) -> Padding:
     return Padding(Panel(text, border_style=style), pad=(2, 0, 0, 0))
 
-def WeaponOption(weapon, func):
+def WeaponOption(weapon : "Weapon", func:str):
     return Option(text=weapon.name, func=func, selectable=True, type="weapon")
 
 @group()
@@ -119,7 +118,8 @@ def get_player_display(option: Option):
 
 def _option_button(text :str, style: str, top_padding:int=0, right_padding:int =0, bottom_padding:int =0, left_padding:int =0) -> Padding:
     height = 3
-    if left_padding !=0 : height = 4 
+    if left_padding !=0 :
+        height = 4 
     left_padding = 0
 
     return Padding(
@@ -144,8 +144,8 @@ class Op:
     def __init__(self):
         self.selected : bool= False
         self.next_node : str = "1a"
-        self.func = "core.clean()"
-        self.preview : Layout= None
+        self.func : str = "core.clean()"
+        self.preview : Layout = None
         self.type : str = None
         self.text : str= "d"
 
@@ -164,8 +164,25 @@ def richTable()->Table:
     table.add_column(justify="center")
     return table
 
-
+def Loader():
+    return Padding(Panel("Loading..."), pad=(2, 4, 0, 4),expand=False)
 def richNote(text:str,core: "Core")->Padding:
 
-    text_renderable = Text(text,no_wrap=False)
+    text_renderable = Text(text ,no_wrap=False)
     return Padding(Panel(text_renderable), pad=(2, 4, 0, 4),expand=False)
+
+def Reward(ary :list = []):
+    #chances this might not work due to the choices thing
+    grid = Table.grid()
+    grid.add_column()
+    for reward in ary:
+        grid.add_row(reward)
+    return Panel(grid)
+
+
+def get_selectable_options(options: list):
+    array = []
+    for i in reversed(options):
+        if isinstance(i, Choices):
+            array.extend(i.ary)
+    return array
