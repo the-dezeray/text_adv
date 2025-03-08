@@ -40,7 +40,7 @@ import sys
 
 if TYPE_CHECKING:
     from ui.console import Console
-
+    from rich.live import Live
 
 def _dialogue_text(text, style) -> Padding:
     return Padding(Panel(text, border_style=style), pad=(2, 0, 0, 0))
@@ -48,7 +48,7 @@ def _dialogue_text(text, style) -> Padding:
 
 class Core:
     def __init__(self) -> None:
-        self.rich_console = None
+        self.rich_console : "Live"= None
         self.running : bool= True
         self.ant = []
         self.in_fight: bool = False
@@ -62,7 +62,7 @@ class Core:
         self.entity = None
         self.key_listener = None
         self.s = "options"
-        self.selected_option = 0
+        self.selected_option :int = 0
         self.others = []
         self._layout = Layout()
         self.player = Player()
@@ -92,29 +92,29 @@ class Core:
         for _chapter in story.items():
             for i in _chapter[1]["choices"]:
                 ary.append(i["next_node"])
-        print(ary)
+        return ary
 
-    def exit():
+    def exit()->None:
         sys.exit()
 
-    def _post_initialize(self):
+    def _post_initialize(self)->None:
         current_time = datetime.datetime.now()
         logger.info(f"New game instance {current_time}")
         self.check_story()
 
-    def check_story(self):
+    def check_story(self)->None:
         print("Checking story")
 
     @property
-    def chapter_id(self):
+    def chapter_id(self)->str:
         return self._chapter_id
 
     @chapter_id.getter
-    def chapter_id(self):
+    def chapter_id(self)->str:
         return self._chapter_id
 
     @chapter_id.setter
-    def chapter_id(self, value):
+    def chapter_id(self, value)->None:
         story = self.story if self.temp_story is None else self.temp_story
         if value == "-1" or value == -1:
             value = -1
@@ -128,7 +128,7 @@ class Core:
 
         self._chapter_id = value
 
-    def execute_yaml_function(self, func: str):
+    def execute_yaml_function(self, func: str)->any:
         core = self
         logger.info(f"Executing function: {func}")
         local_scope = {"core": core}  # Define the scope where 'core' is available
@@ -163,7 +163,7 @@ class Core:
 
         self.continue_game()
 
-    def continue_game(self):
+    def continue_game(self)->None:
        
         # set the selected option to 0
         self.selected_option = 0

@@ -10,7 +10,7 @@ from ui.options import richTable
 from ui.options import Option,get_selectable_options
 from ui.layouts import LayoutInGame, LayoutDefault,Lsd
 from rich.console import ConsoleRenderable, Group, RichCast
-
+from rich.console import group 
 from typing import TYPE_CHECKING, Tuple, Optional
 from enum import Enum
 
@@ -48,7 +48,15 @@ class Console:
     def initialize_command_mode(self):
         self.temp_right_tab = self.right
         self.right = command_mode_layout(core = self.core)
+    def intitialize_normal_mode(self):
+        ...
+    def initialize_fight_mode(self):
+        self.right = self.entity()
+    def entity(self):
+        grid = Table.grid()
+        grid.add_column()
 
+        return grid
     def s(self):
         grid = Table.grid(expand=True)
         grid.add_column()
@@ -65,14 +73,17 @@ class Console:
         grid.add_row(Panel(renderable=stat_grid,title="Stats",title_align="right",border_style="bold bright_yellow"))
         grid.add_row(self.core.job_progress)
         grid.add_row(Panel(renderable="",title="inventory",title_align="right"))
-        grid.add_row(r"""
-            .____     _______________   _______________.____       ____ 
-            |    |    \_   _____/\   \ /   /\_   _____/|    |     /_   |
-            |    |     |    __)_  \   Y   /  |    __)_ |    |      |   |
-            |    |___  |        \  \     /   |        \|    |___   |   |
-            |_______ \/_______  /   \___/   /_______  /|_______ \  |___|
-                    \/        \/                    \/         \/       
-        """)
+        
+        @group()
+        def get_panels():
+            yield "[bright_yellow]Controls[/bright_yellow]"
+            yield "Q - [bright_yellow]quit[/bright_yellow]"
+            yield "I - [bright_yellow]inventory[/bright_yellow]"
+            yield "A - [bright_yellow]stats[/bright_yellow]"
+            yield "M - [bright_yellow]menu[/bright_yellow]"
+            yield "S - [bright_yellow]settins[/bright_yellow]"
+        instruction_panel = get_panels()
+        grid.add_row(instruction_panel)
         return grid
     def clean(self):
         self.core.chapter_id = "1a"

@@ -4,7 +4,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG,filename="log.log",filemode="w",format="%(filename)s - %(levelname)s - %(message)s")
 logger= logging.getLogger("central")
 
-def event_logger(func):
+def event_logger(func)->callable:
     '''log the call of a cution'''
     def wrapper(*args, **kwargs):
         logger.info(f"Calling function: {func.__name__} with args: {args} and kwargs: {kwargs}")

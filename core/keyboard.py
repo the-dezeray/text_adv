@@ -6,8 +6,10 @@ from ui.options import Choices
 from core.core import Core
 from util.logger import logger
 from ui.options import get_selectable_options
+from typing import TYPE_CHECKING
 
-
+if TYPE_CHECKING:
+    from ui.options import Option
 class KeyboardControl:
     def __init__(self, core: Core):
         self.core = core
@@ -34,7 +36,11 @@ class KeyboardControl:
             KEY.BACKSPACE: self.handle_backspace,
             KEY.DOWN: lambda: self.scroll_options(-1),
             KEY.ENTER: self.handle_enter,
-            "q": self.handle_escape,
+            "A":self.show_stats,
+            "S":self.show_settings,
+            "M":self.show_menu,
+            "I":self.show_inventory,
+            "Q": self.handle_escape,
             ":": self.handle_command_mode,
         }
         try:
@@ -47,7 +53,15 @@ class KeyboardControl:
     def handle_command_mode(self):
         self.core.command_mode = True
         
-
+    def show_stats(self):
+        ...
+    def show_settings(self):
+        ...
+    def show_menu(self):
+        ...
+    def show_inventory(self):
+        ...
+        
     def handle_escape(self):
         self.core.TERMINATE()
         # self.core.end_game()
@@ -67,8 +81,8 @@ class KeyboardControl:
         self.execute_selected_option()
 
     def scroll_options(self, value: int):
-        selectable_options = get_selectable_options(self.core.options)
-        options_len = len(selectable_options)
+        selectable_options :list["Option"]= get_selectable_options(self.core.options)
+        options_len :int = len(selectable_options)
 
         if options_len == 0:  # No selectable options; return early.
             return
@@ -79,12 +93,15 @@ class KeyboardControl:
         # Update the selected status of each option.
         for i, option in enumerate(selectable_options):
             option.selected = i == self.core.selected_option
+      
+                
 
     def execute_selected_option(self):
         core: Core = self.core
 
         for option in get_selectable_options(core.options):
-            if option.selected == True:
+            if option.selected==True:
+
                 if isinstance(option.func, str):
                     core.next_node = option.next_node
                     core.execute_yaml_function(option.func)

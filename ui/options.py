@@ -15,6 +15,8 @@ from typing import TYPE_CHECKING, Optional
 if TYPE_CHECKING :
     from core import Core
     from objects.weapon import Weapon
+def yy():
+    ...
 class Option:
     def __init__(
         self, 
@@ -25,7 +27,8 @@ class Option:
         selectable: bool = True, 
         type: Literal ["header","entity_profile","note"] = "", 
         h_allign: str = "center", 
-        v_allign: str = "middle"
+        v_allign: str = "middle",
+        on_select: Optional[Callable] = lambda: yy(),
     ) -> None:
         self.text = text
         self.func = func
@@ -36,7 +39,7 @@ class Option:
         self.type = type
         self.v_allign= v_allign
         self.h_allign = h_allign  # Fixed incorrect assignment from v_allign
-
+        self.on_select = on_select
 
     def build_renderable(self, style: str= "", left_padding: int= 0,core = None) -> Padding | ConsoleRenderable:
         option : Option = self
@@ -112,7 +115,7 @@ def WeaponOption(weapon : "Weapon", func:str):
     return Option(text=weapon.name, func=func, selectable=True, type="weapon")
 
 @group()
-def get_player_display(option: Option):
+def get_player_display(option: Option)->Padding:
     yield _dialogue_text(option.text, "none")
     yield Rule(style="bold red")
 
@@ -164,14 +167,14 @@ def richTable()->Table:
     table.add_column(justify="center")
     return table
 
-def Loader():
+def Loader()->Padding:
     return Padding(Panel("Loading..."), pad=(2, 4, 0, 4),expand=False)
 def richNote(text:str,core: "Core")->Padding:
 
     text_renderable = Text(text ,no_wrap=False)
     return Padding(Panel(text_renderable), pad=(2, 4, 0, 4),expand=False)
 
-def Reward(ary :list = []):
+def Reward(ary :list = [])->Panel:
     #chances this might not work due to the choices thing
     grid = Table.grid()
     grid.add_column()
@@ -180,9 +183,22 @@ def Reward(ary :list = []):
     return Panel(grid)
 
 
-def get_selectable_options(options: list):
+def get_selectable_options(options: list)->list[Option]:
     array = []
     for i in reversed(options):
         if isinstance(i, Choices):
             array.extend(i.ary)
     return array
+
+def shop():
+    ...
+def card():
+    ...
+def sound():
+    ...
+def long_button():
+    ...
+def lister():
+    ...
+def inventory_button():
+    ...

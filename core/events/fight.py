@@ -6,7 +6,9 @@ from util.logger import logger ,event_logger
 from typing import TYPE_CHECKING, Literal
 if TYPE_CHECKING:
     from objects.item import Item
-def deal_damage(core, weapon):
+    from core.core import Core
+    from objects.entities import entity
+def deal_damage(core, weapon)->None:
     """
     Deals damage to the entity and updates the options list with the damage dealt.
 
@@ -18,7 +20,7 @@ def deal_damage(core, weapon):
     core.options.append(Option(text=f"[yellow]dealt[/yellow] {weapon.damage} damage", type="header", func=lambda: None, selectable=False))
     _fight(core)
 @event_logger
-def fight(entity=None, core=None,repeat = 0,reward : Literal["auto",None,"Item"]=None ):
+def fight(entity : "entity" =None, core: "Core"=None,repeat :int= 0,reward : Literal["auto",None,"Item"]=None )->None:
     """
     Initiates a fight sequence.
 
@@ -36,6 +38,7 @@ def fight(entity=None, core=None,repeat = 0,reward : Literal["auto",None,"Item"]
         core.entity = entity
         core.player.turn = True
         core.in_fight = True
+        core.console.initialize_fight_mode()
         _fight(core)
 
 def get_head_count(array:list):
@@ -49,7 +52,7 @@ def get_head_count(array:list):
     """
     return sum(1 for i in array if i.type == "header")
 
-def _fight(core):
+def _fight(core)->None:
     """
     Handles the fight logic, alternating turns between the player and the entity.
 

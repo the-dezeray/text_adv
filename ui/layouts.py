@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from core.core import Core
 class CustomLayout:
     def initialize(self, core):
-        ...
+        self.core = core
     def update(self):
         ...
 class LayoutCharacterSelection(CustomLayout):
@@ -30,18 +30,18 @@ class LayoutCharacterSelection(CustomLayout):
         layout.update(content)
         return layout
 
-class LayoutDefault:
+class LayoutDefault(CustomLayout):
     def initialize(self, core): ...
-    def update(self):
+    def update(self)->Layout:
         return Layout("des")
 
-class Lsd:
+class Lsd(CustomLayout):
     def initialize(self, core):
         self.core = core
         core.options = [Choices(ary=[Op() for _ in range(4)], do_build=False)]
         core.options[0].ary[0].selected = True
 
-    def update(self):
+    def update(self)->Layout:
         layout = Layout()
         layout.split(Layout(name="View", ratio=10), Layout(name="control"))
         layout["View"].split_row(Layout(name="Picture"), Layout(name="Stats"))
@@ -54,7 +54,7 @@ class Lsd:
         layout["control"].update(Columns(renderables=grid, align="center"))
         return layout
 
-class LayoutInGame:
+class LayoutInGame(CustomLayout):
     def initialize(self, core : "Core"):
         self.core = core
 
@@ -72,3 +72,19 @@ class LayoutInGame:
         layout["middle"].update(Panel(content,padding = (0,0)))
         layout.update(content)
         return layout
+    
+class LayoutInventory(CustomLayout):
+    def initialize(self, core : "Core"):
+        self.core = core
+
+class LayoutSettings(CustomLayout):
+    def initialize(self, core : "Core"):
+        self.core = core
+
+class LayoutStartMenu(CustomLayout):
+    def initialize(self, core : "Core"):
+        self.core = core
+
+class LayoutPreGame(CustomLayout):
+    def initialize(self, core : "Core"):
+        self.core = core
