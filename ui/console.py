@@ -9,7 +9,8 @@ from rich.layout import Layout
 from ui.options import richTable
 from ui.options import Option,get_selectable_options
 from ui.layouts import LayoutInGame, LayoutDefault,Lsd
-from rich.console import ConsoleRenderable, Group, RichCast
+from rich.console import ConsoleRenderable, group, RichCast
+
 from rich.console import group 
 from typing import TYPE_CHECKING, Tuple, Optional
 from enum import Enum
@@ -33,10 +34,20 @@ LAYOUTS = {
 
 def command_mode_layout():
     from rich.table import Table
-    grid = Table.grid()
+    grid = Table.grid(expand=True)
     grid.add_column()
-    grid.add_row(Panel("core.command_handler.input"))
-    return grid
+    grid.add_row(Panel(">",title="input",title_align="right",border_style="green",expand=True))
+    
+    hgrid = Table.grid(expand=True)
+    hgrid.add_column()
+    instructions = "goto \[chapter\] \nreload \nkill \nheal \nrestart"
+    grid.add_row(Panel(instructions,title="input",title_align="right",border_style="yellow",expand=True))
+    
+    @group()
+    def layout():
+        yield grid
+        yield hgrid
+    return layout()
 class Console:
     def __init__(self, core: "Core"):
         self.core = core
@@ -47,7 +58,7 @@ class Console:
         self.temp_right_tab : Optional[ConsoleRenderable] = None
     def initialize_command_mode(self):
         self.temp_right_tab = self.right
-        self.right = command_mode_layout(core = self.core)
+        self.right = command_mode_layout()
     def intitialize_normal_mode(self):
         ...
     def initialize_fight_mode(self):
@@ -55,7 +66,7 @@ class Console:
     def entity(self):
         grid = Table.grid()
         grid.add_column()
-
+        
         return grid
     def s(self):
         grid = Table.grid(expand=True)

@@ -69,8 +69,9 @@ class LayoutInGame(CustomLayout):
             )
         layout["left"].update(self.core.console.s())
         layout["right"].update(self.core.console.right)
-        layout["middle"].update(Panel(content,padding = (0,0)))
-        layout.update(content)
+        
+        layout["middle"].update(Panel(content,padding = (0,0),title="A fallen room",title_align="right",box=box.ROUNDED,subtitle=": [red1]5%[/red1]",subtitle_align="right",style="",border_style="bright_white"))
+        
         return layout
     
 class LayoutInventory(CustomLayout):

@@ -64,6 +64,7 @@ class Core:
         self.s = "options"
         self.selected_option :int = 0
         self.others = []
+        self._disable_command_mode = False
         self._layout = Layout()
         self.player = Player()
         self.player_turn : bool= False
@@ -146,13 +147,12 @@ class Core:
     def command_mode(self):
         return self._command_mode
     @command_mode.setter
-    def command_mode(self):
+    def command_mode(self, value):
         if not self._disable_command_mode:
-            self._command_mode = not self._command_mode
+            self._command_mode = bool(value)  # Ensure it is a boolean
 
             if self._command_mode:
                 self.console.initialize_command_mode()
-    def clean(self):
         self.chapter_id = "1a"
         self.console.layout = "INGAME"
 
@@ -160,9 +160,9 @@ class Core:
         self.running = False
         self.console.options = []
         quit()
-
-        self.continue_game()
-
+        exit()
+        
+   
     def continue_game(self)->None:
        
         # set the selected option to 0

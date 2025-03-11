@@ -36,12 +36,12 @@ class KeyboardControl:
             KEY.BACKSPACE: self.handle_backspace,
             KEY.DOWN: lambda: self.scroll_options(-1),
             KEY.ENTER: self.handle_enter,
-            "A":self.show_stats,
-            "S":self.show_settings,
-            "M":self.show_menu,
-            "I":self.show_inventory,
-            "Q": self.handle_escape,
-            ":": self.handle_command_mode,
+            'A':self.show_stats,
+            'S':self.show_settings,
+            'M':self.show_menu,
+            'I':self.show_inventory,
+            'Q': self.handle_escape,
+            ':': self.handle_command_mode,
         }
         try:
             action = key_actions.get(key, lambda: None)
@@ -51,6 +51,7 @@ class KeyboardControl:
         core.console.refresh()
 
     def handle_command_mode(self):
+        
         self.core.command_mode = True
         
     def show_stats(self):
@@ -61,7 +62,7 @@ class KeyboardControl:
         ...
     def show_inventory(self):
         ...
-        
+
     def handle_escape(self):
         self.core.TERMINATE()
         # self.core.end_game()
