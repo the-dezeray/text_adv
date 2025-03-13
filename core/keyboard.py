@@ -44,15 +44,31 @@ class KeyboardControl:
             ':': self.handle_command_mode,
         }
         try:
-            action = key_actions.get(key, lambda: None)
-            action()
+            if core.command_mode:
+                if key == 'Q':
+                    self.handle_escape()
+                if key == ':':
+                    self.handle_command_mode()
+
+                if key == KEY.ENTER:
+                    core.execute_command(core.current_entry_text)
+                    core.current_entry_text = ""
+                elif key == KEY.BACKSPACE:
+                    core.current_entry_text = core.current_entry_text[:-1]
+                else:
+                    core.current_entry_text += key
+
+                
+            else:
+                action = key_actions.get(key, lambda: None)
+                action()
         except Exception:
             logger.error(f"Unhandled exception in execute_on_key: {Exception}")
         core.console.refresh()
 
     def handle_command_mode(self):
         
-        self.core.command_mode = True
+        self.core.command_mode = not self.core.command_mode
         
     def show_stats(self):
         ...

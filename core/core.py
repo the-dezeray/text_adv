@@ -70,6 +70,7 @@ class Core:
         self.player_turn : bool= False
         self.next_node : str= None
         self.options = []
+        self.current_entry_text : str= ""
         self._command_mode : bool = False
         self.job_progress = Progress(
             "{task.description}",
@@ -150,9 +151,8 @@ class Core:
     def command_mode(self, value):
         if not self._disable_command_mode:
             self._command_mode = bool(value)  # Ensure it is a boolean
-
-            if self._command_mode:
-                self.console.initialize_command_mode()
+            self.console.toggle_command_mode()
+            
         self.chapter_id = "1a"
         self.console.layout = "INGAME"
 
