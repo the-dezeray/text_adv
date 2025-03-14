@@ -110,6 +110,8 @@ class KeyboardControl:
         # Update the selected status of each option.
         for i, option in enumerate(selectable_options):
             option.selected = i == self.core.selected_option
+            if option.preview:
+                option.preview()
       
                 
 
