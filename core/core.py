@@ -159,6 +159,7 @@ class Core:
     def TERMINATE(self):
         self.running = False
         self.console.options = []
+        input_handler.stop()
         quit()
         exit()
         

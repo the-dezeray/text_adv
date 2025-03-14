@@ -76,31 +76,24 @@ def main(**kwargs):
     job2 = core.job_progress.add_task("[magenta]Baking", total=1200)
     job3 = core.job_progress.add_task("[cyan]Mixing", total=1400)
     input_handler = NonBlockingInput()
-    try:
-        with Live(
-            Layout("ds"),
-            screen=True,
-            auto_refresh=True,
-            console=core.rich_console,
-        ) as core.rich_live_instance:
-            core.continue_game()
-            while core.running:
-                key = input_handler.get_key()
-                if key:
-                    keyboard_controller.execute_on_key(key)
-                ary = core.job_progress.tasks
-                for job in core.job_progress.tasks:
-                    if not job.finished:
-                        core.job_progress.advance(job.id)
-                time.sleep(0.01)
-    except KeyboardInterrupt:
-        print("keyboard interrupt  pressed")
-        core.TERMINATE()
-    except Exception:
-        core.rich_console.print_exception(show_locals=True)
-    finally:
-        # Optional cleanup if needed
-        print("Exiting program...")
+
+    with Live(
+        Layout("ds"),
+        screen=True,
+        auto_refresh=True,
+        console=core.rich_console,
+    ) as core.rich_live_instance:
+        core.continue_game()
+        while core.running:
+            key = input_handler.get_key()
+            if key:
+                keyboard_controller.execute_on_key(key)
+            ary = core.job_progress.tasks
+            for job in core.job_progress.tasks:
+                if not job.finished:
+                    core.job_progress.advance(job.id)
+            time.sleep(0.01)
+
 
 
 if __name__ == "__main__":
