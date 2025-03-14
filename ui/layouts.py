@@ -38,7 +38,7 @@ class LayoutDefault(CustomLayout):
 class Lsd(CustomLayout):
     def initialize(self, core):
         self.core = core
-        core.options = [Choices(ary=[Op() for _ in range(4)], do_build=False)]
+        core.options = [Choices(ary=[Op() for _ in range(4)], do_list_build=False)]
         core.options[0].ary[0].selected = True
 
     def update(self)->Layout:
@@ -61,16 +61,24 @@ class LayoutInGame(CustomLayout):
     def update(self):
         table : Table = self.core.console.fill_richTable()
         content = table
-        layout = Layout()   
-        layout.split_row(
+        layout = Layout()
+        layout.split_column(Layout(name="up",size =1 ),Layout(name = "down"))   
+        
+        def top_bar():
+            
+            ui = "Home Inventory Settings "
+            return ui
+        layout["up"].update(top_bar())
+        layout["down"].split_row(
             Layout(name= "left",ratio= 1,visible=True),
             Layout(name= "middle",ratio= 3),
             Layout(name= "right",ratio= 1,visible=True)
             )
+        if self.core.command_mode:
+            self.core.console.right = self.core.console.command_mode_layout()
         layout["left"].update(self.core.console.s())
         layout["right"].update(self.core.console.right)
-        
-        layout["middle"].update(Panel(content,padding = (0,0),title="A fallen room",title_align="right",box=box.ROUNDED,subtitle=": [red1]5%[/red1]",subtitle_align="right",style="",border_style="bright_white"))
+        layout["middle"].update(Panel(content,padding = (0,0),title="A fallen room",title_align="right",box=box.ROUNDED,subtitle=": [red1]5%[/red1]",subtitle_align="right",style="",border_style="bold light_slate_grey"))
         
         return layout
     

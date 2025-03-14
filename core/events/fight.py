@@ -101,7 +101,8 @@ def _fight(core)->None:
         core.options.append(Option(type = 'header',text="you attained the [red]sword of death![/]", selectable=False))
         from objects.weapon import Weapon
         w = Weapon.generate(name = "sword")
-        core.options.append(Choices(ary=[w,w]))
+        from ui.options import Selectables
+        core.options.append(Choices(ary=[w,w],core=core))
         core.options.append(Choices(renderable = Option(text="You win!", selectable=True,func= core.goto_next )))
 
       

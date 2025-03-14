@@ -17,6 +17,7 @@ from enum import Enum
 
 if TYPE_CHECKING:
     from core.core import Core
+    from objects.weapon import Weapon
     
 LAYOUTS = {
     "INGAME": LayoutInGame(),
@@ -32,22 +33,6 @@ LAYOUTS = {
     "DEFAULT": LayoutDefault(),
 }
 
-def command_mode_layout():
-    from rich.table import Table
-    grid = Table.grid(expand=True)
-    grid.add_column()
-    grid.add_row(Panel(">",title="input",title_align="right",border_style="green",expand=True))
-    
-    hgrid = Table.grid(expand=True)
-    hgrid.add_column()
-    instructions = "goto \[chapter\] \nreload \nkill \nheal \nrestart"
-    grid.add_row(Panel(instructions,title="input",title_align="right",border_style="yellow",expand=True))
-    
-    @group()
-    def layout():
-        yield grid
-        yield hgrid
-    return layout()
 class Console:
     def __init__(self, core: "Core"):
         self.core = core
@@ -56,14 +41,44 @@ class Console:
         self.right = ""
         self.left_tab :Optional[ConsoleRenderable] = ""
         self.temp_right_tab : Optional[ConsoleRenderable] = None
-    def initialize_command_mode(self):
-        self.temp_right_tab = self.right
-        self.right = command_mode_layout()
+    def show_weapon(self,weapon: "Weapon"):
+        grid = Table.grid(expand=True)
+        grid.add_column()
+        grid.add_row(Panel(f"[bold green]{weapon.name}[/bold green]"))
+
+        self.right = grid
+    def toggle_command_mode(self):
+        if self.core.command_mode:
+            self.temp_right_tab = self.right
+        else:
+            self.right = self.temp_right_tab
     def intitialize_normal_mode(self):
         ...
+    def command_mode_layout(self):
+        from rich.table import Table
+        grid = Table.grid(expand=True)
+        grid.add_column()
+        stext =  "t"
+        try :
+            stext = self.core.current_entry_text
+        except Exception:
+            stext = "hehe"
+        grid.add_row(Panel(f"> + {stext}",title="input",title_align="right",border_style="green",expand=True))
+        
+        hgrid = Table.grid(expand=True)
+        hgrid.add_column()
+        instructions = "goto \[chapter\] \nreload \nkill \nheal \nrestart"
+        grid.add_row(Panel(instructions,title="input",title_align="right",border_style="yellow",expand=True))
+        
+        @group()
+        def layout():
+            yield grid
+            yield hgrid
+        return layout()
     def initialize_fight_mode(self):
         self.right = self.entity()
     def entity(self):
+        """Primary Right Tab"""
         grid = Table.grid()
         grid.add_column()
         
@@ -80,13 +95,21 @@ class Console:
         stat_grid.add_row("[bright_yellow]> luck[/bright_yellow] 2")
         stat_grid.add_row("[bright_yellow]> exp [/bright_yellow] 232/1000")
         stat_grid.add_row("[bright_yellow]> LEVEL[/bright_yellow] 5")
-        grid.add_row(Panel(renderable="",title="HP",title_align="right",border_style="bold bright_green"))
-        grid.add_row(Panel(renderable=stat_grid,title="Stats",title_align="right",border_style="bold bright_yellow"))
+        def get_vitals():
+            """Vitals Panel"""
+            c = "green_yellow"
+            c2 = "dark_orange3"
+            d1 = "bright_cyan"
+            ui = f"[{c}]HP ////////////[/{c}][{c2}]//////[/{c2}]  \n[{d1}]MP /////[/{d1}][{c2}]/////[/{c2}] "
+            return ui
+        grid.add_row(Panel(renderable= get_vitals(),title="Vitals",title_align="right",border_style="bold light_slate_grey"))
+        grid.add_row(Panel(renderable=stat_grid,title="Stats",title_align="right",border_style="bold light_slate_grey"))
         grid.add_row(self.core.job_progress)
         grid.add_row(Panel(renderable="",title="inventory",title_align="right"))
         
         @group()
         def get_panels():
+            """Instruction Panel"""
             yield "[bright_yellow]Controls[/bright_yellow]"
             yield "Q - [bright_yellow]quit[/bright_yellow]"
             yield "I - [bright_yellow]inventory[/bright_yellow]"
@@ -128,13 +151,13 @@ class Console:
         
         for option in options:
             if  isinstance(option, Option):
-                renderable = option.build_renderable( style="none", left_padding=0,core = _core)
+                renderable = option.render( style="none", left_padding=0,core = _core)
                 table.add_row(Align(renderable, align="center"))
   
             elif isinstance(option,(Padding,Panel)):
                 table.add_row(Align(option, align="center"))
             else:
-                grid = option.build_renderable()
+                grid = option.render()
                 table.add_row(Align(grid, align="center"))
         ary = get_selectable_options(_core.options)
         if ary:

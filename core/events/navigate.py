@@ -9,7 +9,7 @@ def navigate(core= None,location = "treasure"):
     ary = [ Option(text="Open", func=lambda: core.goto_next(), selectable=False),
             Option(text="Leave", func=lambda: core.goto_next(), selectable=False)
     ]
-    core.options.append(Choices(core=core,ary=ary,do_build=True))
+    core.options.append(Choices(core=core,ary=ary,do_list_build=True))
     
 
 
