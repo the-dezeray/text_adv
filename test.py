@@ -1,5 +1,5 @@
 """
-Demonstrates the use of multiple Progress instances in a single Live display.    
+Demonstrates the use of multiple Progress instances in a single Live display.
 """
 
 from time import sleep

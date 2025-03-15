@@ -1,4 +1,5 @@
-'''This module contains the Option class and Choices class. The Option class is used to create an option object that can be used in the Choices class. The Choices class is used to create a list of options that can be used in the UI. The WeaponOption function is used to create an option object for weapons. The _dialogue_text function is used to create a text object for the UI.'''
+"""This module contains the Option class and Choices class. The Option class is used to create an option object that can be used in the Choices class. The Choices class is used to create a list of options that can be used in the UI. The WeaponOption function is used to create an option object for weapons. The _dialogue_text function is used to create a text object for the UI."""
+
 from typing import Callable, Optional, Literal
 from rich.padding import Padding
 from rich.panel import Panel
@@ -7,7 +8,7 @@ from rich.align import Align
 from rich.layout import Layout
 from rich.console import group
 from rich.rule import Rule
-from rich.text import Text 
+from rich.text import Text
 from rich import box
 from rich.console import ConsoleRenderable
 from typing import TYPE_CHECKING, Optional
@@ -17,20 +18,19 @@ if TYPE_CHECKING:
     from objects.weapon import Weapon
 
 
-def yy():
-    ...
+def yy(): ...
 
 
 class Option:
     def __init__(
-        self, 
-        text: str = "", 
-        func: Optional[Callable] = None, 
-        preview: Optional[str] = None, 
-        next_node: Optional[str] = None, 
-        selectable: bool = True, 
-        type: Literal["header", "entity_profile", "note", "choices"] = "", 
-        h_allign: str = "center", 
+        self,
+        text: str = "",
+        func: Optional[Callable] = None,
+        preview: Optional[str] = None,
+        next_node: Optional[str] = None,
+        selectable: bool = True,
+        type: Literal["header", "entity_profile", "note", "choices"] = "",
+        h_allign: str = "center",
         v_allign: str = "middle",
         on_select: Optional[Callable] = lambda: yy(),
     ) -> None:
@@ -45,9 +45,11 @@ class Option:
         self.h_allign = h_allign  # Fixed incorrect assignment from v_allign
         self.on_select = on_select
 
-    def render(self, style: str = "", left_padding: int = 0, core = None) -> Padding | ConsoleRenderable:
+    def render(
+        self, style: str = "", left_padding: int = 0, core=None
+    ) -> Padding | ConsoleRenderable:
         option: Option = self
-        
+
         if option.type == "header":
             return _dialogue_text(option.text, style)
         elif option.type == "entity_profile":
@@ -58,9 +60,15 @@ class Option:
             return _option_button(option.text, style, left_padding=left_padding)
 
 
-class Choices():
-    def __init__(self, ary: list = None, core: "Core" = None, renderable: Optional[ConsoleRenderable] = None, 
-                 selectable: bool = True, do_list_build: bool = True):
+class Choices:
+    def __init__(
+        self,
+        ary: list = None,
+        core: "Core" = None,
+        renderable: Optional[ConsoleRenderable] = None,
+        selectable: bool = True,
+        do_list_build: bool = True,
+    ):
         self.ary = ary
         self.core = core
         self.renderable = renderable
@@ -82,7 +90,7 @@ class Choices():
 
             renderable: Option = option.render(style, left_padding)
             renderables.append(renderable)
-            
+
         grid = get_grid(colomuns=2)
         for i in range(0, len(renderables), 2):
             if i + 1 < len(renderables):
@@ -92,37 +100,46 @@ class Choices():
                 )
             else:
                 grid.add_row(Align(renderables[i], align="center"))
-                
+
         return Padding(grid, pad=(1, 0, 0, 0))
 
     def list_builder(self) -> None:
-        from core.events.fight import deal_damage  # don't remove this prevents circular import
+        from core.events.fight import (
+            deal_damage,
+        )  # don't remove this prevents circular import
+
         array = []
         from objects.weapon import WeaponItem
-        
+
         if self.renderable is not None:
             array.append(self.renderable)
         elif isinstance(self.ary[0], WeaponItem):
             if self.core.console is None:
-                raise ValueError("Core must be set if weapon instance is being called, but got None")
+                raise ValueError(
+                    "Core must be set if weapon instance is being called, but got None"
+                )
             for weapon in self.ary:
-                array.append(WeaponOption(
-                    weapon=weapon, 
-                    func=lambda w=weapon: deal_damage(self.core, w),
-                    preview=lambda: self.core.console.show_weapon(weapon)
-                ))
+                array.append(
+                    WeaponOption(
+                        weapon=weapon,
+                        func=lambda w=weapon: deal_damage(self.core, w),
+                        preview=lambda: self.core.console.show_weapon(weapon),
+                    )
+                )
         elif isinstance(self.ary[0], dict):
             for choice in self.ary:
-                array.append(Option(
-                    text=choice['text'], 
-                    func=choice['function'], 
-                    next_node=choice['next_node'], 
-                    selectable=True
-                ))
+                array.append(
+                    Option(
+                        text=choice["text"],
+                        func=choice["function"],
+                        next_node=choice["next_node"],
+                        selectable=True,
+                    )
+                )
         elif isinstance(self.ary[0], (Panel, Padding, Option)):
             for option in self.ary:
                 array.append(option)
-                
+
         self.ary = array
 
 
@@ -137,8 +154,12 @@ def _dialogue_text(text: str, style: str) -> Padding:
     return Padding(Panel(text, border_style=style), pad=(2, 0, 0, 0))
 
 
-def WeaponOption(weapon: "Weapon", func: str, preview: Optional[callable] = None) -> Option:
-    return Option(text=weapon.name, func=func, selectable=True, type="weapon", preview=preview)
+def WeaponOption(
+    weapon: "Weapon", func: str, preview: Optional[callable] = None
+) -> Option:
+    return Option(
+        text=weapon.name, func=func, selectable=True, type="weapon", preview=preview
+    )
 
 
 @group()
@@ -147,11 +168,17 @@ def get_player_display(option: Option):
     yield Rule(style="bold red")
 
 
-def _option_button(text: str, style: str, top_padding: int = 0, right_padding: int = 0, 
-                  bottom_padding: int = 0, left_padding: int = 0) -> Padding:
+def _option_button(
+    text: str,
+    style: str,
+    top_padding: int = 0,
+    right_padding: int = 0,
+    bottom_padding: int = 0,
+    left_padding: int = 0,
+) -> Padding:
     height = 3
     if left_padding != 0:
-        height = 4 
+        height = 4
     left_padding = 0
 
     return Padding(
@@ -192,7 +219,7 @@ class Op:
 
 
 def richTable() -> Table:
-    '''This function creates a rich Table object with the specified properties.'''
+    """This function creates a rich Table object with the specified properties."""
     table: Table = Table(
         expand=True,
         caption=" -",
@@ -232,49 +259,49 @@ def get_selectable_options(options: list) -> list[Option]:
     return array
 
 
-def shop():
-    ...
+def shop(): ...
 
 
-def card():
-    ...
+def card(): ...
 
 
-def sound():
-    ...
+def sound(): ...
 
 
-def long_button():
-    ...
+def long_button(): ...
 
 
-def lister():
-    ...
+def lister(): ...
 
 
-def inventory_button():
-    ...
+def inventory_button(): ...
 
 
-class Selectables():
+class Selectables:
     def __init__(self, ary, core):
-        from core.events.fight import deal_damage  # don't remove this prevents circular import
+        from core.events.fight import (
+            deal_damage,
+        )  # don't remove this prevents circular import
         from objects.weapon import WeaponItem
-        
+
         self.ary = ary
         self.core = core
         array = []
-        
+
         if isinstance(self.ary[0], WeaponItem):
             if core.console is None:
-                raise ValueError("Core must be set if weapon instance is being called, but got None")
+                raise ValueError(
+                    "Core must be set if weapon instance is being called, but got None"
+                )
             for weapon in self.ary:
-                array.append(WeaponOption(
-                    weapon=weapon, 
-                    func=lambda w=weapon: deal_damage(core, w),
-                    preview=lambda: core.console.show_weapon(weapon)
-                ))
-                
+                array.append(
+                    WeaponOption(
+                        weapon=weapon,
+                        func=lambda w=weapon: deal_damage(core, w),
+                        preview=lambda: core.console.show_weapon(weapon),
+                    )
+                )
+
         self.ary = array
 
     def build_renderable(self) -> Padding:
@@ -291,7 +318,7 @@ class Selectables():
 
             renderable = option.build_renderable(style, left_padding)
             renderables.append(renderable)
-            
+
         grid = get_grid(colomuns=2)
         for i in range(0, len(renderables), 2):
             if i + 1 < len(renderables):
@@ -301,5 +328,5 @@ class Selectables():
                 )
             else:
                 grid.add_row(Align(renderables[i], align="center"))
-                
+
         return Padding(grid, pad=(1, 0, 0, 0))

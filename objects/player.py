@@ -1,7 +1,9 @@
 from objects.inventory import Inventory
 from objects.weapon import Weapon
 from util.logger import logger
-class Player():
+
+
+class Player:
     def __init__(self):
         self.hp = 100
         self.max_hp = 100
@@ -23,19 +25,22 @@ class Player():
         self.add_basic_skills()
         self.add_basic_resistance()
         logger.info("Player created")
-    def trap_interaction(self,trap: dict):
-        #attempt escape
+
+    def trap_interaction(self, trap: dict):
+        # attempt escape
         if trap != None:
             logger.info(f"trap invalid -CURRENT CHAPTER - {self.chapter_id}")
         pass
+
     def add_basic_resistance(self):
-        pass    
+        pass
+
     def add_basic_skills(self):
         pass
+
     def add_basic_weapons(self):
-        self.inventory.add(Weapon.generate(name ="shield"))
-        self.inventory.add(Weapon.generate(name ="sword"))
+        self.inventory.add(Weapon.generate(name="shield"))
+        self.inventory.add(Weapon.generate(name="sword"))
 
     def is_revivable(self):
         return False
-    

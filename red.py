@@ -1,4 +1,5 @@
-'''random documentation'''
+"""random documentation"""
+
 from rich.live import Live
 from rich.layout import Layout
 from rich.console import Console
@@ -12,21 +13,24 @@ from rich.progress import Progress
 import sys
 import select
 
+
 def non_blocking_readkey():
-    """ Check if a key is available without blocking. """
+    """Check if a key is available without blocking."""
     if sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
         return sys.stdin.read(1)
     return None
+
+
 def main(**kwargs):
-    chapter_id = kwargs.get("chapter_id", '4a') # 4a as the default
+    chapter_id = kwargs.get("chapter_id", "4a")  # 4a as the default
     story = kwargs.get("story", "story.yaml")
     mute = kwargs.get("mute", False)
     tank = kwargs.get("tank", False)
     subchapter = kwargs.get("subchapter", "areas_to_explore.yaml")
-    
+
     core = Core()
     core.rich_console = Console()
-    install(show_locals=True,console=core.rich_console)
+    install(show_locals=True, console=core.rich_console)
     core.rich_console.force_terminal = True
     core.rich_console.force_interactive = True
     core.rich_console.stderr = True
@@ -37,7 +41,7 @@ def main(**kwargs):
     job1 = core.job_progress.add_task("[green]Cooking")
     job2 = core.job_progress.add_task("[magenta]Baking", total=200)
     job3 = core.job_progress.add_task("[cyan]Mixing", total=400)
-    
+
     try:
         with Live(
             Layout("ds"),
@@ -54,7 +58,7 @@ def main(**kwargs):
                 ke = readkey()
 
                 if ke != "":
-                    logger.info(f"Key pressed: {ke}") 
+                    logger.info(f"Key pressed: {ke}")
                     keyboard_controller.execute_on_key(ke)
                 core.rich_console.print("d")
     except KeyboardInterrupt:

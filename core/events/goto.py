@@ -1,2 +1,2 @@
-def goto(core= None):
+def goto(core=None):
     pass

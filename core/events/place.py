@@ -1,2 +1,2 @@
-def place(core= None):
+def place(core=None):
     pass

@@ -2,11 +2,13 @@ import psutil
 import pygetwindow as gw
 import time
 
+
 def get_active_window():
     window = gw.getActiveWindow()
     if window:
         return window.title
     return None
+
 
 while True:
     active_window = get_active_window()

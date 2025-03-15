@@ -1,1 +1,1 @@
-#test if all are decorated
+# test if all are decorated

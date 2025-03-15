@@ -1,2 +1,2 @@
-def encounter(core= None):
+def encounter(core=None):
     pass

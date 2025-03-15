@@ -42,17 +42,18 @@ if TYPE_CHECKING:
     from ui.console import Console
     from rich.live import Live
 
+
 def _dialogue_text(text, style) -> Padding:
     return Padding(Panel(text, border_style=style), pad=(2, 0, 0, 0))
 
 
 class Core:
     def __init__(self) -> None:
-        self.rich_console : "Live"= None
-        self.running : bool= True
+        self.rich_console: "Live" = None
+        self.running: bool = True
         self.ant = []
         self.in_fight: bool = False
-        self.story : dict= load_yaml_file("data/story.yaml")
+        self.story: dict = load_yaml_file("data/story.yaml")
         self._chapter_id = -1  # default value
         self.progress = Progress()
         self.in_game = True
@@ -62,23 +63,23 @@ class Core:
         self.entity = None
         self.key_listener = None
         self.s = "options"
-        self.selected_option :int = 0
+        self.selected_option: int = 0
         self.others = []
         self._disable_command_mode = False
         self._layout = Layout()
         self.player = Player()
-        self.player_turn : bool= False
-        self.next_node : str= None
+        self.player_turn: bool = False
+        self.next_node: str = None
         self.options = []
-        self.current_entry_text : str= ""
-        self._command_mode : bool = False
+        self.current_entry_text: str = ""
+        self._command_mode: bool = False
         self.job_progress = Progress(
             "{task.description}",
             SpinnerColumn(),
             BarColumn(),
             TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
         )
-        self.console  : Console = Console(core=self)
+        self.console: Console = Console(core=self)
         self._post_initialize()
         self.job_progress = Progress(
             "{task.description}",
@@ -88,6 +89,7 @@ class Core:
         )
         self.overall_progress = Progress()
         self.overall_task = self.overall_progress.add_task("All Jobs", total=int(1000))
+
     def _get_next_nodes():
         story = load_yaml_file("data/story.yaml")
         ary = []
@@ -96,27 +98,27 @@ class Core:
                 ary.append(i["next_node"])
         return ary
 
-    def exit()->None:
+    def exit() -> None:
         sys.exit()
 
-    def _post_initialize(self)->None:
+    def _post_initialize(self) -> None:
         current_time = datetime.datetime.now()
         logger.info(f"New game instance {current_time}")
         self.check_story()
 
-    def check_story(self)->None:
+    def check_story(self) -> None:
         print("Checking story")
 
     @property
-    def chapter_id(self)->str:
+    def chapter_id(self) -> str:
         return self._chapter_id
 
     @chapter_id.getter
-    def chapter_id(self)->str:
+    def chapter_id(self) -> str:
         return self._chapter_id
 
     @chapter_id.setter
-    def chapter_id(self, value)->None:
+    def chapter_id(self, value) -> None:
         story = self.story if self.temp_story is None else self.temp_story
         if value == "-1" or value == -1:
             value = -1
@@ -130,7 +132,7 @@ class Core:
 
         self._chapter_id = value
 
-    def execute_yaml_function(self, func: str)->any:
+    def execute_yaml_function(self, func: str) -> any:
         core = self
         logger.info(f"Executing function: {func}")
         local_scope = {"core": core}  # Define the scope where 'core' is available
@@ -141,18 +143,21 @@ class Core:
             logger.error(
                 f"Error executing function: {func} - {e} : function exists in yaml file however execution failed mostly likely to the function not defined as  a local or global variable"
             )
+
     @property
     def command_mode(self):
         return self._command_mode
+
     @command_mode.getter
     def command_mode(self):
         return self._command_mode
+
     @command_mode.setter
     def command_mode(self, value):
         if not self._disable_command_mode:
             self._command_mode = bool(value)  # Ensure it is a boolean
             self.console.toggle_command_mode()
-            
+
         self.chapter_id = "1a"
         self.console.layout = "INGAME"
 
@@ -162,10 +167,8 @@ class Core:
         input_handler.stop()
         quit()
         exit()
-        
-   
-    def continue_game(self)->None:
-       
+
+    def continue_game(self) -> None:
         # set the selected option to 0
         self.selected_option = 0
         if self.chapter_id == -1:
@@ -196,4 +199,3 @@ class Core:
     def clear_logs(): ...
     def restart(): ...
     def raw_exec(): ...
-    
