@@ -8,3 +8,9 @@ env/
 venv/
 .env
 *.log
+build/
+wheels/
+dist/
+.venv
+*.py[oc]
+*.egg-info/
