@@ -114,11 +114,44 @@ class LayoutSettings(CustomLayout):
         self.core = core
 
 
+class LayoutPreGame(CustomLayout):
+    def initialize(self, core: "Core"):
+        self.core = core
+
+
 class LayoutStartMenu(CustomLayout):
     def initialize(self, core: "Core"):
         self.core = core
 
+    def update(self):
+        table: Table = self.core.console.fill_richTable()
+        content = table
+        layout = Layout()
+        layout.split_column(Layout(name="up", size=1), Layout(name="down"))
 
-class LayoutPreGame(CustomLayout):
-    def initialize(self, core: "Core"):
-        self.core = core
+        def top_bar():
+            ui = "Home Inventory Settings "
+            return ui
+
+        layout["up"].update(top_bar())
+        layout["down"].split_row(
+            Layout(name="menus", ratio=3),
+        )
+
+        # if self.core.command_mode:
+        #   self.core.console.right = self.core.console.command_mode_layout()
+        def menu():
+            ui = Table.grid()
+            ui.add_column()
+            ui.add_row("Continue Game")
+            ui.add_row("New Game")
+            ui.add_row("Settings")
+            ui.add_row("About Me")
+            ui.add_row("Leave")
+
+            return ui
+
+        ui = self.core.console.fill_richTable()
+        layout["menus"].update(Panel(ui))
+
+        return layout

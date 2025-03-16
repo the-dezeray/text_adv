@@ -29,7 +29,7 @@ class Option:
         preview: Optional[str] = None,
         next_node: Optional[str] = None,
         selectable: bool = True,
-        type: Literal["header", "entity_profile", "note", "choices"] = "",
+        type: Literal["header", "entity_profile", "note", "choices","menu"] = "",
         h_allign: str = "center",
         v_allign: str = "middle",
         on_select: Optional[Callable] = lambda: yy(),
@@ -56,6 +56,8 @@ class Option:
             return get_player_display(option)
         elif option.type == "note":
             return richNote(option.text, core)
+        elif option.type =="menu":
+            return _menu_button(option.text, style, left_padding=left_padding)
         else:
             return _option_button(option.text, style, left_padding=left_padding)
 
@@ -68,15 +70,17 @@ class Choices:
         renderable: Optional[ConsoleRenderable] = None,
         selectable: bool = True,
         do_list_build: bool = True,
+        menu_type: Literal["grid", "menu"] = "grid",
     ):
         self.ary = ary
+        self.h_allign= "center"
         self.core = core
         self.renderable = renderable
-
+        self.menu_type = menu_type
         if do_list_build:
             self.list_builder()
 
-    def render(self) -> Padding:
+    def render(self,core = None) -> Padding:
         renderables = []
         for option in self.ary:
             style = "none"
@@ -90,18 +94,26 @@ class Choices:
 
             renderable: Option = option.render(style, left_padding)
             renderables.append(renderable)
+        if self.menu_type == "grid":
+            grid = get_grid(colomuns=2)
+            for i in range(0, len(renderables), 2):
+                if i + 1 < len(renderables):
+                    grid.add_row(
+                        Align(renderables[i], align="center"),
+                        Align(renderables[i + 1], align="center"),
+                    )
+                else:
+                    grid.add_row(Align(renderables[i], align="center"))
 
-        grid = get_grid(colomuns=2)
-        for i in range(0, len(renderables), 2):
-            if i + 1 < len(renderables):
-                grid.add_row(
-                    Align(renderables[i], align="center"),
-                    Align(renderables[i + 1], align="center"),
-                )
-            else:
-                grid.add_row(Align(renderables[i], align="center"))
+            return Padding(grid, pad=(1, 0, 0, 0))
+        elif self.menu_type == "menu":
+            self.h_allign = "left"
+            grid = Table.grid()
+            grid.add_column()
+            for renderable in renderables:
+                grid.add_row(Align(renderable, align="center"))
 
-        return Padding(grid, pad=(1, 0, 0, 0))
+            return Padding(grid, pad=(1, 0, 0, 0))
 
     def list_builder(self) -> None:
         from core.events.fight import (
@@ -166,6 +178,24 @@ def WeaponOption(
 def get_player_display(option: Option):
     yield _dialogue_text(option.text, "none")
     yield Rule(style="bold red")
+
+def _menu_button(
+    text: str,
+    style: str,
+    top_padding: int = 0,
+    right_padding: int = 0,
+    bottom_padding: int = 0,
+    left_padding: int = 0,
+) -> Padding:
+    height =6
+    if left_padding != 0:
+        height = 8
+    left_padding = 0
+
+    return Padding(
+        text,
+        pad=(top_padding, right_padding, bottom_padding, left_padding),
+    )
 
 
 def _option_button(

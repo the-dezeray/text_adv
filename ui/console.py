@@ -8,7 +8,7 @@ from rich.rule import Rule
 from rich.layout import Layout
 from ui.options import richTable
 from ui.options import Option, get_selectable_options
-from ui.layouts import LayoutInGame, LayoutDefault, Lsd
+from ui.layouts import LayoutInGame, LayoutDefault, Lsd, LayoutStartMenu
 from rich.console import ConsoleRenderable, group, RichCast
 
 from rich.console import group
@@ -23,6 +23,7 @@ LAYOUTS = {
     "INGAME": LayoutInGame(),
     "SHOP": Layout(),
     "STATS": Layout(),
+    "MENU": LayoutStartMenu(),
     "INVENTORY": Layout(),
     "SCROLL_READING": Layout(),
     "FIGHT": Layout(),
@@ -191,17 +192,14 @@ class Console:
         _core = self.core
         table = richTable()
         options = _core.options
-
+        from ui.options import Choices
         for option in options:
-            if isinstance(option, Option):
-                renderable = option.render(style="none", left_padding=0, core=_core)
-                table.add_row(Align(renderable, align="center"))
-
+            if isinstance(option, (Option,Choices)):
+                renderable = option.render( core=_core)
+                table.add_row(Align(renderable, align=option.h_allign))
             elif isinstance(option, (Padding, Panel)):
-                table.add_row(Align(option, align="center"))
-            else:
-                grid = option.render()
-                table.add_row(Align(grid, align="center"))
+                table.add_row(Align(option))
+
         ary = get_selectable_options(_core.options)
         if ary:
             ch = True

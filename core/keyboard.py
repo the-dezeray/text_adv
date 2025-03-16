@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
-from ui.options import Choices
+from ui.options import Choices, Op
 from core.core import Core
 from util.logger import logger
 from ui.options import get_selectable_options
 from typing import TYPE_CHECKING
 
+from ui.options import Option
+
 if TYPE_CHECKING:
-    from ui.options import Option
+    ...
 
 
 class KeyboardControl:
@@ -63,8 +65,8 @@ class KeyboardControl:
             else:
                 action = key_actions.get(key, lambda: None)
                 action()
-        except Exception:
-            logger.error(f"Unhandled exception in execute_on_key: {Exception}")
+        except Exception as e:
+            logger.error(f"Unhandled exception in execute_on_key: {e}", exc_info=True)
         core.console.refresh()
 
     def handle_command_mode(self):
@@ -72,7 +74,26 @@ class KeyboardControl:
 
     def show_stats(self): ...
     def show_settings(self): ...
-    def show_menu(self): ...
+    def show_menu(self):
+        self.core.options = []
+        from art import text2art
+
+       
+
+        # Define menu options with ASCII text
+        menu_items = [
+            {"text": "Continue game","function":None,"next_node":None},
+            {"text": "New game","function":None,"next_node":None },
+            {"text": "Settings" ,"function":None,"next_node":None},
+            {"text": "About us" ,"function":None,"next_node":None},
+            {"text": "Leave","function":None,"next_node":None},
+        ]
+
+
+
+        self.core.options.append(Choices(ary=menu_items, menu_type="menu"))
+        self.core.state = "MENU"
+
     def show_inventory(self): ...
 
     def handle_escape(self):
