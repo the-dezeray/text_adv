@@ -29,13 +29,13 @@ class Option:
         preview: Optional[str] = None,
         next_node: Optional[str] = None,
         selectable: bool = True,
-        type: Literal["header", "entity_profile", "note", "choices","menu"] = "",
+        type: Literal["header", "entity_profile", "note", "choices", "menu"] = "",
         h_allign: str = "center",
         v_allign: str = "middle",
         on_select: Optional[Callable] = lambda: yy(),
     ) -> None:
         self.left_padding = 0
-        self.style =""
+        self.style = ""
         self.core = None
         self.text = text
         self.func = func
@@ -50,7 +50,7 @@ class Option:
     def on_selecta(self):
         self.style = "bold green"
         self.left_padding += 5
-       
+
     def render(
         self, style: str = "", left_padding: int = 0, core=None
     ) -> Padding | ConsoleRenderable:
@@ -81,20 +81,20 @@ class Choices:
         menu_type: Literal["grid", "menu"] = "grid",
     ):
         self.ary = ary
-        self.h_allign= "center"
+        self.h_allign = "center"
         self.core = core
         self.renderable = renderable
         self.menu_type = menu_type
         if do_list_build:
             self.list_builder()
 
-    def render(self,core = None) -> Padding:
+
+    def render(self, core=None) -> Padding:
         renderables = []
         for option in self.ary:
             style = "none"
             left_padding = 0
 
-         
             renderable: Option = option.render(style, left_padding)
             renderables.append(renderable)
         if self.menu_type == "grid":
@@ -165,14 +165,13 @@ def ui_grid(colomuns: int = 1) -> Table:
     return grid
 
 
-def ui_text_panel(option= None,text= "") -> Padding:
-    
-    style = "" 
+def ui_text_panel(option=None, text="") -> Padding:
+    style = ""
     if text == "":
         if option:
             text = option.text
-            if option.selected :
-                style="bold green"
+            if option.selected:
+                style = "bold green"
                 if option.preview:
                     option.preview()
         else:
@@ -188,20 +187,17 @@ def WeaponOption(
     )
 
 
-
-
-    
 def ui_menu_btn(
     option,
     text: str,
     style: str,
-    selected = True,
+    selected=True,
     top_padding: int = 0,
     right_padding: int = 0,
     bottom_padding: int = 0,
     left_padding: int = 0,
 ) -> Padding:
-    height =6
+    height = 6
     if left_padding != 0:
         height = 8
     left_padding = 0
@@ -210,18 +206,18 @@ def ui_menu_btn(
         left_padding = 8
 
         if option.preview:
-                option.preview()
+            option.preview()
 
     return Padding(
         option.text,
         pad=(top_padding, right_padding, bottom_padding, left_padding),
     )
 
- 
+
 def ui_button(
-    option:Option,
+    option: Option,
     style: str = "",
-    selected = False,
+    selected=False,
     top_padding: int = 0,
     right_padding: int = 0,
     bottom_padding: int = 0,
@@ -232,12 +228,11 @@ def ui_button(
         height = 4
     left_padding = 0
 
-
     if option.selected:
         style = "bold green"
         left_padding = 5
         if option.preview:
-            option.preview()        
+            option.preview()
     return Padding(
         Panel(option.text, width=15, height=height, border_style=style),
         pad=(top_padding, right_padding, bottom_padding, left_padding),
@@ -264,9 +259,10 @@ def show_player_actions(player):
 def load_shop():
     pass
 
+
 def ui_player_display(text):
-     
     return ui_text_panel(text=text)
+
 
 class Op:
     def __init__(self):
@@ -335,4 +331,3 @@ def lister(): ...
 
 
 def inventory_button(): ...
-
