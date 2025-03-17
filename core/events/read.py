@@ -10,7 +10,7 @@ from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
 from rich.table import Table
 
-
+from ui.options import ui_text_panel
 scrolls = {
     "ancient_scroll": "You unroll the brittle parchment, the faint scent of dust and something akin to ozone filling your nostrils \n The script, a swirling, alien calligraphy, seems to writhe before your eyes \n As you focus, the words resolve, not into legible text, but into a series of fractured images \n You see… a vast, starless sky, split by a crackling, violet fissure\n You see… a city of obsidian towers, their surfaces reflecting distorted, fleeting faces\n You see… your own hand, aged and withered, clutching a blackened, broken shard\n You see… a pair of luminous, yellow eyes, watching you from the depths of a suffocating darkness\n The images flicker and change, a chaotic slideshow of unsettling visions\n A chill creeps up your spine, and you feel a prickling sensation, as if unseen eyes are now fixed upon you, both within and beyond the scroll's strange depths\n Do you dare to continue deciphering these fractured glimpses, or do you quickly roll the scroll shut, hoping to banish the unsettling visions?"
 }
@@ -23,15 +23,9 @@ def read(core, scroll: str = ""):
         core.options = []
 
         core.options.append(
-            Option(text=string, type="note", func=lambda: None, selectable=False)
+            ui_text_panel(text=string)
         )
-        core.options.append(
-            Choices(
-                renderable=Option(
-                    text="Proceed", func=lambda: core.goto_next(), selectable=False
-                )
-            )
-        )
+        core.options.append(Choices(renderable= Option(text="Proceed", func=lambda: core.goto_next(), selectable=True)))
         grid = Table.grid()
         grid.add_column()
 

@@ -42,8 +42,6 @@ if TYPE_CHECKING:
     from ui.console import Console
     from rich.live import Live
 
-def _dialogue_text(text, style) -> Padding:
-    return Padding(Panel(text, border_style=style), pad=(2, 0, 0, 0))
 
 
 class Core:
@@ -189,10 +187,9 @@ class Core:
                 story = self.temp_story
             current_chapter = self.story[self.chapter_id]
             self.options = []
+            from ui.options import ui_text_panel
+            self.options.append(ui_text_panel(text = current_chapter["text"]))
 
-            self.options.append(
-                Option(text=current_chapter["text"], selectable=False, type="header")
-            )
             # or index,choice in enumerate(current_chapter["choices"]):
             self.options.append(Choices(current_chapter["choices"]))
         self.console.refresh()

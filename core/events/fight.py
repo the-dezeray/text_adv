@@ -3,7 +3,7 @@ from objects.player import Player
 from ui.options import Choices, Reward
 from util.logger import logger, event_logger
 from typing import TYPE_CHECKING, Literal
-
+from ui.options import ui_text_panel
 if TYPE_CHECKING:
     from objects.item import Item
     from core.core import Core
@@ -20,12 +20,7 @@ def deal_damage(core, weapon) -> None:
     """
     core.entity.hp -= weapon.damage
     core.options.append(
-        Option(
-            text=f"[yellow]dealt[/yellow] {weapon.damage} damage",
-            type="header",
-            func=lambda: None,
-            selectable=False,
-        )
+        ui_text_panel(text=f"[yellow]dealt[/yellow] {weapon.damage} damage")
     )
     _fight(core)
 
@@ -85,17 +80,13 @@ def _fight(core) -> None:
 
     if len(core.options) > 1:
         last = core.options[-1]
-
+    from ui.options import ui_player_display
     core.options = []
+    core.options.append(ui_player_display( text=f"Player ❤ {player.hp}/50     ⚔ 5      🛡 100 "))
     core.options.append(
-        Option(
-            type="entity_profile", text=f"Player ❤ {player.hp}/50     ⚔ 5      🛡 100 "
-        )
+        ui_player_display(
+     text=f"SNAKE ❤ {entity.hp}/50     ⚔ 5      🛡 100 "
     )
-    core.options.append(
-        Option(
-            type="entity_profile", text=f"SNAKE ❤ {entity.hp}/50     ⚔ 5      🛡 100 "
-        )
     )
 
     if player.turn:
@@ -108,7 +99,9 @@ def _fight(core) -> None:
         entity.turn = True
     else:
         core.options.append(last)
-        core.options.append(Option(type="header", text="You prepare to defend "))
+
+     
+        core.options.append(ui_text_panel( text="You prepare to defend "))
         ary = player.inventory.weapons(type="defence")
         core.options.append(Choices(ary, core))
         entity.deal_damage(player)
@@ -123,17 +116,11 @@ def _fight(core) -> None:
 
     if entity.hp <= 0:
         core.options = []
-        core.options.append(
-            Option(
-                type="header",
-                text="you attained the [red]sword of death![/]",
-                selectable=False,
-            )
-        )
+        core.options.append(ui_text_panel(text="you attained the [red]sword of death![/]"))
         from objects.weapon import Weapon
 
         w = Weapon.generate(name="sword")
-        from ui.options import Selectables
+   
 
         core.options.append(Choices(ary=[w, w], core=core))
         core.options.append(

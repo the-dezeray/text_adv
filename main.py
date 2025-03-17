@@ -87,6 +87,7 @@ def main(**kwargs):
         screen=True,
         auto_refresh=True,
         console=core.rich_console,
+        
     ) as core.rich_live_instance:
         core.continue_game()
         while core.running:

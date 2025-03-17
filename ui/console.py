@@ -6,7 +6,7 @@ from rich.panel import Panel
 from rich.align import Align
 from rich.rule import Rule
 from rich.layout import Layout
-from ui.options import richTable
+from ui.options import ui_table
 from ui.options import Option, get_selectable_options
 from ui.layouts import LayoutInGame, LayoutDefault, Lsd, LayoutStartMenu
 from rich.console import ConsoleRenderable, group, RichCast
@@ -187,10 +187,10 @@ class Console:
         _layout: Layout = self.current_layout.update()
         self.core.rich_live_instance.update(_layout)
 
-    def fill_richTable(self) -> Table:
+    def fill_ui_table(self) -> Table:
         """returns rich table after filling it with options"""
         _core = self.core
-        table = richTable()
+        table = ui_table()
         options = _core.options
         from ui.options import Choices
         for option in options:
@@ -201,13 +201,10 @@ class Console:
                 table.add_row(Align(option))
 
         ary = get_selectable_options(_core.options)
-        if ary:
-            ch = True
-            for i in ary:
-                if i.selected:
-                    ch = False
-            if ch:
-                ary[0].selected = True
-                return self.fill_richTable()
+        #if selectable item is selected select the first one
+        if ary and all(not i.selected for i in ary ):
+            ary[0].selected = True
+            return self.fill_ui_table()
+
 
         return table

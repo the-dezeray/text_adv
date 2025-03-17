@@ -29,7 +29,7 @@ class LayoutCharacterSelection(CustomLayout):
         core.options[0].ary[0].selected = True
 
     def update(self) -> Layout:
-        table = self.core.console.fill_richTable()
+        table = self.core.console.fill_ui_table()
         content = Padding(table, pad=(0, 0, 0, 0))
         layout = Layout("des")
         layout.update(content)
@@ -68,7 +68,7 @@ class LayoutInGame(CustomLayout):
         self.core = core
 
     def update(self):
-        table: Table = self.core.console.fill_richTable()
+        table: Table = self.core.console.fill_ui_table()
         content = table
         layout = Layout()
         layout.split_column(Layout(name="up", size=1), Layout(name="down"))
@@ -124,7 +124,7 @@ class LayoutStartMenu(CustomLayout):
         self.core = core
 
     def update(self):
-        table: Table = self.core.console.fill_richTable()
+        table: Table = self.core.console.fill_ui_table()
         content = table
         layout = Layout()
         layout.split_column(Layout(name="up", size=1), Layout(name="down"))
@@ -151,7 +151,7 @@ class LayoutStartMenu(CustomLayout):
 
             return ui
 
-        ui = self.core.console.fill_richTable()
+        ui = self.core.console.fill_ui_table()
         layout["menus"].update(Panel(ui))
 
         return layout
