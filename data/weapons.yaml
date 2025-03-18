@@ -159,7 +159,7 @@ sunken_crown:
     rarity: 10
 
 oblivion_dagger:
-    name: "Memory Razor"
+    name: "MemoryRazor"
     damage: 15
     crit: 100
     effects: ["cursed"]

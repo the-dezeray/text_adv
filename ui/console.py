@@ -116,7 +116,9 @@ class Console:
         stat_grid.add_row(
             "[bright_yellow]> vitality[/bright_yellow] [bold yellow1]1[/bold yellow1]"
         )
-        stat_grid.add_row("[bright_yellow]> strength[/bright_yellow] 2")
+        stat_grid.add_row(
+            "[bright_yellow]> strength[/bright_yellow] [red3]\uf111 \uf111 \uf111 \uf111 \uf111[red3] "
+        )
         stat_grid.add_row("[bright_yellow]> speed[/bright_yellow] 2")
         stat_grid.add_row("[bright_yellow]> mana[/bright_yellow] 6")
         stat_grid.add_row("[bright_yellow]> luck[/bright_yellow] 2")
@@ -148,7 +150,13 @@ class Console:
             )
         )
         grid.add_row(self.core.job_progress)
-        grid.add_row(Panel(renderable="", title="inventory", title_align="right"))
+        grid.add_row(
+            Panel(
+                renderable="Armor \n leather jacker\n Hat of death\n bots of truth \nWeapons\n sword \n shield \n rusty axe",
+                title="inventory",
+                title_align="right",
+            )
+        )
 
         @group()
         def get_panels():
@@ -193,18 +201,18 @@ class Console:
         table = ui_table()
         options = _core.options
         from ui.options import Choices
+
         for option in options:
-            if isinstance(option, (Option,Choices)):
-                renderable = option.render( core=_core)
+            if isinstance(option, (Option, Choices)):
+                renderable = option.render(core=_core)
                 table.add_row(Align(renderable, align=option.h_allign))
             elif isinstance(option, (Padding, Panel)):
                 table.add_row(Align(option))
 
         ary = get_selectable_options(_core.options)
-        #if selectable item is selected select the first one
-        if ary and all(not i.selected for i in ary ):
+        # if selectable item is selected select the first one
+        if ary and all(not i.selected for i in ary):
             ary[0].selected = True
             return self.fill_ui_table()
-
 
         return table
