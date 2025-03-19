@@ -132,7 +132,7 @@ class Console:
             d1 = "bright_cyan"
             ui = f"[{c}]HP ////////////[/{c}][{c2}]//////[/{c2}]  \n[{d1}]MP /////[/{d1}][{c2}]/////[/{c2}] "
             return ui
-
+    
         grid.add_row(
             Panel(
                 renderable=get_vitals(),
@@ -149,7 +149,7 @@ class Console:
                 border_style="bold light_slate_grey",
             )
         )
-        grid.add_row(self.core.job_progress)
+        #grid.add_row(self.core.job_progress)
         grid.add_row(
             Panel(
                 renderable="Armor \n leather jacker\n Hat of death\n bots of truth \nWeapons\n sword \n shield \n rusty axe",
@@ -161,14 +161,13 @@ class Console:
         @group()
         def get_panels():
             """Instruction Panel"""
-            yield "[bright_yellow]Controls[/bright_yellow]"
-            yield "Q - [bright_yellow]quit[/bright_yellow]"
-            yield "I - [bright_yellow]inventory[/bright_yellow]"
-            yield "A - [bright_yellow]stats[/bright_yellow]"
-            yield "M - [bright_yellow]menu[/bright_yellow]"
-            yield "S - [bright_yellow]settins[/bright_yellow]"
+            yield "[bright_yellow]Controls[/bright_yellow] Q - [bright_yellow]quit[/bright_yellow]"
+            yield "I - [bright_yellow]inventory[/bright_yellow] A - [bright_yellow]stats[/bright_yellow]"
+            yield "M - [bright_yellow]menu[/bright_yellow]  S - [bright_yellow]settins[/bright_yellow]"
 
         instruction_panel = get_panels()
+        task_panel = Padding(renderable="Taks :\nkill 3 snakes \n Make it alive \n Kill the great snake")
+        grid.add_row(task_panel)
         grid.add_row(instruction_panel)
         return grid
 
