@@ -1,6 +1,7 @@
-# TermA [![License](https://img.shields.io/github/license/TheCherno/TermA.svg)](https://github.com/TheCherno/TermA/blob/master/LICENSE)
+# TermA ![License](https://img.shields.io/github/license/the-deezeray/text_adv)
 
-![TermA](/terma-high-resolution-logo-transparent.png?raw=true "TermA")
+
+![TermA](/terma-high-resolution-logo-transparent(1).png?raw=true "TermA")
 
 TermA (Terminal Adventure) is a text-based Python game set in a futuristic world where players navigate through challenging levels, solve puzzles, and interact with a variety of characters. The game is designed to be a fun and engaging experience for fans of old-school terminal-based adventures, offering a nostalgic dive into the text gaming world while integrating modern features.
 
