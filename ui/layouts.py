@@ -71,7 +71,7 @@ class LayoutInGame(CustomLayout):
         table: Table = self.core.console.fill_ui_table()
         content = table
         layout = Layout()
-        layout.split_column(Layout(name="up", size=1), Layout(name="down"))
+        layout.split_column(Layout(name="up", size=1), Layout(name="down"),Layout(name="footer",size=1))
 
         def top_bar():
             ui = "Home Inventory Settings "
@@ -83,6 +83,8 @@ class LayoutInGame(CustomLayout):
             Layout(name="middle", ratio=3),
             Layout(name="right", ratio=1, visible=True),
         )
+
+
         if self.core.command_mode:
             self.core.console.right = self.core.console.command_mode_layout()
         layout["left"].update(self.core.console.s())
