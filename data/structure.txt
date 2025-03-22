@@ -1,0 +1,34 @@
+{
+  "1a": {
+    "location": "The Path of Light",
+    "text": "You wake up and find yourself lost in a place you've never been to. This place is unfamiliar. The air is thick with an eerie silence, and the soft glow of an unknown light source flickers in the distance. So, where am I?",
+    "choices": [
+      {
+        "text": "Explore",
+        "next_node": "2a",
+        "function": null
+      },
+      {
+        "text": "Stay",
+        "next_node": "1a",
+        "function": fight(entity = Entities.generate(type = 'snake', lvl = 1), core = core)
+      }
+    ]
+  },
+  "2a": {
+    "location": null,
+    "text": "Layer 1: Welcome to the most terrifying place you've ever set foot in. Shadows dance along the cracked walls, whispering secrets of those who came before.",
+    "choices": [
+      {
+        "text": "Go north",
+        "next_node": "3a",
+        "function": "fight(entity = Entities.generate(type = 'snake', lvl = 3), core = core)"
+      },
+      {
+        "text": "Go south",
+        "next_node": "4b",
+        "function": null
+      }
+    ]
+  }
+}
