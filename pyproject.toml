@@ -6,9 +6,12 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "art>=6.4",
+    "google-genai>=1.7.0",
+    "google-generativeai>=0.8.4",
     "markdown-it-py==3.0.0",
     "mdurl==0.1.2",
     "pygments==2.19.1",
+    "python-dotenv>=1.0.1",
     "pyyaml==6.0.2",
     "readchar==4.2.1",
     "rich==13.9.4",
