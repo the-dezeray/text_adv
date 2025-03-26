@@ -40,10 +40,10 @@ class KeyboardControl:
             KEY.BACKSPACE: self.handle_backspace,
             KEY.DOWN: lambda: self.scroll_options(-1),
             KEY.ENTER: self.handle_enter,
-            "A": self.show_stats,
-            "S": self.show_settings,
-            "M": self.show_menu,
-            "I": self.show_inventory,
+            "A": self.core.show_stats,
+            "S": self.core.show_settings,
+            "M": self.core.show_menu,
+            "I": self.core.show_inventory,
             "Q": self.handle_escape,
             ":": self.handle_command_mode,
         }
@@ -73,28 +73,10 @@ class KeyboardControl:
         self.core.command_mode = not self.core.command_mode
 
     def show_stats(self): ...
-    def show_settings(self): ...
-    def show_menu(self):
-        self.core.options = []
-        from art import text2art
-
-       
-
-        # Define menu options with ASCII text
-        menu_items = [
-            {"text": "Continue game","function":None,"next_node":None},
-            {"text": "New game","function":None,"next_node":None },
-            {"text": "Settings" ,"function":None,"next_node":None},
-            {"text": "About us" ,"function":None,"next_node":None},
-            {"text": "Leave","function":None,"next_node":None},
-        ]
 
 
 
-        self.core.options.append(Choices(ary=menu_items, menu_type="menu"))
-        self.core.state = "MENU"
 
-    def show_inventory(self): ...
 
     def handle_escape(self):
         self.core.TERMINATE()

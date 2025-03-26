@@ -32,6 +32,7 @@ json_schema = TextAdventure.model_json_schema()
 
 
 
+
 def generate_plot_as_nodes(plot: str) -> str:
     """Calls a Gemini client to generate a string based on the plot and other rules which will be turned into dictionary of nodes
     Args:
@@ -44,7 +45,9 @@ def generate_plot_as_nodes(plot: str) -> str:
    
     # Create a properly formatted prompt with the plot and schema
     prompt = f"""Generate a story based on this plot: {plot}.   ArticleResponse = {json_schema}
-    Return a `ArticleResponse`."""
+    Return a `ArticleResponse`.
+    functions attribute in a choice represents an event you can insert from the list below fight | reward |read  
+    """
     
     con = genai.GenerationConfig(response_mime_type= "application/json")
     
@@ -55,4 +58,20 @@ def generate_plot_as_nodes(plot: str) -> str:
     print(f"Response = {response.text}")
     return response.text
 
-generate_plot_as_nodes("The King pleads with a young hero. A fearsome dragon threatens the kingdom and has kidnapped the princess. Will you accept the quest to defeat the dragon?")
+r = generate_plot_as_nodes("The King pleads with a young hero. A fearsome dragon threatens the kingdom and has kidnapped the princess. Will you accept the quest to defeat the dragon?")
+def create_event(r):
+    prompt = f"""where there is a function correct rewrite it with the correct format it.. 
+    enity_list = ['snake1' ,'snake2','rat','vampire']
+    scrolls names = you can generate
+    item_name you can generate
+    fight(entity= enitty_name)`
+    read(scroll_name = "")
+    reward(item="item_name") 
+    here is the story = {r}
+    """
+    print("-------------------------------------------------------------\n modyfing the content \n")
+    model = genai.GenerativeModel(model_name="gemini-2.0-flash")
+    response = model.generate_content(prompt)
+    print(response.text)
+    return response.text
+create_event(r)

@@ -24,7 +24,7 @@ LAYOUTS = {
     "SHOP": Layout(),
     "STATS": Layout(),
     "MENU": LayoutStartMenu(),
-    "INVENTORY": Layout(),
+    "INVENTORY": LayoutDefault(),
     "SCROLL_READING": Layout(),
     "FIGHT": Layout(),
     "SETTINGS": Layout(),

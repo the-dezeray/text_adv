@@ -60,7 +60,7 @@ def generate_plot_as_nodes(plot: str) -> str:
     }
 
     # Create a properly formatted prompt with the plot and schema
-    prompt = f"""Generate a story based on this plot: {plot}. which you present in a form of nodes like this ones {schema}.JSON should include a maximum of 10 story nodes."""
+    prompt = f"""Generate a story based on this plot: {plot}. which you present in a form of nodes like this ones {schema}.JSON should include a maximum of 10 story nodes. functions are know as events  fight ,read , rest  fight  """
     
     con = genai.GenerationConfig(response_mime_type= "application/json",response_schema=response_schema)
     
