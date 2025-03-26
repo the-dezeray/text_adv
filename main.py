@@ -100,6 +100,7 @@ def main(**kwargs):
                     core.job_progress.advance(job.id)
             time.sleep(0.01)
 
-
+    core.sound_player.close()
 if __name__ == "__main__":
     main()
+    

@@ -31,6 +31,8 @@ from core.events.place import place  # noqa: F401  # type: ignore
 from core.events.shop import shop  # noqa: F401  # type: ignore
 from core.events.search_in import search_in  # noqa: F401  # type: ignore
 
+
+from core.sound_player import SoundPlayer
 from rich.padding import Padding
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
@@ -56,6 +58,7 @@ class Core:
         self.rich_live_instance = None
         self.temp_story = None
         self.move_on = True
+        self.sound_player =  SoundPlayer()
         self.entity = None
         self.key_listener = None
         self.s = "options"
@@ -86,7 +89,7 @@ class Core:
         )
         self.overall_progress = Progress()
         self.overall_task = self.overall_progress.add_task("All Jobs", total=int(1000))
-
+   
     def _get_next_nodes():
         story = load_yaml_file("data/story.yaml")
         ary = []
@@ -102,7 +105,8 @@ class Core:
         current_time = datetime.datetime.now()
         logger.info(f"New game instance {current_time}")
         self.check_story()
-
+        self.sound_player.load_music_track('main_theme', 'data/cin1.mp3')
+        self.sound_player.play_music("main_theme")  
     def layout_transtion_to(self, layout):
         match layout:
             case "INGAME":
