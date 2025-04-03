@@ -42,31 +42,30 @@ class KeyboardControl:
             KEY.ENTER: self.handle_enter,
             "A": self.core.show_stats,
             "S": self.core.show_settings,
-            "M": self.core.show_menu,
-            "I": self.core.show_inventory,
-            "Q": self.handle_escape,
+            "M": self.core.console.show_menu,
+            "I": self.core.console.show_inventory,
+            'q': self.handle_escape,
             ":": self.handle_command_mode,
         }
-        try:
-            if core.command_mode:
-                if key == "Q":
-                    self.handle_escape()
-                if key == ":":
-                    self.handle_command_mode()
 
-                if key == KEY.ENTER:
-                    core.execute_command(core.current_entry_text)
-                    core.current_entry_text = ""
-                elif key == KEY.BACKSPACE:
-                    core.current_entry_text = core.current_entry_text[:-1]
-                else:
-                    core.current_entry_text += key
+        if core.command_mode:
+            if key == "Q":
+                self.handle_escape()
+            if key == ":":
+                self.handle_command_mode()
 
+            if key == KEY.ENTER:
+                core.execute_command(core.current_entry_text)
+                core.current_entry_text = ""
+            elif key == KEY.BACKSPACE:
+                core.current_entry_text = core.current_entry_text[:-1]
             else:
-                action = key_actions.get(key, lambda: None)
-                action()
-        except Exception as e:
-            logger.error(f"Unhandled exception in execute_on_key: {e}", exc_info=True)
+                core.current_entry_text += key
+
+        else:
+            action = key_actions.get(key, lambda: None)
+            action()
+
         core.console.refresh()
 
     def handle_command_mode(self):

@@ -7,12 +7,12 @@ from rich.align import Align
 from rich.rule import Rule
 from rich.layout import Layout
 from ui.options import ui_table
-from ui.options import Option, get_selectable_options
-from ui.layouts import LayoutInGame, LayoutDefault, Lsd, LayoutStartMenu
+from ui.options import Option,Choices, get_selectable_options
+from ui.layouts import LayoutInGame, LayoutDefault, Lsd, LayoutStartMenu, LayoutLoading,LayoutInventory
 from rich.console import ConsoleRenderable, group, RichCast
 
 from rich.console import group
-from typing import TYPE_CHECKING, Tuple, Optional
+from typing import TYPE_CHECKING, Tuple, Optional,Literal
 from enum import Enum
 
 if TYPE_CHECKING:
@@ -24,7 +24,7 @@ LAYOUTS = {
     "SHOP": Layout(),
     "STATS": Layout(),
     "MENU": LayoutStartMenu(),
-    "INVENTORY": LayoutDefault(),
+    "INVENTORY": LayoutInventory(),
     "SCROLL_READING": Layout(),
     "FIGHT": Layout(),
     "SETTINGS": Layout(),
@@ -32,6 +32,7 @@ LAYOUTS = {
     "ABOUT": Layout(),
     "CHARACTER_SELECTION": Lsd(),
     "DEFAULT": LayoutDefault(),
+    "LOADING": LayoutLoading(),
 }
 
 
@@ -41,9 +42,11 @@ class Console:
         self.table = None
         self._layout = Layout()
         self.right = ""
+        self.state:Literal["MAIN","INVENTORY"] = "MAIN"
         self.left_tab: Optional[ConsoleRenderable] = ""
         self.temp_right_tab: Optional[ConsoleRenderable] = None
-
+        self.current_layout = LayoutDefault()
+        self.current_layout.initialize(core=self.core)
     def show_weapon(self, weapon: "Weapon"):
         grid = Table.grid(expand=True)
         grid.add_column()
@@ -132,7 +135,7 @@ class Console:
             d1 = "bright_cyan"
             ui = f"[{c}]HP ////////////[/{c}][{c2}]//////[/{c2}]  \n[{d1}]MP /////[/{d1}][{c2}]/////[/{c2}] "
             return ui
-    
+
         grid.add_row(
             Panel(
                 renderable=get_vitals(),
@@ -149,11 +152,14 @@ class Console:
                 border_style="bold light_slate_grey",
             )
         )
-        #grid.add_row(self.core.job_progress)
+        # grid.add_row(self.core.job_progress)
+        
+
+        from art import text2art
         grid.add_row(
             Panel(
-                renderable="Armor \n leather jacker\n Hat of death\n bots of truth \nWeapons\n sword \n shield \n rusty axe",
-                title="inventory",
+                renderable=f"ARMOR \n [grey]leather jacker[/grey]\n [red1]Hat of death[/red1]\n [red1]bots of truth[/red1] \nWeapons\n sword \n shield \n rusty axe",
+                title="[green]inventory[/green]",
                 title_align="right",
             )
         )
@@ -166,7 +172,9 @@ class Console:
             yield "M - [bright_yellow]menu[/bright_yellow]  S - [bright_yellow]settins[/bright_yellow]"
 
         instruction_panel = get_panels()
-        task_panel = Padding(renderable="Taks :\nkill 3 snakes \n Make it alive \n Kill the great snake")
+        task_panel = Padding(
+            renderable="Taks :\nkill 3 snakes \n Make it alive \n Kill the great snake"
+        )
         grid.add_row(task_panel)
         grid.add_row(instruction_panel)
         return grid
@@ -186,14 +194,18 @@ class Console:
             raise ValueError("Expected a value, but got None")
         else:
             _layout.initialize(core=self.core)
-
+                
             self.current_layout = _layout
 
     def refresh(self) -> None:
         """Refresh the console layout by updating the rich live object with the current layout"""
         _layout: Layout = self.current_layout.update()
         self.core.rich_live_instance.update(_layout)
-
+    def fill_inventory_table(self)->Table:
+        self.core.options = []
+        self.core.options.append(Panel("weapons"))
+        self.core.options.append(Choices(ary=self.core.player.inventory.weapons(),core=self.core))
+        return self.fill_ui_table()
     def fill_ui_table(self) -> Table:
         """returns rich table after filling it with options"""
         _core = self.core
@@ -215,3 +227,50 @@ class Console:
             return self.fill_ui_table()
 
         return table
+    def _transtion_layout(self,layout):
+            self.layout = layout
+    def show_inventory(self):
+        self.layout = "INVENTORY"
+        self.options = []
+        self.state = "INVENTORY"
+    def show_menu(self):
+        self.core.options = []
+        from art import text2art
+
+        # Define menu options with ASCII text
+        menu_items = [
+        Option(
+            text="Continue",
+            func=lambda: self._transtion_layout("INGAME"),
+            next_node=None,
+            type="menu",
+           
+        ),
+        Option(
+            text="New game",
+            func=lambda: self._transtion_layout("NEWGAME"),
+            next_node=None,
+            type="menu"
+        ),
+        Option(
+            text="Settings",
+            func=lambda: self._transtion_layout("SETTINGS"),
+            next_node=None,
+            type="menu"
+        ),
+        Option(
+            text="About us",
+            func=lambda:self._transtion_layout("ABOUTUS"),
+            next_node=None,
+            type="menu"
+        ),
+        Option(
+            text="Leave",
+            func=lambda: self.TERMINATE(),
+            next_node=None,
+            type="menu"
+        ),
+        ]       
+    
+        self.core.options.append(Choices(ary=menu_items, menu_type="menu"))
+        self.layout = "MENU"

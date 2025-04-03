@@ -47,18 +47,20 @@ if TYPE_CHECKING:
 
 class Core:
     def __init__(self) -> None:
-        self.rich_console: "Live" = None
+        self.rich_console = None
         self.running: bool = True
         self.ant = []
+        self.input_block = None
         self.in_fight: bool = False
         self.story: dict = load_yaml_file("data/story.yaml")
         self._chapter_id = -1  # default value
         self.progress = Progress()
         self.in_game = True
-        self.rich_live_instance = None
+        self.rich_live_instance: "Live"
         self.temp_story = None
         self.move_on = True
-        self.sound_player =  SoundPlayer()
+        self.timer = None
+        self.sound_player = SoundPlayer()
         self.entity = None
         self.key_listener = None
         self.s = "options"
@@ -89,7 +91,8 @@ class Core:
         )
         self.overall_progress = Progress()
         self.overall_task = self.overall_progress.add_task("All Jobs", total=int(1000))
-   
+    def create_timer(sec: float, func : callable):
+            timer = None
     def _get_next_nodes():
         story = load_yaml_file("data/story.yaml")
         ary = []
@@ -101,28 +104,17 @@ class Core:
     def exit() -> None:
         sys.exit()
 
+    def from_loading_to_start_menu(self):
+        self.console.layout = "MENU"
     def _post_initialize(self) -> None:
         current_time = datetime.datetime.now()
         logger.info(f"New game instance {current_time}")
         self.check_story()
-        self.sound_player.load_music_track('main_theme', 'data/cin1.mp3')
-        self.sound_player.play_music("main_theme")  
-    def layout_transtion_to(self, layout):
-        match layout:
-            case "INGAME":
-                self.chapter_id = "1a"
-                self.console.layout = "INGAME"
-                self.continue_game()
-            case "NEWGAME":
-                self.console.layout = "NEWGAME"
-                ...
-            case "SETTINGS":
-                ...
-            case "ABOUT US":
-                ...
+        # self.sound_player.load_music_track("main_theme", "data/cin1.mp3")
+        # self.sound_player.play_music("main_theme")
 
-    def show_inventory(self):
-        self.state = "INVENTORY"
+
+
 
     def show_settings(self):
         self.state = "SETTINGS"
@@ -130,40 +122,9 @@ class Core:
     def show_stats(self):
         self.state = "STATS"
 
-    def show_menu(self):
-        self.options = []
-        from art import text2art
-
-        # Define menu options with ASCII text
-        menu_items = [
-            {
-                "text": "Continue game",
-                "function": lambda: self.layout_transtion_to("INGAME"),
-                "next_node": None,
-            },
-            {
-                "text": "New game",
-                "function": lambda: self.layout_transtion_to("NEWGAME"),
-                "next_node": None,
-            },
-            {
-                "text": "Settings",
-                "function": lambda: self.layout_transtion_to("SETTINGS"),
-                "next_node": None,
-            },
-            {
-                "text": "About us",
-                "function": lambda: self.layout_transtion_to("ABOUTUS"),
-                "next_node": None,
-            },
-            {"text": "Leave", "function": lambda: self.TERMINATE(), "next_node": None},
-        ]
-
-        self.options.append(Choices(ary=menu_items, menu_type="menu"))
-        self.console.layout = "MENU"
 
     def check_story(self) -> None:
-        print("Checking story")
+        ...
 
     @property
     def chapter_id(self) -> str:
@@ -218,11 +179,11 @@ class Core:
         self.console.layout = "INGAME"
 
     def TERMINATE(self):
+        self.sound_player.close()
         self.running = False
-        self.console.options = []
-
+        self.rich_live_instance.stop()
+        self.input_block.stop()
         quit()
-        exit()
 
     def continue_game(self) -> None:
         # set the selected option to 0
@@ -230,7 +191,7 @@ class Core:
         """if self.chapter_id == -1:
             self.console.layout = "CHARACTER_SELECTION"""
         if self.chapter_id == -1:
-            self.show_menu()
+            self.console.show_menu()
 
         else:
             if self.temp_story is not None:

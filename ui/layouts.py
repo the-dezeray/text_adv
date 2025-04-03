@@ -67,11 +67,17 @@ class LayoutInGame(CustomLayout):
     def initialize(self, core: "Core"):
         self.core = core
 
+        self.core.chapter_id = "1a"
+   
+        self.core.continue_game()
     def update(self):
-        table: Table = self.core.console.fill_ui_table()
-        content = table
+
         layout = Layout()
-        layout.split_column(Layout(name="up", size=1), Layout(name="down"),Layout(name="footer",size=1))
+        layout.split_column(
+            Layout(name="up", size=1),
+            Layout(name="down"),
+            Layout(name="footer", size=1),
+        )
 
         def top_bar():
             ui = "Home Inventory Settings "
@@ -84,11 +90,17 @@ class LayoutInGame(CustomLayout):
             Layout(name="right", ratio=1, visible=True),
         )
 
-
         if self.core.command_mode:
             self.core.console.right = self.core.console.command_mode_layout()
         layout["left"].update(self.core.console.s())
         layout["right"].update(self.core.console.right)
+        table = None
+        if self.core.console.state == "MAIN":
+            table: Table = self.core.console.fill_ui_table()
+            
+        elif self.core.console.state == "INVENTORY":
+            table = self.core.console.fill_inventory_table()
+        content = table
         layout["middle"].update(
             Panel(
                 content,
@@ -140,20 +152,43 @@ class LayoutStartMenu(CustomLayout):
             Layout(name="menus", ratio=3),
         )
 
-        # if self.core.command_mode:
-        #   self.core.console.right = self.core.console.command_mode_layout()
-        def menu():
-            ui = Table.grid()
-            ui.add_column()
-            ui.add_row("Continue Game")
-            ui.add_row("New Game")
-            ui.add_row("Settings")
-            ui.add_row("About Me")
-            ui.add_row("Leave")
-
-            return ui
 
         ui = self.core.console.fill_ui_table()
         layout["menus"].update(Panel(ui))
 
         return layout
+
+
+class LayoutLoading(CustomLayout):
+    def initialize(self, core: "Core"):
+        self.core = core
+        self.core.options = ["dsiree"]
+        from core.timer import Timer
+        self.core.timer = Timer(time = 3,func =core.from_loading_to_start_menu)
+    def update(self):
+        from rich.align import Align
+        lines = "/////////////////////////////////////////////////////////////"
+     
+        from rich.console import Group
+        panel_group = Group(
+        lines,
+        f"{self.core.timer.time}",
+        )
+        ui = Layout(renderable=panel_group)
+        return Padding(renderable=ui,pad = (10,))
+class LayoutInventory(CustomLayout):
+    def initialize(self, core: "Core"):
+        self.core = core
+
+    def update(self):
+        
+
+        layout = Layout()
+
+        #ui = self.core.console.fill_ui_table()
+        #weapons = Choices()
+        renderable = self.core.console.fill_inventory_table()
+        layout.update(Align(Panel(renderable=renderable,height=32,width=100),align="center"))
+
+        return layout
+

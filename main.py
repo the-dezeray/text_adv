@@ -1,5 +1,6 @@
 """random documentation"""
 
+from logging import raiseExceptions
 from rich.live import Live
 from rich.layout import Layout
 from rich.console import Console
@@ -19,14 +20,19 @@ import queue
 class NonBlockingInput:
     def __init__(self):
         self.input_queue = queue.Queue()
+        self.running = True
         self.thread = threading.Thread(target=self._input_thread, daemon=True)
         self.thread.start()
 
     def _input_thread(self):
-        while True:
+        while self.running:
             key = readkey()
             if key:
                 self.input_queue.put(key)
+
+    def stop(self):
+        self.running = False
+        self.thread.join()
 
     def get_key(self):
         try:
@@ -61,46 +67,54 @@ def non_blocking_readkey():
 
 
 def main(**kwargs):
-    chapter_id = kwargs.get("chapter_id", "4a")  # 4a as the default
-    story = kwargs.get("story", "story.yaml")
-    mute = kwargs.get("mute", False)
-    tank = kwargs.get("tank", False)
-    subchapter = kwargs.get("subchapter", "areas_to_explore.yaml")
+    try:
+        #from test6 import test 
+        #test()
+        chapter_id = kwargs.get("chapter_id", "4a")  # 4a as the default
+        story = kwargs.get("story", "story.yaml")
+        mute = kwargs.get("mute", False)
+        tank = kwargs.get("tank", False)
+        subchapter = kwargs.get("subchapter", "areas_to_explore.yaml")
 
-    core = Core()
-    core.rich_console = Console()
-    install(show_locals=True, console=core.rich_console)
-    core.rich_console.force_terminal = True
-    core.rich_console.force_interactive = True
-    core.rich_console.stderr = True
-    core.rich_console.quiet = False
-    core.console.layout = "INGAME"
-    core.chapter_id = chapter_id
-    keyboard_controller = KeyboardControl(core=core)
-    job1 = core.job_progress.add_task("[green]Cooking")
-    job2 = core.job_progress.add_task("[magenta]Baking", total=1200)
-    job3 = core.job_progress.add_task("[cyan]Mixing", total=1400)
-    input_handler = NonBlockingInput()
-
-    with Live(
-        Layout("ds"),
-        screen=True,
-        auto_refresh=True,
-        console=core.rich_console,
+        core = Core()
+        core.rich_console = Console()
+        install(show_locals=True, console=core.rich_console)
+        core.rich_console.force_terminal = True
+        core.rich_console.force_interactive = True
+        core.rich_console.stderr = True
+        core.rich_console.quiet = False
+        core.console.show_menu()
+        #core.chapter_id = chapter_id
         
-    ) as core.rich_live_instance:
-        core.continue_game()
-        while core.running:
-            key = input_handler.get_key()
-            if key:
-                keyboard_controller.execute_on_key(key)
-            ary = core.job_progress.tasks
-            for job in core.job_progress.tasks:
-                if not job.finished:
-                    core.job_progress.advance(job.id)
-            time.sleep(0.01)
+        keyboard_controller = KeyboardControl(core=core)
 
-    core.sound_player.close()
+        core.input_block = NonBlockingInput()
+
+        with Live(
+            Layout(),
+          
+            auto_refresh=True,
+            screen=True,
+            console=core.rich_console,
+        ) as core.rich_live_instance:
+            core.console.refresh()
+            #core.continue_game()
+            while core.running:
+                                
+              
+                key = core.input_block.get_key()
+                if key:
+                    keyboard_controller.execute_on_key(key)
+                ary = core.job_progress.tasks
+                for job in core.job_progress.tasks:
+                    if not job.finished:
+                        core.job_progress.advance(job.id)
+
+    except Exception as error:
+        logger.error(error)
+        raise
+
+
 if __name__ == "__main__":
     main()
-    
+    print("done")

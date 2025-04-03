@@ -84,6 +84,7 @@ class Choices:
         self.h_allign = "center"
         self.core = core
         self.renderable = renderable
+        
         self.menu_type = menu_type
         if do_list_build:
             self.list_builder()
@@ -114,7 +115,7 @@ class Choices:
             grid = Table.grid()
             grid.add_column()
             for renderable in renderables:
-                grid.add_row(Align(renderable, align="center"))
+                grid.add_row(Align(renderable, align=self.h_allign))
 
             return Padding(grid, pad=(1, 0, 0, 0))
 
@@ -151,10 +152,10 @@ class Choices:
                         selectable=True,
                     )
                 )
-        elif isinstance(self.ary[0], (Panel, Padding, Option)):
+        elif isinstance(self.ary[0], (Option,)):
             for option in self.ary:
                 array.append(option)
-
+        
         self.ary = array
 
 
@@ -189,27 +190,31 @@ def WeaponOption(
 
 def ui_menu_btn(
     option,
-    text: str,
-    style: str,
+    text: str= "",
+    style: str="",
     selected=True,
     top_padding: int = 0,
     right_padding: int = 0,
     bottom_padding: int = 0,
     left_padding: int = 0,
 ) -> Padding:
+    color ="white"
     height = 6
     if left_padding != 0:
         height = 8
     left_padding = 0
     if option.selected:
-        style = "bold green"
+        color = "bold green"
         left_padding = 8
 
         if option.preview:
             option.preview()
-
+    from art import text2art
+    text = text2art(option.text,font ="tarty2"  )
+    
+    text = f"[{color}]{text}[/{color}]"
     return Padding(
-        option.text,
+        text,
         pad=(top_padding, right_padding, bottom_padding, left_padding),
     )
 
