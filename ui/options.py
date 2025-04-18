@@ -138,8 +138,8 @@ class Choices:
                 array.append(
                     WeaponOption(
                         weapon=weapon,
-                        func=lambda w=weapon: deal_damage(self.core, w),
-                        preview=lambda: self.core.console.show_weapon(weapon),
+                        func=lambda w=weapon: deal_damage(self.core, w)
+                       # preview=lambda: self.core.console.show_weapon(weapon),
                     )
                 )
         elif isinstance(self.ary[0], dict):

@@ -69,6 +69,7 @@ class Core:
         self._disable_command_mode = False
         self._layout = Layout()
         self.player = Player()
+
         self.player_turn: bool = False
         self.next_node: str = None
         self.options = []

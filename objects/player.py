@@ -6,13 +6,18 @@ from util.logger import logger
 class Player:
     def __init__(self):
         self.hp = 100
-        self.max_hp = 100
+        self.max_hp = 43
+        self.exp = 70
+        self.level = 0
+        self.max_exp =100
         self.attack = 10
         self.defense = 10
         self.speed = 10
         self.name = "default-name"
         self.luck = 10
         self.crit = 0
+        self.max_mp = 100
+        self.mp = 50
         self.faith = 0
         self.turn = False
         self.agility = 0  

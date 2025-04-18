@@ -92,7 +92,7 @@ class LayoutInGame(CustomLayout):
 
         if self.core.command_mode:
             self.core.console.right = self.core.console.command_mode_layout()
-        layout["left"].update(self.core.console.s())
+        layout["left"].update(self.core.console.player_tab())
         layout["right"].update(self.core.console.right)
         table = None
         if self.core.console.state == "MAIN":
