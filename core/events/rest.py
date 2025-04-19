@@ -1,5 +1,5 @@
 from util.logger import logger, event_logger
-from ui.options import Option, Choices,ui_text_panel
+from ui.options import Option, Choices,ui_text_panel,choose_me
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -13,10 +13,9 @@ def rest(core: "Core" = None):
     core.options(ui_text_panel(text="You rest for a while"))
     core.options(ui_text_panel())
     core.options.append(
-        Choices(
-            renderable=Option(
+  choose_me(
                 text="Proceed", func=lambda: core.goto_next(), selectable=False
-            )
+    
         )
     )
  

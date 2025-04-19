@@ -115,6 +115,7 @@ class KeyboardControl:
 
         for option in get_selectable_options(core.options):
             if option.selected == True:
+                option.selected = False
                 if isinstance(option.func, str):
                     core.next_node = option.next_node
                     core.execute_yaml_function(option.func)
@@ -129,3 +130,4 @@ class KeyboardControl:
                         else core.next_node
                     )
                     core.continue_game()
+         

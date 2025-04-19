@@ -1,9 +1,9 @@
 from ui.options import Option, WeaponOption
 from objects.player import Player
-from ui.options import Choices, Reward
+from ui.options import Choices, Reward,buffer_create_weapons
 from util.logger import logger, event_logger
 from typing import TYPE_CHECKING, Literal
-from ui.options import ui_text_panel
+from ui.options import ui_text_panel,choose_me
 if TYPE_CHECKING:
     from objects.item import Item
     from core.core import Core
@@ -96,7 +96,7 @@ def _fight(core: "Core") -> None:
         core.ant = []
         ary = player.inventory.weapons(type="attack")
 
-        core.options.append(Choices(ary, core))
+        core.options.append(buffer_create_weapons(ary, core))
         player.turn = False
         entity.turn = True
     else:
@@ -105,7 +105,7 @@ def _fight(core: "Core") -> None:
      
         core.options.append(ui_text_panel( text="You prepare to defend "))
         ary = player.inventory.weapons(type="defence")
-        core.options.append(Choices(ary, core))
+        core.options.append(buffer_create_weapons(ary, core))
         entity.deal_damage(player)
         entity.turn = False
         player.turn = True
@@ -124,9 +124,7 @@ def _fight(core: "Core") -> None:
         w = Weapon.generate(name="sword")
    
 
-        core.options.append(Choices(ary=[w, w], core=core))
-        core.options.append(
-            Choices(
-                renderable=Option(text="You win!", selectable=True, func=core.goto_next)
-            )
+        core.options.append(buffer_create_weapons(ary=[w, w], core=core))
+        core.options.append(choose_me(text="You win!", func=core.goto_next)
+            
         )

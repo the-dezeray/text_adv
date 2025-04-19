@@ -12,7 +12,7 @@ def display_scene(
     options: Optional[List[str]] = None,
     selected_index: Optional[int] = 0,
     title: str = "[b yellow]\uf4ad Scene[/b yellow]",
-    option_icon: str = "  ",  # Default padding/icon for all options
+    option_icon: str = "\uf101",  # Default icon for options (nf-fa-angle_right)
     option_style: str = "cyan"  # Base style color for options
 ):
     """
@@ -28,12 +28,11 @@ def display_scene(
                                         highlight with a Panel. Defaults to 0 (first option).
                                         If None or out of range, nothing is highlighted.
         title (str): The title to display in the separator rule. Rich markup enabled.
-        option_icon (str): Icon/padding prefix for options.
+        option_icon (str): Icon prefix for options.
         option_style (str): The base Rich style color for the options.
     """
     # Use a Rule as a scene separator with the title
-    
-    console.print(Rule(style="bold magenta", title=title, align="left"))
+    console.print(Rule(title, style="bright_cyan"))
     console.print()  # Add some spacing
 
     # Print the narrative
@@ -42,15 +41,15 @@ def display_scene(
 
     # Display options if provided, using Panel for the selected one
     if options:
-
+        console.print("[bold magenta]--- Choose an Action ---[/bold magenta]")
 
         # Define style for unselected options
         style_unselected = f"dim {option_style}"  # Dim the unselected options
 
         for i, option_text in enumerate(options):
             if selected_index is not None and i == selected_index:
-                # Create a Panel for the selected option
-                selected_text = f"{option_text}"
+                # Create a Panel for the selected option, including the icon
+                selected_text = f"{option_icon} {option_text}"
                 panel = Panel(
                     selected_text,
                     style=f"bold {option_style}",
@@ -59,8 +58,8 @@ def display_scene(
                 )
                 console.print(panel)
             else:
-                # Print unselected options normally
-                console.print(f"[{style_unselected}]{option_icon}{option_text}[/{style_unselected}]")
+                # Print unselected options normally with icon
+                console.print(f"[{style_unselected}]{option_icon} {option_text}[/{style_unselected}]")
 
     else:
         # Handle cases with no specific options
@@ -104,6 +103,7 @@ if __name__ == "__main__":
         options1,
         selected_index=0,  # Show first option highlighted initially
         title="[b green]\uf1bb Deep Forest[/b green]",  # nf-fa-tree
+        option_icon="\uf0da",  # nf-fa-caret_right (from original code)
         option_style="green"
     )
     console.print("\n[dim](Simulating choice: 2. Go Right towards water...)[/dim]")
@@ -124,6 +124,7 @@ if __name__ == "__main__":
         options2,
         selected_index=0,  # Show first option highlighted
         title="[b cyan]\uf773 Babbling Stream[/b cyan]",  # nf-mdi-water
+        option_icon="\uf0da",  # nf-fa-caret_right
         option_style="cyan"
     )
     console.print("\n[dim](Simulating choice: 1. Drink from the stream...)[/dim]")
@@ -159,6 +160,7 @@ if __name__ == "__main__":
         options4,
         selected_index=0,  # Show first option highlighted
         title="[b yellow]\uf6e4 Downstream Path[/b yellow]",  # nf-mdi-home_variant_outline
+        option_icon="\uf0da",  # nf-fa-caret_right
         option_style="yellow"
     )
     console.print("\n[dim](Simulating choice: 1. Approach the shack cautiously...)[/dim]")
@@ -179,6 +181,7 @@ if __name__ == "__main__":
         options5,
         selected_index=0,  # Show first option highlighted
         title="[b default]\uf6ea The Old Shack[/b default]",  # nf-mdi-hut
+        option_icon="\uf0da",  # nf-fa-caret_right
         option_style="white"  # Using white as base style
     )
     console.print("\n[dim](Simulating choice: 2. Peek through the opening...)[/dim]")
@@ -199,6 +202,7 @@ if __name__ == "__main__":
         options6,
         selected_index=0,  # Show first option highlighted
         title="[b magenta]\uf500 Peeking Inside[/b magenta]",  # nf-mdi-eye_outline
+        option_icon="\uf0da",  # nf-fa-caret_right
         option_style="magenta"
     )
     console.print("\n[dim](Simulating choice: 1. Clear your throat...)[/dim]")

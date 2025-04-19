@@ -7,7 +7,7 @@ from rich.align import Align
 from rich.rule import Rule
 from rich.layout import Layout
 from ui.options import ui_table
-from ui.options import Option,Choices, get_selectable_options
+from ui.options import Option,Choices, get_selectable_options,buffer_display_choices,buffer_create_weapons
 from ui.layouts import LayoutInGame, LayoutDefault, Lsd, LayoutStartMenu, LayoutLoading,LayoutInventory
 from rich.console import ConsoleRenderable, group, RichCast
 
@@ -283,7 +283,7 @@ class Console:
     @property
     def layout(self) -> Layout:
         return self._layout
-
+    
     @layout.setter
     def layout(self, value: str):
         _layout = LAYOUTS.get(value, None)
@@ -309,23 +309,29 @@ class Console:
         table = ui_table()
         options = _core.options
         from ui.options import Choices
-
+        from rich.rule import Rule
+        
         for option in options:
-            if isinstance(option, (Option, Choices)):
+            if isinstance(option, (Option, Choices,buffer_display_choices,buffer_create_weapons)):
                 renderable = option.render(core=_core)
                 table.add_row(Align(renderable, align=option.h_allign))
             elif isinstance(option, (Padding, Panel)):
                 table.add_row(Align(option))
+            else:
+                table.add_row(option)
 
         ary = get_selectable_options(_core.options)
         # if selectable item is selected select the first one
         if ary and all(not i.selected for i in ary):
+            _core.selected_option = 0
             ary[0].selected = True
-            return self.fill_ui_table()
+            return self.fill_ui_table() 
 
         return table
     def _transtion_layout(self,layout):
+            self.core.options = []
             self.layout = layout
+           
     def show_inventory(self):
         self.layout = "INVENTORY"
         self.options = []
@@ -333,43 +339,43 @@ class Console:
     def show_menu(self):
         self.core.options = []
         from art import text2art
-
+        from ui.options import choose_me
         # Define menu options with ASCII text
         menu_items = [
-        Option(
+        choose_me(
             text="Continue",
             func=lambda: self._transtion_layout("INGAME"),
             next_node=None,
             type="menu",
            
         ),
-        Option(
+        choose_me(
             text="New game",
             func=lambda: self._transtion_layout("NEWGAME"),
             next_node=None,
             type="menu"
         ),
-        Option(
+        choose_me(
             text="Settings",
             func=lambda: self._transtion_layout("SETTINGS"),
             next_node=None,
             type="menu"
         ),
-        Option(
+        choose_me(
             text="About us",
             func=lambda:self._transtion_layout("ABOUTUS"),
             next_node=None,
             type="menu"
         ),
-        Option(
+        choose_me(
             text="Leave",
             func=lambda: self.TERMINATE(),
             next_node=None,
             type="menu"
         ),
         ]       
-    
-        self.core.options.append(Choices(ary=menu_items, menu_type="menu"))
+
+        self.core.options.extend(menu_items)
         self.layout = "MENU"
     def enemy_tab(self):
             grid = Table.grid(expand=True)

@@ -4,7 +4,7 @@
   choices:
     - text: "Explore"
       next_node: 2a
-      function: null
+      function: "rest(core=core)"
     - text: "Stay"
       next_node: 1a
       function: "stay(core=core,limit = 2,next_node = 1c,text = 'you sleep for a while and wake up')"

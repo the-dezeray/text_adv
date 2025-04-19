@@ -1,12 +1,12 @@
-from ui.options import Option, Choices
+from ui.options import Option, Choices,choose_me
 
 
 def shop(core, level="normal"):
     core.console.load_shop()
     core.options.append(
-        Option(text="shop", type="header", func=lambda: None, selectable=False)
+        choose_me(text="shop", type="header", func=lambda: None, selectable=False)
     )
     core.options.append(
-        Choices(renderable=Option(text="Proceed", func=lambda: core.goto_next(), selectable=False)
-        )
+        choose_me(text="Proceed", func=lambda: core.goto_next(), selectable=False)
+        
     )

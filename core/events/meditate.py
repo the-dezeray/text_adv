@@ -1,4 +1,4 @@
-from ui.options import Option, Choices
+from ui.options import Option
 from util.logger import event_logger
 from typing import TYPE_CHECKING
 

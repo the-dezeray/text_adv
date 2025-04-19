@@ -1,7 +1,7 @@
 """core of the game"""
 
 from util.file_handler import load_yaml_file  # pylint: disable=unused-import
-from ui.options import Option, Choices
+from ui.options import Option, Choices,buffer_display_choices
 from rich.layout import Layout
 from objects.entities import Entities  # pylint: disable=unused-import
 from objects.item import Items
@@ -188,7 +188,7 @@ class Core:
 
     def continue_game(self) -> None:
         # set the selected option to 0
-        self.selected_option = 0
+  
         """if self.chapter_id == -1:
             self.console.layout = "CHARACTER_SELECTION"""
         if self.chapter_id == -1:
@@ -200,14 +200,23 @@ class Core:
             else:
                 story = self.temp_story
             current_chapter = self.story[self.chapter_id]
-            self.options = []
+      
             from ui.options import ui_text_panel
-
-            self.options.append(ui_text_panel(text=current_chapter["text"]))
+            tit  ="[b green]\uf1bb Deep Forest[/b green]"
+            from rich.table import Table
+            from rich.rule import Rule
+            
+            self.options.append(Rule(title=tit,align="left",style="cyan"))
+            from rich.text import Text
+            ui_text = Text(text = current_chapter["text"],justify= "full")
+            self.options.append(Padding(ui_text))    
 
             # or index,choice in enumerate(current_chapter["choices"]):
-            self.options.append(Choices(current_chapter["choices"]))
+            self.options.append(buffer_display_choices(current_chapter["choices"]))
+        self.selected_option = len(self.options)-1
+        self.options[-1].selected = True
         self.console.refresh()
+
 
     def goto_next(self) -> None:
         """Go to the next node in the story"""

@@ -7,6 +7,7 @@ from util.logger import logger
 class entity:
     def __init__(self, **kwargs) -> None:
         level = kwargs.pop("level")
+        self.level = level
         self.name = ""
         self.weapon = None
         self.intelligence = 3
@@ -18,7 +19,7 @@ class entity:
         self.resitant = {}
         self.droppable_items = {}
         self.flee = 0
-        self.dmg = level * 2
+        self.dmg = level * 30
         self.armor = level * 1.5
         self.speed = level * 3
         self.hp = level * 40

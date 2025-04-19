@@ -69,7 +69,6 @@ class Option:
         else:
             return _dict["default"](option)
 
-
 class Choices:
     def __init__(
         self,
@@ -83,6 +82,7 @@ class Choices:
         self.ary = ary
         self.h_allign = "center"
         self.core = core
+        self.selectable = True
         self.renderable = renderable
         
         self.menu_type = menu_type
@@ -159,6 +159,137 @@ class Choices:
         self.ary = array
 
 
+class buffer_create_weapons:
+    def __init__(
+        self,
+        ary: list = None,
+        core: "Core" = None,
+    ):
+        self.ary = ary
+        self.h_allign = "center"
+        self.core = core
+        self.selectable = True
+        self.list_builder()
+
+
+    def render(self, core=None) -> Padding:
+        renderables = []
+        for option in self.ary:
+            style = "none"
+            left_padding = 0
+
+            renderable: Option = option.render(style, left_padding)
+            renderables.append(renderable)
+
+        grid = ui_grid(colomuns=2)
+        for i in range(0, len(renderables), 2):
+            if i + 1 < len(renderables):
+                grid.add_row(
+                    Align(renderables[i], align="center"),
+                    Align(renderables[i + 1], align="center"),
+                )
+            else:
+                grid.add_row(Align(renderables[i], align="center"))
+
+            return Padding(grid, pad=(1, 0, 0, 0))
+
+    def list_builder(self) -> None:
+        from core.events.fight import (
+            deal_damage,
+        )  # don't remove this prevents circular import
+
+        array = []
+        from objects.weapon import WeaponItem
+
+        if self.core.console is None:
+            raise ValueError(
+                "Core must be set if weapon instance is being called, but got None"
+            )
+        for weapon in self.ary:
+            array.append(
+                WeaponOption(
+                    weapon=weapon,
+                    func=lambda w=weapon: deal_damage(self.core, w)
+                    # preview=lambda: self.core.console.show_weapon(weapon),
+                )
+            )
+
+        self.ary = array
+
+
+
+class buffer_display_choices:
+    def __init__(
+        self,
+        ary: list = None,
+
+        title = "",
+        icon = ""
+    ):
+        self.ary = ary
+        self.h_allign = "left"
+        self.title= title
+        array = []
+        self.selectable = True
+        for choice in self.ary:
+            array.append(
+                new__ui(
+                    text=choice["text"],
+                    func=choice["function"],
+                    next_node=choice["next_node"],
+                    selectable=True,
+                )
+            )
+        
+        self.ary = array
+
+    def render(self, core=None) -> Padding:
+        renderables = []
+        for option in self.ary:
+            renderable:new__ui =  option.render()
+            renderables.append(renderable)
+   
+        grid = ui_grid(colomuns=1)
+
+        for i in renderables:
+            grid.add_row(i)
+        return grid
+
+class buffer_display_menu_items:
+    def __init__(
+        self,
+        ary: list = None,
+        title = "",
+        icon = ""
+    ):
+        self.ary = ary
+        self.h_allign = "left"
+        self.title= title
+        array = []
+      
+        for choice in self.ary:
+            array.append(
+                new__ui(
+                    text=choice["text"],
+                    func=choice["function"],
+                    next_node=choice["next_node"],
+                    selectable=True,
+                )
+            )
+        
+        self.ary = array
+
+    def render(self, core=None) -> Padding:
+        renderables = []
+        for option in self.ary:
+            renderable:new__ui =  option.render()
+            renderables.append(renderable)
+   
+        grid = ui_grid(colomuns=1)
+
+        for i in renderables:
+            grid.add_row(i)
+        return grid
 def ui_grid(colomuns: int = 1) -> Table:
     grid = Table.grid()
     for _ in range(colomuns):
@@ -243,6 +374,29 @@ def ui_button(
         pad=(top_padding, right_padding, bottom_padding, left_padding),
     )
 
+def new_ui_button(
+    option: Option,
+    style: str = "",
+    selected=False,
+    top_padding: int = 0,
+    right_padding: int = 0,
+    bottom_padding: int = 0,
+    left_padding: int = 0,
+) -> Padding:
+    height = 3
+    if left_padding != 0:
+        height = 4
+    left_padding = 0
+
+    if option.selected:
+        style = "bold green"
+        left_padding = 5
+        if option.preview:
+            option.preview()
+    return Padding(
+        Panel(option.text, width=15, height=height, border_style=style),
+        pad=(top_padding, right_padding, bottom_padding, left_padding),
+    )
 
 def _display_weapon(weapon: "Weapon"):
     pass
@@ -315,8 +469,11 @@ def Reward(ary: list = []) -> Panel:
 def get_selectable_options(options: list) -> list[Option]:
     array = []
     for i in reversed(options):
-        if isinstance(i, (Choices)):
-            array.extend(i.ary)
+        if isinstance(i, (Choices,buffer_display_choices,buffer_create_weapons)):
+            if(i.selectable):
+                array.extend(i.ary)
+        elif isinstance(i,choose_me) and i.selectable:
+            array.append(i)
     return array
 
 
@@ -336,3 +493,30 @@ def lister(): ...
 
 
 def inventory_button(): ...
+
+
+class new__ui(Option):
+    def __init__(self, text = "", func = None, preview = None, next_node = None, selectable = True, type = "", h_allign = "center", v_allign = "middle", on_select = lambda : yy()):
+        super().__init__(text, func, preview, next_node, selectable, type, h_allign, v_allign, on_select)
+
+    def render(self,style = "",left_padding = 0,core=None):
+        if self.selected:
+            self.style = "green"
+            a = f"\uf0da {self.text}"
+            return Panel(a,style ="bold green")
+        else:
+            return Padding(f"[dim green] \uf0da {self.text} [dim green]")
+            
+class choose_me(Option):
+    def __init__(self, text = "", func = None, preview = None, next_node = None, selectable = True, type = "", h_allign = "center", v_allign = "middle", on_select = lambda : yy()):
+        super().__init__(text, func, preview, next_node, selectable, type, h_allign, v_allign, on_select)
+
+    def render(self, style = "", left_padding = 0, core=None):
+        if self.selected:
+            self.style = "bold green"
+            self.left_padding += 5
+            return Panel(self.text,style="bold green")
+        else :
+            self.style = ""
+            self.left_padding = 0
+            return Panel(self.text)
