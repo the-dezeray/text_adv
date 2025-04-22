@@ -70,7 +70,7 @@ def main(**kwargs):
     try:
         #from test6 import test 
         #test()
-        chapter_id = kwargs.get("chapter_id", "1a")  # 4a as the default
+        chapter_id = kwargs.get("chapter_id", "4a")  # 4a as the default
         story = kwargs.get("story", "story.yaml")
         mute = kwargs.get("mute", False)
         tank = kwargs.get("tank", False)
@@ -79,6 +79,7 @@ def main(**kwargs):
         core = Core()
         core.rich_console = Console()
         install(show_locals=True, console=core.rich_console)
+        core.chapter_id = chapter_id
         core.rich_console.force_terminal = True
         core.rich_console.force_interactive = True
         core.rich_console.stderr = True
