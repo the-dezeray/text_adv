@@ -32,7 +32,7 @@ from core.events.shop import shop  # noqa: F401  # type: ignore
 from core.events.search_in import search_in  # noqa: F401  # type: ignore
 
 
-from core.sound_player import SoundPlayer
+#from core.sound_player import SoundPlayer
 from rich.padding import Padding
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
@@ -60,7 +60,7 @@ class Core:
         self.temp_story = None
         self.move_on = True
         self.timer = None
-        self.sound_player = SoundPlayer()
+        #self.sound_player = SoundPlayer()
         self.entity = None
         self.key_listener = None
         self.s = "options"
