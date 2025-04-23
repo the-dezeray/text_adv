@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from ui.options import Choices, Op
 from core.core import Core
 from util.logger import logger
 from ui.options import get_selectable_options

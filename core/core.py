@@ -1,7 +1,7 @@
 """core of the game"""
 
 from util.file_handler import load_yaml_file  # pylint: disable=unused-import
-from ui.options import Option, Choices,buffer_display_choices
+from ui.options import Option,buffer_display_choices
 from rich.layout import Layout
 from objects.entities import Entities  # pylint: disable=unused-import
 from objects.item import Items

@@ -45,8 +45,13 @@ class Player:
     def add_basic_weapons(self):
         self.inventory.add(Weapon.generate(name="shield"))
         self.inventory.add(Weapon.generate(name="sword"))
-        self.inventory.add(Weapon.generate(name="oblivion_dagger"))
-        
-
+        self.inventory.add(Weapon.generate(name="rusted_shiv"))
+        self.inventory.add(Weapon.generate(name="bone_club"))
+        self.inventory.add(Weapon.generate(name="gate_shield"))
+        self.inventory.add(Weapon.generate(name="whip"))
+        self.inventory.add(Weapon.generate(name="barbed_flail"))
+        self.inventory.add(Weapon.generate(name="furnace_poker"))
+  
+  
     def is_revivable(self):
         return False

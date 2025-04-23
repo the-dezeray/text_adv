@@ -6,29 +6,6 @@ from rich.panel import Panel  # Import Panel for selected options
 from typing import List, Tuple, Optional
 from rich.padding import Padding
 from ui.options import Option
-def ui_button(
-    option: Option,
-    style: str = "",
-    selected=False,
-    top_padding: int = 0,
-    right_padding: int = 0,
-    bottom_padding: int = 0,
-    left_padding: int = 0,
-) -> Padding:
-    height = 3
-    if left_padding != 0:
-        height = 4
-    left_padding = 0
-
-    if option.selected:
-        style = "bold green"
-        left_padding = 5
-        if option.preview:
-            option.preview()
-    return Padding(
-        Panel(option.text, width=15, height=height, border_style=style),
-       
-    )
 
 
 def display_scene(

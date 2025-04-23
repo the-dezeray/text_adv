@@ -6,8 +6,8 @@ from rich.panel import Panel
 from rich.align import Align
 from rich.rule import Rule
 from rich import box
-from ui.options import Op
-from ui.options import Option, Choices
+
+from ui.options import Option
 from rich.layout import Layout
 from typing import TYPE_CHECKING, Tuple
 
@@ -25,7 +25,7 @@ class CustomLayout:
 class LayoutCharacterSelection(CustomLayout):
     def initialize(self, core: "Core"):
         self.core = core
-        core.options = [Choices(ary=[Op() for _ in range(4)], do_build=False)]
+        #core.options = [Choices(ary=[Op() for _ in range(4)], do_build=False)]
         core.options[0].ary[0].selected = True
 
     def update(self) -> Layout:
@@ -45,7 +45,8 @@ class LayoutDefault(CustomLayout):
 class Lsd(CustomLayout):
     def initialize(self, core):
         self.core = core
-        core.options = [Choices(ary=[Op() for _ in range(4)], do_list_build=False)]
+        # TODO
+        # core.options = [Choices(ary=[Op() for _ in range(4)], do_list_build=False)]
         core.options[0].ary[0].selected = True
 
     def update(self) -> Layout:
@@ -67,8 +68,7 @@ class LayoutInGame(CustomLayout):
     def initialize(self, core: "Core"):
         self.core = core
 
-        self.core.chapter_id = "1a"
-   
+
         self.core.continue_game()
     def update(self):
 
@@ -76,7 +76,7 @@ class LayoutInGame(CustomLayout):
         layout.split_column(
             Layout(name="up", size=1),
             Layout(name="down"),
-            Layout(name="footer", size=1),
+
         )
 
         def top_bar():

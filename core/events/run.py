@@ -1,6 +1,6 @@
 """This module contains the run event."""
 
-from ui.options import Option, Choices, Loader
+from ui.options import Option, Loader
 from util.logger import logger, event_logger
 from random import randint
 from typing import TYPE_CHECKING, Optional

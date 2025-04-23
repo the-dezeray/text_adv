@@ -7,7 +7,7 @@ from rich.align import Align
 from rich.rule import Rule
 from rich.layout import Layout
 from ui.options import ui_table
-from ui.options import Option,Choices, get_selectable_options,buffer_display_choices,buffer_create_weapons
+from ui.options import Option, get_selectable_options,buffer_display_choices,buffer_create_weapons
 from ui.layouts import LayoutInGame, LayoutDefault, Lsd, LayoutStartMenu, LayoutLoading,LayoutInventory
 from rich.console import ConsoleRenderable, group, RichCast
 
@@ -47,13 +47,20 @@ class Console:
         self.temp_right_tab: Optional[ConsoleRenderable] = None
         self.current_layout = LayoutDefault()
         self.current_layout.initialize(core=self.core)
-    def show_weapon(self, weapon: "Weapon"):
+        """    def show_weapon(self, weapon: "Weapon"):
         grid = Table.grid(expand=True)
         grid.add_column()
         grid.add_row(Panel(f"[bold green]{weapon.name}[/bold green]"))
 
         self.right = grid
+        """
+    def show_weapon(self):
+        from rich_pixels import Pixels
+        pixels = Pixels.from_image_path("icon1.png",)
+        self.right=  Panel('ds')
+        
 
+        
     def toggle_command_mode(self):
         if self.core.command_mode:
             self.temp_right_tab = self.right
@@ -301,18 +308,18 @@ class Console:
     def fill_inventory_table(self)->Table:
         self.core.options = []
         self.core.options.append(Panel("weapons"))
-        self.core.options.append(Choices(ary=self.core.player.inventory.weapons(),core=self.core))
+        #self.core.options.append(Choices(ary=self.core.player.inventory.weapons(),core=self.core))
         return self.fill_ui_table()
     def fill_ui_table(self) -> Table:
         """returns rich table after filling it with options"""
         _core = self.core
         table = ui_table()
         options = _core.options
-        from ui.options import Choices
+      
         from rich.rule import Rule
         
         for option in options:
-            if isinstance(option, (Option, Choices,buffer_display_choices,buffer_create_weapons)):
+            if isinstance(option, (Option, buffer_display_choices,buffer_create_weapons)):
                 renderable = option.render(core=_core)
                 table.add_row(Align(renderable, align=option.h_allign))
             elif isinstance(option, (Padding, Panel)):
@@ -339,35 +346,35 @@ class Console:
     def show_menu(self):
         self.core.options = []
         from art import text2art
-        from ui.options import choose_me
+        from ui.options import menu__ui,choose_me
         # Define menu options with ASCII text
         menu_items = [
-        choose_me(
+        menu__ui(
             text="Continue",
             func=lambda: self._transtion_layout("INGAME"),
             next_node=None,
             type="menu",
            
         ),
-        choose_me(
+        menu__ui(
             text="New game",
             func=lambda: self._transtion_layout("NEWGAME"),
             next_node=None,
             type="menu"
         ),
-        choose_me(
+        menu__ui(
             text="Settings",
             func=lambda: self._transtion_layout("SETTINGS"),
             next_node=None,
             type="menu"
         ),
-        choose_me(
+        menu__ui(
             text="About us",
             func=lambda:self._transtion_layout("ABOUTUS"),
             next_node=None,
             type="menu"
         ),
-        choose_me(
+        menu__ui(
             text="Leave",
             func=lambda: self.TERMINATE(),
             next_node=None,

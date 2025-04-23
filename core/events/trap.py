@@ -1,4 +1,4 @@
-from ui.options import Option, Choices
+from ui.options import Option, choose_me
 from util.logger import logger, event_logger
 
 
@@ -10,7 +10,7 @@ def get_random():
 def trap(core=None, type: str = None):
     trap = {"name": "fire trap", "damage": 1}
     core.options.append(
-        Choices(
+        choose_me(
             renderable=Option(
                 text="You have been hit by a trap", func=lambda: core.goto_next()
             )

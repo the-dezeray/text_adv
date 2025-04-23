@@ -1,6 +1,6 @@
 from ui.options import Option, WeaponOption
 from objects.player import Player
-from ui.options import Choices, Reward,buffer_create_weapons
+from ui.options import Reward,buffer_create_weapons
 from util.logger import logger, event_logger
 from typing import TYPE_CHECKING, Literal
 from ui.options import ui_text_panel,choose_me
@@ -55,16 +55,7 @@ def fight(
         _fight(core)
 
 
-def get_head_count(array: list):
-    """
-    Counts the number of header options in the given array.
-    Args:
-        array: The array of options.
 
-    Returns:
-        int: The count of header options.
-    """
-    return sum(1 for i in array if i.type == "header")
 
 
 def _fight(core: "Core") -> None:
@@ -82,27 +73,22 @@ def _fight(core: "Core") -> None:
 
     if len(core.options) > 1:
         last = core.options[-1]
-    from ui.options import ui_player_display
+
     core.options = []
-    core.options.append(ui_player_display( text=f"Player ❤ {player.hp}/50     ⚔ 5      🛡 100 "))
-    core.options.append(
-        ui_player_display(
-     text=f"SNAKE ❤ {entity.hp}/50     ⚔ 5      🛡 100 "
-    )
-    )
+
 
     if player.turn:
         core.options += core.ant
         core.ant = []
         ary = player.inventory.weapons(type="attack")
-
+        core.options.append(ui_text_panel(text="You prepare to attack"))
         core.options.append(buffer_create_weapons(ary, core))
         player.turn = False
         entity.turn = True
     else:
         core.options.append(last)
 
-     
+
         core.options.append(ui_text_panel( text="You prepare to defend "))
         ary = player.inventory.weapons(type="defence")
         core.options.append(buffer_create_weapons(ary, core))
@@ -123,8 +109,7 @@ def _fight(core: "Core") -> None:
 
         w = Weapon.generate(name="sword")
    
+        a = choose_me(text="You win!", func=core.goto_next)
+        core.options.append(choose_me(text="You win!", func=core.goto_next) )
+        core.options.append(buffer_create_weapons(ary=[w, w], core=core,extra=True))
 
-        core.options.append(buffer_create_weapons(ary=[w, w], core=core))
-        core.options.append(choose_me(text="You win!", func=core.goto_next)
-            
-        )

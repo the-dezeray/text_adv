@@ -6,7 +6,6 @@ from rich.layout import Layout
 from rich.console import Console
 from rich.traceback import install
 from readchar import readkey
-import time
 from util.logger import logger
 from core.core import Core
 from core.keyboard import KeyboardControl
@@ -88,7 +87,6 @@ def main(**kwargs):
         #core.chapter_id = chapter_id
         
         keyboard_controller = KeyboardControl(core=core)
-
         core.input_block = NonBlockingInput()
 
         with Live(

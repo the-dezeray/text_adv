@@ -1,5 +1,5 @@
 from util.logger import logger, event_logger
-from ui.options import Option, Choices,ui_text_panel,choose_me
+from ui.options import Option,ui_text_panel,choose_me
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

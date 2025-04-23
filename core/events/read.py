@@ -1,4 +1,4 @@
-from ui.options import Option, Choices,choose_me
+from ui.options import Option, choose_me
 from util.logger import logger, event_logger
 from rich.panel import Panel
 from rich.table import Table
