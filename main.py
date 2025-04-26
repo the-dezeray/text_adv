@@ -76,7 +76,7 @@ def main(**kwargs):
         subchapter = kwargs.get("subchapter", "areas_to_explore.yaml")
 
         core = Core()
-        core.rich_console = Console()
+        core.rich_console = Console(color_system="truecolor",style="bold black",quiet=True)
         install(show_locals=True, console=core.rich_console)
         core.chapter_id = chapter_id
         core.rich_console.force_terminal = True

@@ -6,7 +6,7 @@ from rich.panel import Panel
 from rich.align import Align
 from rich.rule import Rule
 from rich import box
-
+from ui.components import player_tab,command_mode_layout
 from ui.options import Option
 from rich.layout import Layout
 from typing import TYPE_CHECKING, Tuple
@@ -91,9 +91,9 @@ class LayoutInGame(CustomLayout):
         )
 
         if self.core.command_mode:
-            self.core.console.right = self.core.console.command_mode_layout()
-        layout["left"].update(self.core.console.player_tab())
-        layout["right"].update(self.core.console.right)
+            self.core.console.right = command_mode_layout(self.core)
+        layout["left"].update(player_tab(self.core))
+        #layout["right"].update(self.core.console.right)
         table = None
         if self.core.console.state == "MAIN":
             table: Table = self.core.console.fill_ui_table()

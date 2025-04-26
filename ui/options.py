@@ -19,7 +19,6 @@ def yy():
 
 
 class Option:
-    """Represents a selectable or non-selectable item in the UI."""
     def __init__(
         self,
         text: str = "",
@@ -33,21 +32,6 @@ class Option:
         on_select: Optional[Callable] = None,
         core: Optional["Core"] = None, # Added type hint
     ) -> None:
-        """
-        Initializes an Option object.
-
-        Args:
-            text (str): The text displayed for the option. Defaults to "".
-            func (Optional[Callable]): The function executed when the option is selected. Defaults to None.
-            preview (Optional[Callable]): A function to generate a preview when the option is highlighted. Defaults to None.
-            next_node (Optional[str]): The identifier of the next node in a sequence or flow. Defaults to None.
-            selectable (bool): Determines if the option can be selected by the user. Defaults to True.
-            type (Literal[...] "" ): The category or type of the option. Defaults to "".
-            h_allign (str): Horizontal alignment of the option's text. Defaults to "center".
-            v_allign (str): Vertical alignment of the option's text. Defaults to "middle".
-            on_select (Optional[Callable]): A function called immediately upon selection. Defaults to a placeholder.
-            core (Optional["Core"]): A reference to the main application core object. Defaults to None.
-        """
         self.left_padding = 0
         self.style = ""
         self.core = core
@@ -65,15 +49,11 @@ class Option:
 
     @property
     def selected(self) -> bool:
-        """Gets the selection state of the option."""
         return self._selected
 
     @selected.setter
     def selected(self, value: bool) -> None:
-        """
-        Sets the selection state and triggers the preview function if selected.
-        Requires the 'core' attribute to be set for refreshing the console.
-        """
+
         self._selected = value
         # Trigger preview only if selected, preview function exists, and core is available
         if self._selected and self.preview and self.core and self.core.console:
@@ -83,20 +63,6 @@ class Option:
     def render(
         self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None
     ) -> ConsoleRenderable:
-        """
-        Abstract render method to be implemented by subclasses.
-
-        Args:
-            style (str): The style string for rendering. Defaults to "".
-            left_padding (int): The amount of left padding. Defaults to 0.
-            core (Optional["Core"]): Reference to the core object. Defaults to None.
-
-        Returns:
-            ConsoleRenderable: The Rich renderable object for this option.
-
-        Raises:
-            NotImplementedError: If the subclass does not implement this method.
-        """
         # Subclasses should implement how they render based on their state
         raise NotImplementedError("Subclasses must implement the render method.")
 
@@ -109,17 +75,6 @@ class buffer_create_weapons:
         core: "Core" = None,
         extra: bool = False
     ):
-        """
-        Initializes the weapon buffer.
-
-        Args:
-            ary (list["Weapon"], optional): A list of Weapon objects. Defaults to None.
-            core ("Core", optional): Reference to the main application core. Defaults to None.
-            extra (bool): Flag for potentially different display modes. Defaults to False.
-
-        Raises:
-            ValueError: If core is None when initializing.
-        """
         if core is None:
             raise ValueError("Core must be provided for buffer_create_weapons.")
         self.extra = extra
@@ -153,15 +108,6 @@ class buffer_create_weapons:
         return options_list
 
     def render(self, core: Optional["Core"] = None) -> ConsoleRenderable:
-        """
-        Renders the list of weapon options within a layout or grid.
-
-        Args:
-            core (Optional["Core"]): Reference to the core object (can override instance core). Defaults to None.
-
-        Returns:
-            ConsoleRenderable: A Panel or Table containing the rendered weapon options.
-        """
         renderables = [option.render() for option in self.ary] # Render each weapon option
 
         grid = ui_grid(colomuns=1)
@@ -175,13 +121,27 @@ class buffer_create_weapons:
             layout.split_row(Layout(name="options"), Layout(name="preview"))
             try:
                 # Attempt to load and display an icon
-                pixels = Pixels.from_image_path("icon1.png")
-                layout["preview"].update(Panel(pixels, height=28))
+                cc =[]
+                for i in range(0,49):
+                    cc.append(f"a/{i}.png")
+                cc =["1.png","2.png","3.png"]
+                import random
+                icon = random.choice(cc)
+                from rich_pixels import FullcellRenderer
+                pixels = Pixels.from_image_path(icon,resize=(16,16))
+                a = Table.grid(expand=False)
+                a.add_column()
+                a.add_row(Panel(pixels,border_style="cyan",subtitle="reaper",subtitle_align="right",expand=False,width=23))
+
+                a.add_row("󰦝 dmg [ [bold red1]43[/bold red1] ]")
+                a.add_row("󰄽 spd 23")
+                a.add_row("[white]EFFECTS[/white]\n [red]bleed 1[/red][cyan]frost[/cyan]\n slow and blinding")
+                layout["preview"].update(Padding(a, expand=False))
             except Exception: # Catch potential file not found or loading errors
                  layout["preview"].update(Panel("[dim]No preview[/dim]", height=28)) # Fallback text
 
             layout["options"].update(grid)
-            return Panel(layout, expand=False, height=32)
+            return Padding(layout, expand=False,)
         else:
             # If 'extra' is true, just return the grid
             return grid
@@ -195,14 +155,7 @@ class buffer_display_choices:
         title: str = "",
         icon: str = "" # Icon parameter seems unused in render
     ):
-        """
-        Initializes the choices buffer.
 
-        Args:
-            ary (list[dict], optional): List of choice dictionaries. Each dict should have 'text', 'function', 'next_node'. Defaults to None.
-            title (str): Title for the choice section (unused in render). Defaults to "".
-            icon (str): Icon identifier (unused in render). Defaults to "".
-        """
         self.raw_choices = ary or []
         self.h_allign = "left"
         self.title = title
@@ -250,14 +203,7 @@ class buffer_display_menu_items:
         title: str = "",
         icon: str = "" # Icon parameter seems unused in render
     ):
-        """
-        Initializes the menu items buffer.
 
-        Args:
-            ary (list[dict], optional): List of menu item dictionaries. Each dict should have 'text', 'function', 'next_node'. Defaults to None.
-            title (str): Title for the menu section (unused in render). Defaults to "".
-            icon (str): Icon identifier (unused in render). Defaults to "".
-        """
         self.raw_items = ary or []
         self.h_allign = "left"
         self.title = title
@@ -298,15 +244,7 @@ class buffer_display_menu_items:
 
 
 def ui_grid(colomuns: int = 1) -> Table:
-    """
-    Creates a simple Rich Table configured as a borderless grid.
 
-    Args:
-        colomuns (int): The number of columns for the grid. Defaults to 1.
-
-    Returns:
-        Table: A Rich Table object ready for rows to be added.
-    """
     grid = Table.grid(expand=True) # Expand grid to fill available space
     for _ in range(colomuns):
         grid.add_column()
@@ -314,20 +252,7 @@ def ui_grid(colomuns: int = 1) -> Table:
 
 
 def ui_text_panel(option: Optional[Option] = None, text: str = "") -> Padding:
-    """
-    Creates a simple text element wrapped in Padding. If an option is provided
-    and selected, applies a specific style.
 
-    Args:
-        option (Optional[Option]): An Option object whose text and state might be used. Defaults to None.
-        text (str): Explicit text to display. If empty, uses option's text. Defaults to "".
-
-    Returns:
-        Padding: A Padding object containing the text.
-
-    Raises:
-        ValueError: If both `option` and `text` are not provided.
-    """
     display_text = text
     style = "" # Default style
 
@@ -342,7 +267,7 @@ def ui_text_panel(option: Optional[Option] = None, text: str = "") -> Padding:
             raise ValueError("ui_text_panel requires either an 'option' or 'text'.")
 
     # Return text wrapped in Padding, potentially with a style
-    return Padding(Text(display_text, style=style))
+    return Padding(display_text, style=style)
 
 
 def WeaponOption(
@@ -351,18 +276,6 @@ def WeaponOption(
     preview: Optional[Callable] = None,
     core: Optional["Core"] = None
 ) -> "wep__ui":
-    """
-    Factory function to create a 'wep__ui' instance for a weapon.
-
-    Args:
-        weapon ("Weapon"): The weapon object.
-        func (Callable): The function to execute when this weapon option is selected.
-        preview (Optional[Callable]): Function to generate a preview. Defaults to None.
-        core (Optional["Core"]): Reference to the core application object. Defaults to None.
-
-    Returns:
-        wep__ui: An initialized weapon UI option.
-    """
     return wep__ui(
         text=weapon.name,
         func=func,
@@ -382,20 +295,7 @@ def new_ui_button(
     bottom_padding: int = 0,
     left_padding: int = 0, # This seems overridden based on selection state
 ) -> Padding:
-    """
-    Creates a UI element resembling a button using Rich Panel and Padding.
-    Highlights the button when the associated option is selected.
 
-    Args:
-        option (Option): The Option object associated with this button.
-        top_padding (int): Top padding units. Defaults to 0.
-        right_padding (int): Right padding units. Defaults to 0.
-        bottom_padding (int): Bottom padding units. Defaults to 0.
-        left_padding (int): Base left padding units (modified when selected). Defaults to 0.
-
-    Returns:
-        Padding: A Padding object containing the styled Panel.
-    """
     button_height = 3
     current_left_padding = left_padding # Use the provided base padding
     border_style = "" # Default border style
@@ -448,25 +348,11 @@ def ui_table() -> Table:
 
 
 def Loader() -> Padding:
-    """
-    Creates a simple "Loading..." indicator panel wrapped in Padding.
-
-    Returns:
-        Padding: A Padding object containing the loading Panel.
-    """
     return Padding(Panel("Loading..."), pad=(2, 4, 0, 4), expand=False)
 
 
 def Reward(ary: list[str] = None) -> Panel:
-    """
-    Displays a list of reward strings in a Panel.
 
-    Args:
-        ary (list[str], optional): A list of strings representing rewards. Defaults to None.
-
-    Returns:
-        Panel: A Panel containing the list of rewards.
-    """
     rewards = ary or []
     grid = Table.grid(expand=True) # Use a grid to list rewards
     grid.add_column()
@@ -476,16 +362,7 @@ def Reward(ary: list[str] = None) -> Panel:
 
 
 def get_selectable_options(options: list) -> list[Option]:
-    """
-    Filters a list of UI elements and extracts all selectable Option objects.
-    It handles nested options within buffer objects.
 
-    Args:
-        options (list): A list potentially containing Option objects or buffer objects.
-
-    Returns:
-        list[Option]: A flattened list containing only the selectable Option instances.
-    """
     selectable_list = []
     # Iterate in reverse to maintain visual order when selecting (usually bottom-up)
     for item in reversed(options):
@@ -543,17 +420,6 @@ class wep__ui(Option):
         self.type = "weapon" # Ensure type is set
 
     def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
-        """
-        Renders the weapon option, highlighting it when selected.
-
-        Args:
-            style (str): Base style (unused, determined by selection). Defaults to "".
-            left_padding (int): Base padding (unused). Defaults to 0.
-            core (Optional["Core"]): Core reference. Defaults to None.
-
-        Returns:
-            ConsoleRenderable: A Panel (if selected) or Padding (if not).
-        """
         # Use a Unicode arrow or similar indicator
         indicator = "\uf0da" # Example: Right-pointing arrow
         display_text = f"{indicator} {self.text} "
@@ -569,24 +435,9 @@ class wep__ui(Option):
 
 
 class new__ui(Option):
-    """General purpose UI option, often used for choices or simple actions."""
     def __init__(self, **kwargs):
-        """Initializes a general UI element, forwarding arguments to Option."""
         super().__init__(**kwargs)
-        # Type might be set via kwargs or defaults to ""
-
     def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
-        """
-        Renders the general UI option, highlighting it when selected.
-
-        Args:
-            style (str): Base style (unused). Defaults to "".
-            left_padding (int): Base padding (unused). Defaults to 0.
-            core (Optional["Core"]): Core reference. Defaults to None.
-
-        Returns:
-            ConsoleRenderable: A Panel (if selected) or Padding (if not).
-        """
         indicator = "\uf0da"
         display_text = f"{indicator} {self.text} "
 
@@ -605,69 +456,33 @@ class choose_me(Option):
     def __init__(self, **kwargs):
         """Initializes a 'choose_me' UI element, forwarding arguments to Option."""
         super().__init__(**kwargs)
-        # Type might be set via kwargs
 
     def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> Panel:
-        """
-        Renders the 'choose_me' option as a Panel, highlighting border when selected.
-
-        Args:
-            style (str): Base style (unused). Defaults to "".
-            left_padding (int): Base padding (potentially modified internally). Defaults to 0.
-            core (Optional["Core"]): Core reference. Defaults to None.
-
-        Returns:
-            Panel: A Panel representing the option.
-        """
-        current_style = "" # Default empty style
-        # Padding is handled externally if needed, not added here directly.
-        # self.left_padding modification removed as it's not standard practice in render
-
         if self.selected:
             current_style = "bold green"
-            # Preview handled by setter
-
-        # Always render as a Panel, change style based on selection
         return Panel(Align.center(self.text), style=current_style, expand=False)
 
 
 class menu__ui(Option):
-    """UI representation for a main menu item, often using ASCII art."""
     def __init__(self, **kwargs):
-        """Initializes a menu UI element, forwarding arguments to Option."""
-        # Default horizontal alignment to left for menu items
         if 'h_allign' not in kwargs:
             kwargs['h_allign'] = "left"
         super().__init__(**kwargs)
         self.type = "menu" # Ensure type is set
 
     def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
-        """
-        Renders the menu item using ASCII art text, highlighting when selected.
-
-        Args:
-            style (str): Base style (unused). Defaults to "".
-            left_padding (int): Base padding (unused). Defaults to 0.
-            core (Optional["Core"]): Core reference. Defaults to None.
-
-        Returns:
-            ConsoleRenderable: A Panel or Padding containing the ASCII art text.
-        """
         try:
-            from art import text2art # Optional dependency
-            # Generate ASCII art, fallback to plain text if 'art' fails
+            from art import text2art 
             ctext = text2art(self.text, font="tarty2") # Example font
         except ImportError:
-            ctext = self.text # Fallback to plain text
-        except Exception: # Catch errors during text2art generation
+            ctext = self.text 
+        except Exception: 
              ctext = f"[italic] {self.text} (art error) [/italic]"
 
         if self.selected:
             self.style = "bold green"
-            # Preview handled by setter
-            # Wrap selected ASCII art in a Panel for potential border/background
+
             return Panel(Align.center(f"[{self.style}]{ctext}[/{self.style}]"), border_style=self.style, expand=False)
         else:
-            self.style = "dim grey93" # Dim style for non-selected
-            # Non-selected is just padded text
+            self.style = "dim grey93" #
             return Padding(Align.center(f"[{self.style}]{ctext}[/{self.style}]"), (0,0,0,0))

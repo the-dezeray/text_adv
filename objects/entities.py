@@ -22,7 +22,7 @@ class entity:
         self.dmg = level * 30
         self.armor = level * 1.5
         self.speed = level * 3
-        self.hp = level * 40
+        self.hp = level * 6011
         self.turn = False
         self.rank = ""
 
