@@ -20,7 +20,7 @@ scrolls = {
 def read(core, scroll: str = "ancient_scroll") -> None:
     string = scrolls.get(scroll, None)
     if string != None:
-        core.options = []
+        core.options.clear()
 
         core.options.append(
             ui_text_panel(text=string)

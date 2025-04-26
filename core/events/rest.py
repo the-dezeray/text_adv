@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 @event_logger
 def rest(core: "Core" = None):
     logger.info("You rest for a while")
-    core.options = []
+    core.options.clear()
     core.options(ui_text_panel(text="You rest for a while"))
     core.options(ui_text_panel())
     core.options.append(

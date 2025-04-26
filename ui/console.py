@@ -10,7 +10,7 @@ from ui.options import ui_table
 from ui.options import Option, get_selectable_options,buffer_display_choices,buffer_create_weapons
 from ui.layouts import LayoutInGame, LayoutDefault, Lsd, LayoutStartMenu, LayoutLoading,LayoutInventory
 from rich.console import ConsoleRenderable, group, RichCast
-
+from ui.display_queue import DisplayQueue
 from rich.console import group
 from typing import TYPE_CHECKING, Tuple, Optional,Literal,List
 from enum import Enum
@@ -49,7 +49,7 @@ class Console:
         self.temp_right_tab: Optional[ConsoleRenderable] = None
         self.current_layout = LayoutDefault()
         self.current_layout.initialize(core=self.core)
-
+        self.display_queue = DisplayQueue(console = Console) 
     def show_weapon(self):
         from rich_pixels import Pixels
         pixels = Pixels.from_image_path("icon1.png",)
@@ -100,7 +100,7 @@ class Console:
         _layout: Layout = self.current_layout.update()
         self.core.rich_live_instance.update(_layout)
     def fill_inventory_table(self)->Table:
-        self.core.options = []
+        self.core.options.clear()
         self.core.options.append(Panel("weapons"))
         #self.core.options.append(Choices(ary=self.core.player.inventory.weapons(),core=self.core))
         return self.fill_ui_table()
@@ -130,15 +130,15 @@ class Console:
 
         return table
     def _transtion_layout(self,layout):
-            self.core.options = []
+            self.core.options.clear()
             self.layout = layout
            
     def show_inventory(self):
         self.layout = "INVENTORY"
-        self.options = []
+        self.options.clear()
         self.state = "INVENTORY"
     def show_menu(self):
-        self.core.options = []
+        self.core.options.clear()
         from ui.ad import menu_items
         self.core.options.extend(menu_items(self.core))
         self.layout = "MENU"

@@ -45,14 +45,14 @@ def fight(
         logger.info("entity is not defined in fight")
 
     else:
-        core.options = []
+        core.options.clear()
         core.console.refresh()
         core.move_on = False
         core.entity = entity
         core.player.turn = True
         core.in_fight = True
         core.console.initialize_fight_mode()
-        core.options = []
+        core.options.clear()
         _fight(core)
 
 
@@ -216,8 +216,9 @@ def _fight(core: "Core") -> None:
             if isinstance(i,buffer_create_weapons):
                 core.options.remove(i)
         # Append any previous messages (as per original logic)
-        core.options += core.ant
-        core.ant = []
+
+        core.options.extend(core.ant)
+
 
 
         ary = player.inventory.weapons(type="attack")
@@ -245,7 +246,7 @@ def _fight(core: "Core") -> None:
             pass  # console.print("you lose")
 
     if entity.hp <= 0:
-        core.options = []
+        core.options.clear()
         core.options.append(ui_text_panel(text="you attained the [red]sword of death![/]"))
         from objects.weapon import Weapon
 
