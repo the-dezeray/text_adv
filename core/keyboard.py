@@ -95,7 +95,7 @@ class KeyboardControl:
         self.execute_selected_option()
 
     def scroll_options(self, value: int):
-        selectable_options: list["Option"] = get_selectable_options(self.core.options)
+        selectable_options: list["Option"] = self.core.console.get_selectable_options()
         options_len: int = len(selectable_options)
 
         if options_len == 0:  # No selectable options; return early.
@@ -112,7 +112,7 @@ class KeyboardControl:
     def execute_selected_option(self):
         core: Core = self.core
 
-        for option in get_selectable_options(core.options):
+        for option in core.console.get_selectable_options():
             if option.selected == True:
                 option.selected = False
                 if isinstance(option.func, str):

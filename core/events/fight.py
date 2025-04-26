@@ -21,7 +21,7 @@ def deal_damage(core:"Core", weapon:"Weapon") -> None:
         None
     """
     core.entity.hp -= weapon.damage
-    core.options.append(
+    core.console.print(
         ui_text_panel(text=f"[yellow]dealt[/yellow] {weapon.damage} damage")
     )
     _fight(core)
@@ -45,14 +45,14 @@ def fight(
         logger.info("entity is not defined in fight")
 
     else:
-        core.options.clear()
+        core.console.clear_display()
         core.console.refresh()
         core.move_on = False
         core.entity = entity
         core.player.turn = True
         core.in_fight = True
         core.console.initialize_fight_mode()
-        core.options.clear()
+        core.console.clear_display()
         _fight(core)
 
 
@@ -106,11 +106,11 @@ def hhhh(core):
     damage_amount = 45
 
     # 1. Rule to start the player's action sequence
-    core.options.append(Rule(f"[bold sky_blue1]{player_icon} Player Turn[/]", style="sky_blue1", align="left"))
+    core.console.print(Rule(f"[bold sky_blue1]{player_icon} Player Turn[/]", style="sky_blue1", align="left"))
 
     # 2. Descriptive Attack Text
     attack_text = ui_text_panel(text = f"You lunge, {attack_icon} striking the {target_icon}[bold red]{target_name}[/bold red]!")
-    core.options.append(attack_text)
+    core.console.print(attack_text)
 
     # 3. Damage Report - With Visual Bar
     #    Adjust the number of blocks based on damage or target HP%
@@ -120,7 +120,7 @@ def hhhh(core):
     damage_bar = damage_bar_char * bar_length
     # nf-mdi-heart_broken (U+F0ECF) 󰻏
     damage_icon = "\U000F0ECF"
-    core.options.append(
+    core.console.print(
         ui_text_panel(text = f"{damage_icon} Dealt [bold bright_red]{damage_amount}[/] damage! [{_get_damage_color(damage_amount)}]{damage_bar}[/]")
     )
     # --- Start of section to replace ---
@@ -158,7 +158,7 @@ def hhhh(core):
         effects_panel = Panel(effects_table, title=header, title_align="left", border_style="dim")
 
         # Append the panel to the core options
-        core.options.append(effects_panel)
+        core.console.print(effects_panel)
 
 
         # --- End of section to replace ---
@@ -181,13 +181,13 @@ def hhhh(core):
             extra_turn_line = ui_text_panel(text = f"{event_icon} [{shock_style}]Shock[/] ripples through the enemy! You gain an {extra_turn_icon}[{extra_turn_style}] Extra Turn![/]")
         
             line =  f"{event_icon} [{shock_style}]Impact[/] Skull Fructure  INCAPABLE OF CASTING MAGICAL SPELLS FOR 2 TURNS  [red1]BLEED [/red1]"
-            core.options.append(Panel(renderable=line, title="Shock Triggered", border_style="yellow",title_align="left"))
+            core.console.print(Panel(renderable=line, title="Shock Triggered", border_style="yellow",title_align="left"))
 
-            core.options.append(extra_turn_line)
+            core.console.print(extra_turn_line)
         # Add elif/else for other potential special events (crits, misses, etc.)
 
         # 6. End of Player Action Rule
-        core.options.append(Rule(style="sky_blue1"))    
+        core.console.print(Rule(style="sky_blue1"))    
 def _fight(core: "Core") -> None:
     """
     Handles the fight logic, alternating turns between the player and the entity.
@@ -195,14 +195,14 @@ def _fight(core: "Core") -> None:
     Args:
         core: The core game object containing game state.
     """
-    for option in core.options:
+    for option in core.console.renderables:
         option.selectable = False
 
     player: Player = core.player
     entity = core.entity
 
-    if len(core.options) > 1:
-        last = core.options[-1]
+    if len(core.console.renderables) > 1:
+        last = core.console.renderables[-1]
 
     # --- Nerd Font Icons & Styles Configuration (Corrected Escapes) ---
     # Make sure your terminal font supports these icons!
@@ -212,29 +212,29 @@ def _fight(core: "Core") -> None:
      # Assuming core.options holds Rich renderables
 
     if player.turn:
-        for i in reversed(core.options):
+        for i in reversed(core.console.renderables):
             if isinstance(i,buffer_create_weapons):
-                core.options.remove(i)
+                core.console.renderables.remove(i)
         # Append any previous messages (as per original logic)
 
-        core.options.extend(core.ant)
+        core.console.print(core.ant)
 
 
 
         ary = player.inventory.weapons(type="attack")
-        core.options.append(buffer_create_weapons(ary, core))
+        core.console.print(buffer_create_weapons(ary, core))
         # --- End of Turn Transition ---
         player.turn = False
         entity.turn = True # Or switch to the next entity in the turn order
 
 
     else:
-        a = core.options.pop()
-        core.options.pop()
+        a = core.console.renderables.pop()
+        core.console.renderables.pop()
         hhhh(core)
-        core.options.append(ui_text_panel( text="You prepare to defend "))
+        core.console.print(ui_text_panel( text="You prepare to defend "))
         ary = player.inventory.weapons(type="defence")
-        core.options.append(buffer_create_weapons(ary, core))
+        core.console.print(buffer_create_weapons(ary, core))
         entity.deal_damage(player)
         entity.turn = False
         player.turn = True
@@ -246,13 +246,13 @@ def _fight(core: "Core") -> None:
             pass  # console.print("you lose")
 
     if entity.hp <= 0:
-        core.options.clear()
-        core.options.append(ui_text_panel(text="you attained the [red]sword of death![/]"))
+        core.console.clear_display()
+        core.console.print(ui_text_panel(text="you attained the [red]sword of death![/]"))
         from objects.weapon import Weapon
 
         w = Weapon.generate(name="sword")
    
         a = choose_me(text="You win!", func=core.goto_next)
-        core.options.append(choose_me(text="You win!", func=core.goto_next) )
-        core.options.append(buffer_create_weapons(ary=[w, w], core=core,extra=True))
+        core.console.print(choose_me(text="You win!", func=core.goto_next) )
+        core.console.print(buffer_create_weapons(ary=[w, w], core=core,extra=True))
 

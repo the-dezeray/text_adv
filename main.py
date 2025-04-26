@@ -83,7 +83,7 @@ def main(**kwargs):
         core.rich_console.force_interactive = True
         core.rich_console.stderr = True
         core.rich_console.quiet = False
-        core.console.show_menu()
+        
         #core.chapter_id = chapter_id
         
         keyboard_controller = KeyboardControl(core=core)
@@ -96,7 +96,7 @@ def main(**kwargs):
             screen=True,
             console=core.rich_console,
         ) as core.rich_live_instance:
-            core.console.refresh()
+            core.console.show_menu()
             #core.continue_game()
             while core.running:
                                 

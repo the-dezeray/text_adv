@@ -26,7 +26,7 @@ class LayoutCharacterSelection(CustomLayout):
     def initialize(self, core: "Core"):
         self.core = core
         #core.options = [Choices(ary=[Op() for _ in range(4)], do_build=False)]
-        core.options[0].ary[0].selected = True
+        core.console.renderables[0].ary[0].selected = True
 
     def update(self) -> Layout:
         table = self.core.console.fill_ui_table()
@@ -47,7 +47,7 @@ class Lsd(CustomLayout):
         self.core = core
         # TODO
         # core.options = [Choices(ary=[Op() for _ in range(4)], do_list_build=False)]
-        core.options[0].ary[0].selected = True
+        core.console.renderables[0].ary[0].selected = True
 
     def update(self) -> Layout:
         layout = Layout()
@@ -162,7 +162,7 @@ class LayoutStartMenu(CustomLayout):
 class LayoutLoading(CustomLayout):
     def initialize(self, core: "Core"):
         self.core = core
-        self.core.options = ["dsiree"]
+        self.core.console.renderables= ["dsiree"]
         from core.timer import Timer
         self.core.timer = Timer(time = 3,func =core.from_loading_to_start_menu)
     def update(self):

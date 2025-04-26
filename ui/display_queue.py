@@ -5,7 +5,7 @@ class DisplayQueue:
     def append(self, item):
         
         self._data.append(item)
-        self.core.console.refresh()
+        self.console.refresh()
 
 
     def __getitem__(self, index):
@@ -57,7 +57,7 @@ class DisplayQueue:
         self._data.reverse()
 
     def copy(self):
-        return OPTIONS(self._data.copy())
+        return DisplayQueue(    self._data.copy())
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self._data!r})"

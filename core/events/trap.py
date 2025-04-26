@@ -9,7 +9,7 @@ def get_random():
 @event_logger
 def trap(core=None, type: str = None):
     trap = {"name": "fire trap", "damage": 1}
-    core.options.append(
+    core.console.print(
         choose_me(
             renderable=Option(
                 text="You have been hit by a trap", func=lambda: core.goto_next()

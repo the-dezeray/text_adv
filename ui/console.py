@@ -14,7 +14,7 @@ from ui.display_queue import DisplayQueue
 from rich.console import group
 from typing import TYPE_CHECKING, Tuple, Optional,Literal,List
 from enum import Enum
-
+from ui.options import buffer_display_menu_items
 from ui.components import stats_tab
 if TYPE_CHECKING:
     from core.core import Core
@@ -49,7 +49,7 @@ class Console:
         self.temp_right_tab: Optional[ConsoleRenderable] = None
         self.current_layout = LayoutDefault()
         self.current_layout.initialize(core=self.core)
-        self.display_queue = DisplayQueue(console = Console) 
+        self.renderables = DisplayQueue(console = self  ) 
     def show_weapon(self):
         from rich_pixels import Pixels
         pixels = Pixels.from_image_path("icon1.png",)
@@ -76,11 +76,17 @@ class Console:
         return grid
 
 
-
+    def clear_display(self):
+        self.renderables.clear()
     def clean(self):
         self.core.chapter_id = "1a"
         self.core.continue_game()
-
+    def print(self, item : any) -> None:
+        if isinstance(item,list):
+            for i in item:
+                self.renderables.append(i)
+        else:
+            self.renderables.append(item)
     @property
     def layout(self) -> Layout:
         return self._layout
@@ -99,20 +105,20 @@ class Console:
         """Refresh the console layout by updating the rich live object with the current layout"""
         _layout: Layout = self.current_layout.update()
         self.core.rich_live_instance.update(_layout)
+
     def fill_inventory_table(self)->Table:
-        self.core.options.clear()
-        self.core.options.append(Panel("weapons"))
-        #self.core.options.append(Choices(ary=self.core.player.inventory.weapons(),core=self.core))
+        self.clear_display()
+        self.print(Panel("weapons"))
         return self.fill_ui_table()
     def fill_ui_table(self) -> Table:
         """returns rich table after filling it with options"""
         _core = self.core
         table = ui_table()
-        options = _core.options
+
       
         from rich.rule import Rule
         
-        for option in options:
+        for option in self.renderables:
             if isinstance(option, (Option, buffer_display_choices,buffer_create_weapons)):
                 renderable = option.render(core=_core)
                 table.add_row(Align(renderable, align=option.h_allign))
@@ -121,7 +127,7 @@ class Console:
             else:
                 table.add_row(option)
 
-        ary = get_selectable_options(_core.options)
+        ary = _core.console.get_selectable_options()
         # if selectable item is selected select the first one
         if ary and all(not i.selected for i in ary):
             _core.selected_option = 0
@@ -130,15 +136,29 @@ class Console:
 
         return table
     def _transtion_layout(self,layout):
-            self.core.options.clear()
+            self.core.console.clear_display()
             self.layout = layout
            
     def show_inventory(self):
         self.layout = "INVENTORY"
-        self.options.clear()
+        self.options.clear_display()
         self.state = "INVENTORY"
     def show_menu(self):
-        self.core.options.clear()
+        self.core.console.clear_display()
         from ui.ad import menu_items
-        self.core.options.extend(menu_items(self.core))
+        self.core.console.print(menu_items(self.core))
         self.layout = "MENU"
+    def get_selectable_options(self) -> list[Option]:
+
+        selectable_list = []
+        # Iterate in reverse to maintain visual order when selecting (usually bottom-up)
+        for item in reversed(self.renderables):
+            # Check if the item is a buffer containing a list of options (ary)
+            if isinstance(item, (buffer_display_choices, buffer_create_weapons, buffer_display_menu_items)):
+                # Add all options from the buffer's list
+                selectable_list.extend(item.ary)
+            # Check if the item itself is a selectable Option subclass
+            elif isinstance(item, Option) and item.selectable:
+                selectable_list.append(item)
+            # Add checks for other potential container types if needed
+        return selectable_list

@@ -20,12 +20,12 @@ scrolls = {
 def read(core, scroll: str = "ancient_scroll") -> None:
     string = scrolls.get(scroll, None)
     if string != None:
-        core.options.clear()
+        core.console.clear_display()
 
-        core.options.append(
+        core.console.print(
             ui_text_panel(text=string)
         )
-        core.options.append(choose_me(text="Proceed", func=lambda: core.goto_next(), selectable=True))
+        core.console.print(choose_me(text="Proceed", func=lambda: core.goto_next(), selectable=True))
         grid = Table.grid()
         grid.add_column()
 

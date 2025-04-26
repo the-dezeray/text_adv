@@ -15,7 +15,7 @@ def run(
     core: "Core", fail: Optional[bool] = None, decision: Optional[bool] = None
 ) -> None:
     if decision is None:
-        core.options.append(
+        core.console.print(
             Loader(
                 "attempting escape",
                 function=lambda: run(core=core, decision=True, fail=fail),
