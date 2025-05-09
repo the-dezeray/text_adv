@@ -2,35 +2,35 @@
 def menu_items(core):
     console = core.console
     from art import text2art
-    from ui.options import menu__ui,choose_me
+    from ui.options import MenuOption,Option
     # Define menu options with ASCII text
     menu_items = [
-    menu__ui(
+    MenuOption(
         text="Continue",
         func=lambda: console._transtion_layout("INGAME"),
         next_node=None,
         type="menu",
         
     ),
-    menu__ui(
+    MenuOption(
         text="New game",
         func=lambda: console._transtion_layout("NEWGAME"),
         next_node=None,
         type="menu"
     ),
-    menu__ui(
+    MenuOption(
         text="Settings",
         func=lambda: console._transtion_layout("SETTINGS"),
         next_node=None,
         type="menu"
     ),
-    menu__ui(
+    MenuOption(
         text="About us",
         func=lambda:console._transtion_layout("ABOUTUS"),
         next_node=None,
         type="menu"
     ),
-    menu__ui(
+    MenuOption(
         text="Leave",
         func=lambda: console.TERMINATE(),
         next_node=None,

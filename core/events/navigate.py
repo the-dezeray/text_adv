@@ -1,6 +1,6 @@
-from ui.options import Option
+from ui.options import CustomRenderable
 from util.logger import logger, event_logger
-from ui.options import ui_text_panel,choose_me
+from ui.options import ui_text_panel,Option
 @event_logger
 def navigate(core=None, location="treasure"):
     core.console.clear_display()
@@ -10,6 +10,6 @@ def navigate(core=None, location="treasure"):
     )
 
              
-    core.console.print(choose_me(text="Open", func=lambda: core.goto_next(), ))
-    core.console.print(choose_me(text="Leave", func=lambda: core.goto_next(),))
+    core.console.print(Option(text="Open", func=lambda: core.goto_next(), ))
+    core.console.print(Option(text="Leave", func=lambda: core.goto_next(),))
 

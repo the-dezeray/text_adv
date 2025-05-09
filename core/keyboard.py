@@ -7,7 +7,7 @@ from util.logger import logger
 from ui.options import get_selectable_options
 from typing import TYPE_CHECKING
 
-from ui.options import Option
+from ui.options import CustomRenderable
 
 if TYPE_CHECKING:
     ...
@@ -95,7 +95,7 @@ class KeyboardControl:
         self.execute_selected_option()
 
     def scroll_options(self, value: int):
-        selectable_options: list["Option"] = self.core.console.get_selectable_options()
+        selectable_options: list["CustomRenderable"] = self.core.console.get_selectable_options()
         options_len: int = len(selectable_options)
 
         if options_len == 0:  # No selectable options; return early.
@@ -118,15 +118,18 @@ class KeyboardControl:
                 if isinstance(option.func, str):
                     core.next_node = option.next_node
                     core.execute_yaml_function(option.func)
+                    option.selectable = False
                 elif callable(option.func):
                     if option.next_node is not None:
                         core.next_node = option.next_node
                     option.func()
+                    option.selectable = False
                 else:
                     core.chapter_id = (
                         option.next_node
                         if option.next_node is not None
                         else core.next_node
                     )
+                    option.selectable = False
                     core.continue_game()
          

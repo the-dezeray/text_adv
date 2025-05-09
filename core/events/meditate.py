@@ -1,4 +1,4 @@
-from ui.options import Option
+from ui.options import CustomRenderable
 from util.logger import event_logger
 from typing import TYPE_CHECKING
 

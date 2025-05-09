@@ -1,4 +1,4 @@
-from ui.options import Option, choose_me
+from ui.options import CustomRenderable, Option
 from util.logger import logger, event_logger
 
 
@@ -10,8 +10,8 @@ def get_random():
 def trap(core=None, type: str = None):
     trap = {"name": "fire trap", "damage": 1}
     core.console.print(
-        choose_me(
-            renderable=Option(
+        Option(
+            renderable=CustomRenderable(
                 text="You have been hit by a trap", func=lambda: core.goto_next()
             )
         )

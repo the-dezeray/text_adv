@@ -1,7 +1,7 @@
 """core of the game"""
 
 from util.file_handler import load_yaml_file  # pylint: disable=unused-import
-from ui.options import Option,buffer_display_choices
+from ui.options import CustomRenderable,GridOfChoices
 from rich.layout import Layout
 from objects.entities import Entities  # pylint: disable=unused-import
 from objects.item import Items
@@ -212,7 +212,7 @@ class Core:
             self.console.print(Padding(ui_text))    
 
             # or index,choice in enumerate(current_chapter["choices"]):
-            self.console.print(buffer_display_choices(current_chapter["choices"]))
+            self.console.print(GridOfChoices(current_chapter["choices"]))
         self.selected_option = len(self.console.renderables)-1
         self.console.renderables[-1].selected = True
         self.console.refresh()

@@ -1,9 +1,9 @@
-from ui.options import Option, WeaponOption
+from ui.options import CustomRenderable, create_weapon_option
 from objects.player import Player
-from ui.options import Reward,buffer_create_weapons
+from ui.options import Reward,GridOfWeapons
 from util.logger import logger, event_logger
 from typing import TYPE_CHECKING, Literal
-from ui.options import ui_text_panel,choose_me
+from ui.options import ui_text_panel,Option
 if TYPE_CHECKING:
     from objects.item import Item
     from core.core import Core
@@ -213,7 +213,7 @@ def _fight(core: "Core") -> None:
 
     if player.turn:
         for i in reversed(core.console.renderables):
-            if isinstance(i,buffer_create_weapons):
+            if isinstance(i,GridOfWeapons):
                 core.console.renderables.remove(i)
         # Append any previous messages (as per original logic)
 
@@ -222,7 +222,7 @@ def _fight(core: "Core") -> None:
 
 
         ary = player.inventory.weapons(type="attack")
-        core.console.print(buffer_create_weapons(ary, core))
+        core.console.print(GridOfWeapons(ary, core))
         # --- End of Turn Transition ---
         player.turn = False
         entity.turn = True # Or switch to the next entity in the turn order
@@ -231,10 +231,10 @@ def _fight(core: "Core") -> None:
     else:
         a = core.console.renderables.pop()
         core.console.renderables.pop()
-        hhhh(core)
+        #hhhh(core)
         core.console.print(ui_text_panel( text="You prepare to defend "))
         ary = player.inventory.weapons(type="defence")
-        core.console.print(buffer_create_weapons(ary, core))
+        core.console.print(GridOfWeapons(ary, core))
         entity.deal_damage(player)
         entity.turn = False
         player.turn = True
@@ -252,7 +252,7 @@ def _fight(core: "Core") -> None:
 
         w = Weapon.generate(name="sword")
    
-        a = choose_me(text="You win!", func=core.goto_next)
-        core.console.print(choose_me(text="You win!", func=core.goto_next) )
-        core.console.print(buffer_create_weapons(ary=[w, w], core=core,extra=True))
+        a = Option(text="You win!", func=core.goto_next)
+        core.console.print(Option(text="You win!", func=core.goto_next) )
+        core.console.print(GridOfWeapons(ary=[w, w], core=core,extra=True))
 

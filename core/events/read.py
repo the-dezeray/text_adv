@@ -1,4 +1,4 @@
-from ui.options import Option, choose_me
+from ui.options import CustomRenderable, Option
 from util.logger import logger, event_logger
 from rich.panel import Panel
 from rich.table import Table
@@ -25,7 +25,7 @@ def read(core, scroll: str = "ancient_scroll") -> None:
         core.console.print(
             ui_text_panel(text=string)
         )
-        core.console.print(choose_me(text="Proceed", func=lambda: core.goto_next(), selectable=True))
+        core.console.print(Option(text="Proceed", func=lambda: core.goto_next(), selectable=True))
         grid = Table.grid()
         grid.add_column()
 
