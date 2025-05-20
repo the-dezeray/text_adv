@@ -195,64 +195,59 @@ def _fight(core: "Core") -> None:
     Args:
         core: The core game object containing game state.
     """
-    for option in core.console.renderables:
-        option.selectable = False
-
     player: Player = core.player
     entity = core.entity
 
-    if len(core.console.renderables) > 1:
-        last = core.console.renderables[-1]
-
-    # --- Nerd Font Icons & Styles Configuration (Corrected Escapes) ---
-    # Make sure your terminal font supports these icons!
-
-    # --- Start of code block to paste back ---
-
-     # Assuming core.options holds Rich renderables
+    # Clear previous renderables but keep the layout structure
+    core.console.clear_display()
+    
+    # Display fight status
+    from rich.rule import Rule
+    from rich.text import Text
+    
+    # Show player and entity status
+    status_text = f"[bold green]Player HP: {player.hp}[/bold green] | [bold red]Enemy HP: {entity.hp}[/bold red]"
+    core.console.print(Rule(status_text, style="bold white"))
+    
+    # Display turn information
+    turn_text = "[bold blue]Your Turn[/bold blue]" if player.turn else "[bold red]Enemy Turn[/bold red]"
+    core.console.print(ui_text_panel(text=turn_text))
 
     if player.turn:
-        for i in reversed(core.console.renderables):
-            if isinstance(i,GridOfWeapons):
-                core.console.renderables.remove(i)
-        # Append any previous messages (as per original logic)
-
-        core.console.print(core.ant)
-
-
-
+        # Player's turn
+        core.console.print(ui_text_panel(text="Choose your weapon:"))
         ary = player.inventory.weapons(type="attack")
         core.console.print(GridOfWeapons(ary, core))
-        # --- End of Turn Transition ---
+        
+        # End player's turn
         player.turn = False
-        entity.turn = True # Or switch to the next entity in the turn order
-
+        entity.turn = True
 
     else:
-        a = core.console.renderables.pop()
-        core.console.renderables.pop()
-        #hhhh(core)
-        core.console.print(ui_text_panel( text="You prepare to defend "))
+        # Enemy's turn
+        core.console.print(ui_text_panel(text="You prepare to defend"))
         ary = player.inventory.weapons(type="defence")
         core.console.print(GridOfWeapons(ary, core))
+        
+        # Enemy attacks
         entity.deal_damage(player)
         entity.turn = False
         player.turn = True
 
+    # Check for game over conditions
     if player.hp <= 0:
         if player.is_revivable():
             player.revive()
         else:
-            pass  # console.print("you lose")
+            core.console.print(ui_text_panel(text="[bold red]You have been defeated![/bold red]"))
+            core.in_fight = False
+            return
 
     if entity.hp <= 0:
         core.console.clear_display()
-        core.console.print(ui_text_panel(text="you attained the [red]sword of death![/]"))
+        core.console.print(ui_text_panel(text="[bold green]Victory![/bold green] You attained the [red]sword of death![/red]"))
         from objects.weapon import Weapon
-
         w = Weapon.generate(name="sword")
-   
-        a = Option(text="You win!", func=core.goto_next)
-        core.console.print(Option(text="You win!", func=core.goto_next) )
-        core.console.print(GridOfWeapons(ary=[w, w], core=core,extra=True))
+        core.console.print(Option(text="Continue your journey", func=core.goto_next))
+        core.in_fight = False
 

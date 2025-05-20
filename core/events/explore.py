@@ -10,8 +10,8 @@ def explore(core=None, area=None):
     story: dict = stories["forest_light"]
 
     if story != None:
+        core.game_engine.set_temp_story(story)
         core.chapter_id = "1a"
-        core.temp_story = story
         core.continue_game()
         print("exit")
     else:

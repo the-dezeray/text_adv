@@ -21,6 +21,7 @@ from ui.layouts import (
     LayoutLoading,
     LayoutInventory,
 )
+from ui.components import player_tab
 from rich.console import ConsoleRenderable, group, RichCast
 from ui.display_queue import DisplayQueue
 from rich.console import group
@@ -56,10 +57,10 @@ class Console:
         self.core = core
         self.table = None
         self._layout = Layout()
-        self.right = ""
+        self.right =""
         self.state: Literal["MAIN", "INVENTORY"] = "MAIN"
         self.left_tab: Optional[ConsoleRenderable] = ""
-        self.temp_right_tab: Optional[ConsoleRenderable] = None
+        self.temp_right_tab: Optional[ConsoleRenderable] =None
         self.current_layout = LayoutDefault()
         self.current_layout.initialize(core=self.core)
         self.renderables = DisplayQueue(console=self)
@@ -99,8 +100,7 @@ class Console:
 
     def print(self, item: any) -> None:
         if isinstance(item, list):
-            for i in item:
-                self.renderables.append(i)
+            self.renderables.extend(item)
         else:
             self.renderables.append(item)
 
@@ -153,13 +153,13 @@ class Console:
             else:
                 table.add_row(option)
 
-        ary = _core.console.get_selectable_options()
-        # if selectable item is selected select the first one
-        if ary and all(not i.selected for i in ary):
-            a = self.get_last_selectable()
-            
-     
-            a[0].selected = True
+            ary = _core.console.get_selectable_options()
+            # if selectable item is selected select the first one
+        if ary and all(not i.selected f
+            a = self.get_last_selectable()or i in ary):
+    
+            self.selected_option = a[0]
+            a[1][0].selected = True
             return self.fill_ui_table()
 
         return table
@@ -196,13 +196,13 @@ class Console:
     def get_last_selectable(self) -> list[CustomRenderable]:
         selectable_list = []
         # Iterate in reverse to maintain visual order when selecting (usually bottom-up)
-        for item in reversed(self.renderables):
+        for i,item in enumerate(reversed(self.renderables)):
             # Check if the item is a buffer containing a list of options (ary)
             if isinstance(item, (GridOfChoices, GridOfWeapons)):
                 # Add all options from the buffer's list
-                return item.ary
+                return (i,item.ary)
             # Check if the item itself is a selectable CustomRenderable subclass
             elif isinstance(item, CustomRenderable) and item.selectable:
-                return [item]
+                return (i,[item])
             # Add checks for other potential container types if needed
 

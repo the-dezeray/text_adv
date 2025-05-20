@@ -26,6 +26,19 @@ class entity:
         self.turn = False
         self.rank = ""
 
+
+        self.max_hp = None
+        self.attack = None
+        self.defense = None
+        self.speed = None
+        self.image_paths = None
+        self.description =None
+        self.loot =  []
+        self.abilities = []
+        self.icon_resize = None
+        self.xp_value = None
+ 
+
     def drop():
         pass
 

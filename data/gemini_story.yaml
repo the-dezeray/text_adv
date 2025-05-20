@@ -1,0 +1,323 @@
+1a:
+  location: "The Brink of Awareness"
+  text: "A jolt, and you're tumbling into consciousness. Your hand closes around something small and cool on the uneven ground – a [red1]Dimly Glowing Stone[/]. It offers little light, but a faint warmth. Before you can ponder its origin, the world solidifies..."
+  choices:
+    - text: "Open your eyes fully."
+      next_node: 1
+      function: "receive_item(item='sword', core=core)"
+
+1: # Was 1
+  location: "The Obsidian Labyrinth - Genesis Point"
+  text: "You awaken with a gasp, cold stone beneath you. Jagged obsidian walls pulse with faint, internal light, like veins of molten ore. Strange, sibilant whispers echo, too faint to discern, yet chillingly close. Where are you? How did you get here?"
+  choices:
+    - text: "Trace the glowing veins deeper into the rock."
+      next_node: 2
+      function: null
+    - text: "Focus, try to understand the whispers."
+      next_node: 3
+      function: "skill_check(skill='hp',limit=10, core=core)"
+
+2: # Was 2
+  location: "The Pulsing Vein Tunnels"
+  text: "The passage narrows, the air growing warm and metallic. The glowing veins in the obsidian cast dancing shadows. Ahead, you see ancient murals etched into the walls, depicting beings of shadow and light locked in an eternal struggle."
+  choices:
+    - text: "Examine the murals closely."
+      next_node: 4
+      function: "investigate(target='murals', core=core)"
+    - text: "Press on, the murals are just distractions."
+      next_node: 5
+      function: null
+
+3: # Was 3
+  location: "The Resonant Chamber"
+  text: "You concentrate, and the whispers coalesce. 'Lost one,' a voice sighs directly into your mind, 'this Labyrinth feeds on choices. I can guide you... for a price. A cherished memory, perhaps?' The voice feels ancient and weary."
+  choices:
+    - text: "Offer a memory of a past triumph."
+      next_node: 6
+      function: "offer_memory(memory_type='triumph', core=core)"
+    - text: "Refuse. 'I make my own path!'"
+      next_node: 7
+      function: null
+
+4: # Was 4
+  location: "Chamber of Echoed Histories"
+  text: "One mural depicts a figure holding a crystalline key, said to unlock the Labyrinth's secrets. As you touch it, a faint hum resonates. Two paths diverge from here: one where the mural depicts the key opening a shimmering, magical way; another, rougher path seems to lead to a grander, guarded hall."
+  choices:
+    - text: "Take the newly revealed path of magic (left)."
+      next_node: 8 # Leads to Astrologer's Sanctum
+      function: null
+    - text: "Investigate the rougher path to the guarded hall (right)."
+      next_node: 22 # Leads to Sphinx's Antechamber (Riddle)
+      function: null
+    - text: "The key is a myth. Continue down the main vein tunnel from before."
+      next_node: 5
+      function: null
+
+5: # Was 5
+  location: "The Crumbling Overlook"
+  text: "The main tunnel widens into a vast cavern. A chasm splits the floor, its depths lost in shadow. A single, ancient rope bridge, swaying precariously, is the only visible way across. The air is heavy with the scent of decay."
+  choices:
+    - text: "Risk the rope bridge."
+      next_node: 9
+      function: "skill_check(skill='agility', difficulty=12, core=core)"
+    - text: "Search for another way around the chasm."
+      next_node: 10
+      function: "search(area='chasm_edge', core=core)"
+
+6: # Was 6
+  location: "The Toll Booth of Minds"
+  text: "A wave of dizziness washes over you as the memory is drawn out. The voice hums contentedly. 'A fair trade. Seek the chamber where shadows dance in reverse. There, your path may become clearer.' The presence then fades, leaving you feeling oddly hollow but with a cryptic clue."
+  choices:
+    - text: "Heed the clue and search for 'shadows dancing in reverse'."
+      next_node: 11
+      function: "navigate(clue='reverse_shadows', core=core)"
+    - text: "The price was too high. Try to reclaim your memory."
+      next_node: 7
+      function: "attempt_reclaim_memory(core=core)"
+
+7: # Was 7
+  location: "The Shifting Maze"
+  text: "The Labyrinth groans and shifts around you. Walls slide, passages twist, and you're forced down a new, dark corridor filled with disorienting echoes and flickering lights. You spot a barely noticeable side passage that smells faintly of strange incense and old parchment."
+  choices:
+    - text: "Push through the disorienting main passage."
+      next_node: 12
+      function: null
+    - text: "Investigate the incense-scented side passage."
+      next_node: 21 # Leads to The Grinning Merchant (Shop)
+      function: null
+    - text: "Try to find a small alcove to gather your bearings and rest briefly."
+      next_node: 12
+      function: "rest(short=True, core=core); random_loot(tier='trinket', core=core)" # Added random loot chance on rest
+
+8: # Was 8 - FIGHT NODE
+  location: "The Astrologer's Sanctum"
+  text: "This hidden path leads to a circular chamber. Constellations unknown to you slowly drift across the domed ceiling. In the center, a pedestal holds a 'Star Shard', pulsing with gentle light. As you approach, a [red1]Spectral Guardian[/], formed of starlight and crackling energy, materializes, its many eyes fixed on you. It raises ethereal blades, clearly hostile."
+  choices:
+    - text: "Attempt to parley with the Celestial Guardian."
+      next_node: 13 # Outcome determined by core logic, likely leading to fight anyway or a very hard check
+      function: "escape(type='persuade', difficulty=18, core=core)"
+    - text: "Prepare for battle! Attack the Spectral Guardian."
+      next_node: 13 # Outcome determined by core logic
+      function: "fight(entity=Entities.generate(type='starlight_guardian', lvl=7), core=core)"
+
+9: # Was 9
+  location: "Chasm's Other Side / The Pitfall Ledge"
+  text: "[NODE_TEXT_WILL_UPDATE_BASED_ON_FUNCTION_RESULT_FROM_NODE_5_CHOICE_1] You find yourself either safely across the chasm where an old explorer's pack lies abandoned, or you've fallen to a precarious ledge below, bruised but spotting a narrow crawlspace."
+  choices:
+    - text: "(If successful crossing) Search the explorer's pack."
+      next_node: 14
+      function: "loot(container='explorers_pack', core=core); random_loot(tier='useful', core=core)" # Added random loot
+    - text: "Continue into the passage/crawlspace ahead."
+      next_node: 14
+      function: null
+
+10: # Was 10
+  location: "The Geothermal Vents"
+  text: "Your search reveals a narrow path leading downwards, alongside bubbling geothermal vents. The air is thick with sulfur. The path is treacherous and hot, but it seems to bypass the main chasm. You spot a loose rock that might hide something."
+  choices:
+    - text: "Brave the heated, sulfurous path."
+      next_node: 9
+      function: "skill_check(skill='endurance', difficulty=11, core=core)"
+    - text: "Check under the loose rock before deciding."
+      next_node: 10 # Stays on this node, but text should update
+      function: "search(area='loose_rock', core=core); random_loot(tier='minor', core=core)" # Added random loot
+    - text: "This is too dangerous. Reconsider the rope bridge."
+      next_node: 5
+      function: null
+
+11: # Was 11
+  location: "The Chamber of Inverted Light"
+  text: "You find a room where torchlight casts shadows that seem to flee from the flames rather than extend. In the center are three ornate levers, each carved with a different, unsettling symbol: a Coiled Serpent, a Weeping Eye, a Silent Moon."
+  choices:
+    - text: "Pull the Serpent Lever."
+      next_node: 15
+      function: "interact_object(object='lever_serpent', core=core)"
+    - text: "Pull the Weeping Eye Lever."
+      next_node: 15
+      function: "interact_object(object='lever_eye', core=core)"
+    - text: "Pull the Silent Moon Lever."
+      next_node: 15
+      function: "interact_object(object='lever_moon', core=core)"
+
+12: # Was 12
+  location: "The Maddening Echoes"
+  text: "This passage twists reality. Illusory walls shimmer, whispers dart from every direction, and your own footsteps echo seconds late. Ahead, a faint, steady glow offers a point of focus. [If rested in Node 7: You found a 'smooth stone' that feels oddly calming in your palm.]"
+  choices:
+    - text: "Focus on the distant glow and move towards it."
+      next_node: 16
+      function: null
+    - text: "Try to map the passage, relying on willpower to ignore the illusions. (Risky)"
+      next_node: 16 # Could lead to a penalty or a small discovery
+      function: "skill_check(skill='willpower', difficulty=13, success_bonus_node=null, failure_penalty_node=null, core=core); random_loot(tier='minor_artifact_if_success', core=core)"
+
+13: # Was 13
+  location: "Sanctum Aftermath"
+  text: "[NODE_TEXT_WILL_UPDATE_BASED_ON_FUNCTION_RESULT_FROM_NODE_8] The Star Shard is yours, the guardian pacified or defeated. Or, you were repelled, weakened by celestial energy, the Shard remaining elusive."
+  choices:
+    - text: "(If Shard obtained) Take the Star Shard and seek an exit."
+      next_node: 17
+      function: "receive_item(item='Star_Shard', core=core)"
+    - text: "(If failed/repelled) Retreat from the Sanctum, looking for another way."
+      next_node: 4
+      function: "apply_effect(effect='star_curse', duration='medium', core=core)"
+
+14: # Was 14 - SIDEQUEST TRIGGER ADDED
+  location: "The Forgotten Camp / Dark Crawlspace"
+  text: "[Contextual: If pack looted: Inside the explorer's pack, you find a tattered journal, some dried rations, and a flint & steel.] The passage/crawlspace opens into a small, dry cave. The journal (if found) speaks of the Labyrinth as a sentient entity, with a 'Heart'. In a shadowed corner, a small, intricately carved [red1]Obsidian Idol[/] hums faintly."
+  choices:
+    - text: "(If journal found) Attempt to find the 'Heart of the Labyrinth'."
+      next_node: 17
+      function: "quest_update(quest='LabyrinthHeart', status='active', core=core)"
+    - text: "Examine the Obsidian Idol in the corner."
+      next_node: 14 # Text updates on this node if idol is interacted with
+      function: "interact_idol(idol_id='WhisperingIdol', core=core)" # This function would trigger the sidequest text below if conditions met
+    - text: "[If Idol Examined & Quest Offered by Idol's text update]: 'I will seek the Echoing Crystals.' (Accept Sidequest)"
+      next_node: 17
+      function: "start_sidequest(quest_id='EchoingCrystals', objective='Find 3 Echoing Crystals', reward_location_node='-2', core=core)" # -2 is placeholder for Sunken Reliquary
+    - text: "[If Idol Examined & Quest Offered]: 'This Labyrinth has enough voices. I ignore the idol.'"
+      next_node: 17
+      function: null
+    - text: "Ignore the journal's ramblings and the idol. Press onward."
+      next_node: 17
+      function: null
+
+15: # Was 15
+  location: "The Consequence Chamber"
+  text: "[NODE_TEXT_WILL_UPDATE_BASED_ON_FUNCTION_RESULT_FROM_NODE_11] Serpent Lever: The floor beneath you groans... Eye Lever: A piercing shriek echoes... Moon Lever: A hidden door carved with lunar symbols grinds open..."
+  choices:
+    - text: "(If Moon Lever) Enter the silver passage."
+      next_node: 18
+      function: null
+    - text: "(If Serpent/Eye Lever outcome not fatal) Endure and try another lever."
+      next_node: 11
+      function: "handle_trap_effect(core=core)"
+    - text: "(If Serpent/Eye Lever outcome not fatal) This is too dangerous, find another route."
+      next_node: 6 # Or another appropriate backtrack node
+      function: "flee_trap_room(core=core)"
+
+16: # Was 16
+  location: "The Impossible Oasis"
+  text: "The glow leads to an astonishing sight: a serene subterranean garden, impossibly thriving in the darkness, illuminated by giant, bioluminescent flora. A silent, cloaked figure tends to the plants, their face hidden by shadows. [If mapping in Node 12 failed: You feel disoriented.]"
+  choices:
+    - text: "Approach the silent keeper of the garden."
+      next_node: 18
+      function: null
+    - text: "Cautiously harvest one of the smaller glowing plants."
+      next_node: 18
+      function: "harvest(item='lunarbloom', core=core, stealth_check=True)"
+
+17: # Was 17
+  location: "Crossroads of Fate"
+  text: "Your journey has brought you to a significant juncture. The Labyrinth seems to hold its breath. [Contextual updates based on quests/items]. You notice another dimly lit passage that wasn't obvious before, smelling of old wares."
+  choices:
+    - text: "Follow the guidance (Shard/Heart/Flow/Quest) before you."
+      next_node: 19
+      function: "choose_path_forward(core=core)"
+    - text: "Investigate the passage smelling of old wares."
+      next_node: 21 # To the Shop
+      function: null
+    - text: "Pause, consume rations if you have them, and check your inventory."
+      next_node: 17
+      function: "rest(long=True, core=core); inventory_check(core=core)"
+
+18: # Was 18
+  location: "The Sanctum of Choices (Garden/Moon Passage)"
+  text: "[Contextual updates] The Keeper, if present, raises a hand. 'All who reach this sanctum face a choice. Seek ultimate escape through the Shimmering Portal? Gaze into the Well of Understanding? Or accept a 'Fruit of Clarity'?'"
+  choices:
+    - text: "Step towards the Shimmering Portal (Escape)."
+      next_node: 20
+      function: "choose_final_path(path='escape', core=core)"
+    - text: "Gaze into the Well of Understanding."
+      next_node: 19
+      function: "seek_knowledge(source='well', core=core)"
+    - text: "Accept the Fruit of Clarity (Gift)."
+      next_node: 19
+      function: "receive_item(item='Fruit_of_Clarity', core=core)"
+
+19: # Was 19
+  location: "The Labyrinth's Core / The Threshold of Reality"
+  text: "[NODE_TEXT_WILL_UPDATE_BASED_ON_FUNCTION_RESULT_FROM_NODE_17 or 18] Visions flood your mind... You arrive at a pulsating core... You feel a heightened sense of awareness..."
+  choices:
+    - text: "Attempt to interact with the Core / Cross the Threshold / Confront what the Well revealed."
+      next_node: 20
+      function: "final_interaction(target='nexus_of_labyrinth', core=core)"
+    - text: "This knowledge/power is too much. Find a simpler way out."
+      next_node: 20
+      function: "find_simple_exit(current_location='deep_labyrinth', core=core)"
+
+20: # Was 20 - ENDING NODE
+  location: "Beyond the Obsidian"
+  text: "[NODE_TEXT_WILL_UPDATE_BASED_ON_FUNCTION_RESULT_FROM_NODE_19] Escape Portal: You step through... Core Interaction: The world dissolves... Simple Exit: You find an unassuming crack..."
+  choices:
+    - text: "Your journey concludes... for now. (End)"
+      next_node: 0 # Loops to start for now
+      function: "core.TERMINATE()"
+
+21: # New - SHOP
+  location: "The Grinning Merchant's Nook"
+  text: "The narrow passage opens into a surprisingly cozy nook, lit by glowing fungi. A creature with far too many teeth and an even wider, unsettling grin sits behind a stall made of polished bones and strange crystals. 'Welcome, lost morsel!' it rasps, its voice like grinding stones. 'Care for a trade? Riches for rarities, or perhaps a bit of Labyrinth-lore for a price?' He gestures to his wares: a [red1]Flickering Lantern[/], a [red1]Vial of Viscous Shadow-Ink[/], a [red1]Crudely Drawn Map Fragment[/], and a dusty [red1]Bag of Obsidian Shards[/] (currency?). [Shop_interaction_text_area: Initially empty, or shows lore if asked]"
+  choices:
+    - text: "Ask about the Flickering Lantern."
+      next_node: 21
+      function: "shop_interaction(action='query_item', item_id='lantern', shop_id='GrinningMerchant', core=core)" # Updates Shop_interaction_text_area
+    - text: "Ask about the Shadow-Ink."
+      next_node: 21
+      function: "shop_interaction(action='query_item', item_id='shadow_ink', shop_id='GrinningMerchant', core=core)"
+    - text: "Attempt to buy an item."
+      next_node: 21
+      function: "shop_interaction(action='buy_menu', shop_id='GrinningMerchant', core=core)" # Could list items with prices
+    - text: "Offer to sell something."
+      next_node: 21
+      function: "shop_interaction(action='sell_menu', shop_id='GrinningMerchant', core=core)"
+    - text: "Ask about 'Labyrinth-lore'."
+      next_node: 21
+      function: "shop_interaction(action='ask_lore', shop_id='GrinningMerchant', core=core)" # Updates Shop_interaction_text_area with lore/price
+    - text: "Leave the shop."
+      next_node: 7 # Return to Shifting Maze (or 17 if entered from Crossroads) - needs logic in core to remember entry point
+      function: null
+
+22: # New - RIDDLE INTRO
+  location: "The Sphinx's Antechamber"
+  text: "The rougher path from the Chamber of Echoed Histories leads into a grand, silent hall. Dust motes dance in the faint light filtering from unseen cracks high above. At the far end, dominating the chamber, sits a colossal, weathered statue of a winged beast with a serene yet unnervingly intelligent humanoid face – a Sphinx. Its obsidian eyes seem to pierce your very soul. As you draw closer, a voice, ancient, resonant, and devoid of emotion, echoes not from the statue, but from the air itself."
+  choices:
+    - text: "'I am here. Speak, Guardian.'"
+      next_node: 22.1
+      function: null
+    - text: "This feels ominous. Turn back to the Chamber of Echoed Histories."
+      next_node: 4
+      function: null
+
+22.1: # New - RIDDLE QUESTION
+  location: "The Sphinx's Gaze"
+  text: "The resonant voice fills the hall: 'Many have passed this way. Few have proven worthy. I am the gatekeeper of the Deeper Paths. Answer my riddle, and the way shall be opened unto you. Fail, and your essence shall join the silent dust of this chamber. Listen closely, mortal:'\n\n'I have cities, but no houses.'\n'I have mountains, but no trees.'\n'I have water, but no fish.'\n\n'What am I?'"
+  choices:
+    - text: "A Map."
+      next_node: 22.2
+      function: "resolve_riddle(answer='map', core=core)"
+    - text: "A Dream."
+      next_node: 22.2
+      function: "resolve_riddle(answer='dream', core=core)"
+    - text: "A Cloud."
+      next_node: 22.2
+      function: "resolve_riddle(answer='cloud', core=core)"
+    - text: "Silence (Refuse to answer)." # Could be a different outcome
+      next_node: 22.2
+      function: "resolve_riddle(answer='silence', core=core)"
+
+
+22.2: # New - RIDDLE OUTCOME
+  location: "The Sphinx's Judgment"
+  text: "[NODE_TEXT_WILL_UPDATE_BASED_ON_FUNCTION_RESULT_FROM_NODE_22.1]\nIf correct: The Sphinx's stone lips curve into the faintest smile. 'Indeed. Your mind navigates the currents of thought with clarity. The Deeper Path is yours to tread.' A section of the wall behind the Sphinx grinds open, revealing a dark passage.\nIf incorrect: A deep, sorrowful sigh echoes. 'Alas. Another mind lost to the shadows of ignorance.' The air crackles with an unseen energy, and you feel a profound weariness seep into your bones, your vision blurring for a moment.\nIf silent: 'Silence is but the absence of an answer. The Labyrinth abhors a vacuum.' A wave of disorienting force washes over you."
+  choices:
+    - text: "(If correct) Proceed through the newly opened Deeper Path."
+      next_node: 14 # Leads to Forgotten Camp, perhaps with a bonus or unique insight from Sphinx.
+      function: "apply_riddle_reward(type='insight', core=core)"
+    - text: "(If incorrect) Stumble away, weakened, and try to find another route."
+      next_node: 7 # Pushed back to the Shifting Maze, possibly with a temporary debuff.
+      function: "apply_riddle_penalty(type='weakness_debuff', core=core)"
+    - text: "(If silent outcome) Reorient yourself and escape the antechamber."
+      next_node: 4 # Pushed back to Chamber of Echoed Histories, disoriented.
+      function: "apply_riddle_penalty(type='disorientation', core=core)"
+
+# Node 23, 24, 25 are conceptual placeholders if we need to expand specific branches later.
+# For now, the count is 0-20 (21 nodes) + 21 (shop) + 22, 22.1, 22.2 (riddle sequence, 3 nodes) = 25 nodes.

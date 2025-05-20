@@ -89,10 +89,55 @@ class LayoutInGame(CustomLayout):
             Layout(name="middle", ratio=3),
             Layout(name="right", ratio=1, visible=True),
         )
+        from typing import List
+        class Enemy:
+            def __init__(self, name: str, hp: int, max_hp: int, attack: int, defense: int, speed: int,
+                        image_paths: List[str], description: str = "A fearsome foe.",
+                        loot: List[str] = None, abilities: List[str] = None,
+                        icon_resize: Tuple[int, int] = (16, 16),
+                        xp_value: int = 0, level: int = 1):
+                self.name = name
+                self.hp = hp
+                self.max_hp = max_hp
+                self.attack = attack
+                self.defense = defense
+                self.speed = speed
+                self.image_paths = image_paths
+                self.description = description
+                self.loot = loot if loot else []
+                self.abilities = abilities if abilities else []
+                self.icon_resize = icon_resize
+                self.xp_value = xp_value
+                self.level = level
+                # For draw_bar, an enemy might have a 'fury' or 'stamina' bar instead of MP/EXP
+                # For simplicity, we'll focus on HP for the enemy vitals bar.
 
-        if self.core.command_mode:
-            self.core.console.right = command_mode_layout(self.core)
-        layout["left"].update(player_tab(self.core))
+        from ui.components import enemy_tab
+        reaper_enemy = Enemy(
+        name="Grim Reaper",
+        hp=150,
+        max_hp=200,
+        attack=25,
+        defense=10,
+        speed=15,
+        image_paths="1.png", # Use the dummy paths or your actual image paths
+        description="A harbinger of doom, clad in shadows.",
+        abilities=["Soul Scythe", "Shadow Cloak", "Deathly Gaze"],
+        loot=["Dark Soul Gem", "Scythe Fragment"],
+        icon_resize=(24,24), # Slightly larger icon
+        xp_value=500,
+        level=10
+        )
+        t = command_mode_layout(self.core) if self.core.command_mode else enemy_tab(reaper_enemy)
+        if self.core.in_fight:
+            layout["left"].update(player_tab(core=self.core))
+            layout["right"].update(t)
+        else:
+            layout["left"].update("")
+
+            layout["right"].update(t if self.core.command_mode else "")
+        
+
         #layout["right"].update(self.core.console.right)
         table = None
         if self.core.console.state == "MAIN":

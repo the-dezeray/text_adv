@@ -34,6 +34,7 @@ class DisplayQueue:
 
     def extend(self, iterable):
         self._data.extend(iterable)
+        self.console.refresh()
 
     def remove(self, item):
         self._data.remove(item)

@@ -21,4 +21,4 @@ parser.add_argument("-sub", "--subchapter", help="a sub chapter to start from")
 parser.add_argument("-s", "--story", help="path to the story")
 args = parser.parse_args()
 chapter = args.chatper
-main(chapter_id=chapter)
+main(chapter_id= int(chapter))
