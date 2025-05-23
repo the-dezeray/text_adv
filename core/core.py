@@ -31,7 +31,7 @@ from core.events.search import search
 from core.events.trap import trap
 from core.events.sneak import sneak
 from core.events.encounter import encounter
-from core.events.goto import goto
+
 from core.events.haverst import harvest
 from core.events.interact import interact
 from core.events.investigate import investigate
@@ -40,7 +40,7 @@ from core.events.shop import shop
 from core.events.search_in import search_in
 from core.events.skill_check import skill_check
 from core.events.receive_item import receive_item
-from core.events.escape import escape
+from core.events.escape import attempt_escapeescape
 if TYPE_CHECKING:
     from ui.console import Console
     from rich.live import Live

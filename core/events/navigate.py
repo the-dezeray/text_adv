@@ -13,5 +13,5 @@ def navigate(core:"Core" , location="treasure"):
     )
 
              
-    core.console.print([Option(text="Open", func=lambda: core.goto_next(), ),Option(text="Leave", func=lambda: core.goto_next(),)])
-
+    core.console.print(Option(text="pick up", func=lambda: core.goto_next() ))
+    core.console.print(Option(text="leave", func=lambda: core.goto_next(),))

@@ -7,14 +7,14 @@ if TYPE_CHECKING:
 
 
 @event_logger
-def rest(core: "Core" = None):
+def rest(core: "Core" = None,event = None,probability = 0):
     logger.info("You rest for a while")
     core.console.clear_display()
     core.console.print(ui_text_panel(text="You rest for a while"))
-    core.console.print(ui_text_panel())
+  
     core.console.print(
   Option(
-                text="Proceed", func=lambda: core.goto_next(), selectable=False
+                text="Proceed", func=lambda: core.goto_next()
     
         )
     )

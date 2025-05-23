@@ -1,5 +1,5 @@
 from ui.options import ui_text_panel,Option
-def escape(core, type:str = None,difficulty =None) -> None:
+def attempt_escape(core, type:str = None,difficulty =None) -> None:
     core.console.clear_display()
     text = "try to escape"
     core.console.print(

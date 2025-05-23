@@ -126,12 +126,19 @@ class KeyboardControl:
             if options_len == 0:
                 return
 
-            # Update selected option using modulo arithmetic for circular behavior
-            self.core.selected_option = (self.core.selected_option - value) % options_len
-
-            # Update the selected status of each option
+            # Find the currently selected option's index
+            current_index = next((i for i, opt in enumerate(selectable_options) if opt.selected), 0)
+            
+            # Calculate new index with modulo arithmetic for circular behavior
+            new_index = (current_index - value) % options_len
+            
+            # Update selected status for all options
             for i, option in enumerate(selectable_options):
-                option.selected = i == self.core.selected_option
+                option.selected = (i == new_index)
+            
+            # Update the core's selected_option to match
+            self.core.selected_option = new_index
+            
         except Exception as e:
             logger.error(f"Error scrolling options: {e}")
 

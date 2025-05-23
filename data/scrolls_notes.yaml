@@ -1,0 +1,20 @@
+creak:
+  1a:
+    location: null
+    text: "you enter  into a creak"
+    choices:
+      - text: "peak deap "
+        next_node: 2a
+        function: null
+      - text: "leave"
+        next_node: 1b
+        function: null
+
+  2a:
+    location: null
+    text: "You come face to face with a monster"
+    choices:
+      - text: "fight"
+        next_node: 3a
+        function: "fight(entity = Entities.generate(type = 'monster', lvl = 5), core = core,repeat=3)"
+
