@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 @event_logger
-def investigate(core: "Core" = None, target: str = None) -> None:
+def investigate(core: "Core" , target: str = "") -> None:
     if core is None:
         raise ValueError("Core is None")
     core.goto_next()

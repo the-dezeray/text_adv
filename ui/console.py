@@ -27,28 +27,29 @@ from ui.display_queue import DisplayQueue
 from rich.console import group
 from typing import TYPE_CHECKING, Tuple, Optional, Literal, List
 from enum import Enum
-
+from ui.options import Option ,WeaponOption
 from ui.components import stats_tab
 
 if TYPE_CHECKING:
     from core.core import Core
     from objects.weapon import Weapon
+from ui.layouts import CustomLayout
 
-
-LAYOUTS = {
-    "INGAME": LayoutInGame(),
-    "SHOP": Layout(),
-    "STATS": Layout(),
-    "MENU": LayoutStartMenu(),
-    "INVENTORY": LayoutInventory(),
-    "SCROLL_READING": Layout(),
-    "FIGHT": Layout(),
-    "SETTINGS": Layout(),
-    "AI_STUDIO": Layout(),
-    "ABOUT": Layout(),
-    "CHARACTER_SELECTION": Lsd(),
-    "DEFAULT": LayoutDefault(),
-    "LOADING": LayoutLoading(),
+LAYOUTS: dict [str, type[CustomLayout]] = {
+    
+    "INGAME": LayoutInGame,
+    "SHOP": LayoutDefault,
+    "STATS": LayoutDefault,
+    "MENU": LayoutStartMenu,
+    "INVENTORY": LayoutInventory,
+    "SCROLL_READING": LayoutDefault,
+    "FIGHT": LayoutDefault,
+    "SETTINGS": LayoutDefault,
+    "AI_STUDIO": LayoutDefault,
+    "ABOUT": LayoutDefault,
+    "CHARACTER_SELECTION": Lsd,
+    "DEFAULT": LayoutDefault,
+    "LOADING": LayoutLoading,
 }
 
 
@@ -56,15 +57,14 @@ class Console:
     def __init__(self, core: "Core"):
         self.core = core
         self.table = None
-        self._layout = Layout()
-        self.right :Optional[ConsoleRenderable] = ""
+        self._layout  : CustomLayout = LayoutDefault(core=self.core)
+        self.right :Optional[ConsoleRenderable] = None
         self.state: Literal["MAIN", "INVENTORY"] = "MAIN"
-        self.left_tab: Optional[ConsoleRenderable] = ""
+        self.left_tab: Optional[ConsoleRenderable] = None
         self.temp_right_tab: Optional[ConsoleRenderable] =None
-        self.current_layout = LayoutDefault()
-        self.current_layout.initialize(core=self.core)
+        self.current_layout : CustomLayout = LayoutDefault(core=self.core)
         self.renderables = DisplayQueue(console=self)
-
+        self.selected_option = 0;
     def show_weapon(self):
         from rich_pixels import Pixels
 
@@ -95,32 +95,33 @@ class Console:
         self.renderables.clear()
 
     def clean(self):
-        self.core.chapter_id = "1a"
+        self.core.chapter_id = "0"
         self.core.continue_game()
 
-    def print(self, item: any) -> None:
+    def print(self, item) -> None:
         if isinstance(item, list):
             self.renderables.extend(item)
         else:
             self.renderables.append(item)
 
     @property
-    def layout(self) -> Layout:
+    def layout(self) -> CustomLayout:
         return self._layout
 
     @layout.setter
     def layout(self, value: str):
-        _layout = LAYOUTS.get(value, None)
+        _layout  = LAYOUTS.get(value, LayoutDefault)
+     
         if _layout is None:
             raise ValueError("Expected a value, but got None")
         else:
-            _layout.initialize(core=self.core)
 
-            self.current_layout = _layout
+
+            self.current_layout =  _layout(core=self.core)
 
     def refresh(self) -> None:
         """Refresh the console layout by updating the rich live object with the current layout"""
-        _layout: Layout = self.current_layout.update()
+        _layout: Layout= self.current_layout.update()
         self.core.rich_live_instance.update(_layout)
 
     def fill_inventory_table(self) -> Table:
@@ -146,11 +147,14 @@ class Console:
         for option in self.renderables:
             if isinstance(option, (CustomRenderable, GridOfChoices, GridOfWeapons)):
                 renderable = option.render(core=_core)
-                table.add_row(Align(renderable, align=option.h_allign))
+
+                table.add_row(Align(renderable, align=cast(Literal["left", "center", "right"],option.h_allign)))
             elif isinstance(option, (Padding, Panel)):
                 table.add_row(Align(option))
             else:
-                table.add_row(option)
+                from rich.console import RenderableType
+                from typing import cast
+                table.add_row(cast(RenderableType,option))
 
         # Second pass: handle selection state
         selectable_options = self.get_selectable_options()
@@ -165,7 +169,7 @@ class Console:
 
         return table
 
-    def get_last_selectable(self) -> Optional[Tuple[int, List[CustomRenderable]]]:
+    def get_last_selectable(self) -> Optional[Tuple[int, List[CustomRenderable] | List[Option] | list[WeaponOption]]]:
         """Get the last group of selectable options.
         
         Returns:
@@ -185,7 +189,6 @@ class Console:
 
     def show_inventory(self):
         self.layout = "INVENTORY"
-        self.options.clear_display()
         self.state = "INVENTORY"
 
     def show_menu(self):
@@ -196,7 +199,8 @@ class Console:
         self.layout = "MENU"
 
     def get_selectable_options(self) -> list[CustomRenderable]:
-        selectable_list = []
+  
+        selectable_list :list[CustomRenderable] = []
         # Iterate in reverse to maintain visual order when selecting (usually bottom-up)
         for item in reversed(self.renderables):
             # Check if the item is a buffer containing a list of options (ary)

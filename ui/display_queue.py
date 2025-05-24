@@ -1,6 +1,6 @@
 class DisplayQueue:
     def __init__(self, initial_list=None,console=None):
-        self._data = list(initial_list) if initial_list else []
+        self._data : list = list(initial_list) if initial_list else []
         self.console = console
     def append(self, item):
         

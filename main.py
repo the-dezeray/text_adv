@@ -17,33 +17,6 @@ import queue
 from typing import Optional, Dict, Any
 
 
-class NonBlockingInput:
-    def __init__(self):
-        self.input_queue = queue.Queue()
-        self.running = True
-        self.thread = threading.Thread(target=self._input_thread, daemon=True)
-        self.thread.start()
-
-    def _input_thread(self):
-        while self.running:
-            try:
-                key = readkey()
-                if key:
-                    self.input_queue.put(key)
-            except Exception as e:
-                logger.error(f"Error in input thread: {e}")
-                self.running = False
-
-    def stop(self):
-        self.running = False
-        self.thread.join(timeout=1.0)
-
-    def get_key(self) -> Optional[str]:
-        try:
-            return self.input_queue.get_nowait()
-        except queue.Empty:
-            return None
-
 
 def non_blocking_readkey() -> Optional[str]:
     """Check if a key is available without blocking.
@@ -83,8 +56,8 @@ def main(**kwargs) -> None:
     
     Args:
         **kwargs: Optional keyword arguments:
-            - chapter_id (str): Starting chapter ID (default: "1a")
-            - story (str): Story file path (default: "story.yaml")
+            - chapter_id (str): Starting chapter ID (default: 0)
+            - story (str): Story file path (default: "gemini_story.yaml")
             - mute (bool): Whether to mute sound (default: False)
             - tank (bool): Tank mode flag (default: False)
             - subchapter (str): Subchapter file path (default: "areas_to_explore.yaml")
@@ -92,8 +65,8 @@ def main(**kwargs) -> None:
     try:
         # Initialize configuration
         config = {
-            "chapter_id": kwargs.get("chapter_id", "1a"),
-            "story": kwargs.get("story", "story.yaml"),
+            "chapter_id": kwargs.get("chapter_id", 0),
+            "story": kwargs.get("story", "data/gemini_story.yaml"),
             "mute": kwargs.get("mute", False),
             "tank": kwargs.get("tank", False),
             "subchapter": kwargs.get("subchapter", "areas_to_explore.yaml")
@@ -106,13 +79,13 @@ def main(**kwargs) -> None:
         core.rich_console = Console(color_system="truecolor", style="bold black", quiet=True)
         install(show_locals=True, console=core.rich_console)
         core.chapter_id = config["chapter_id"]
-        core.rich_console.force_terminal = True
-        core.rich_console.force_interactive = True
+        #core.rich_console.force_terminal = True
+        # core.rich_console.force_interactive = True
         core.rich_console.stderr = True
         core.rich_console.quiet = False
         
         keyboard_controller = KeyboardControl(core=core)
-        core.input_block = NonBlockingInput()
+   
 
         try:
             with Live(

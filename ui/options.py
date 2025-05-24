@@ -9,7 +9,7 @@ from rich.text import Text
 from rich.console import ConsoleRenderable
 
 if TYPE_CHECKING:
-    from core import Core
+    from core.core import Core
     from objects.weapon import Weapon
 
 
@@ -18,6 +18,7 @@ def yy():
     pass
 
 
+AlignMethod = Literal["left", "center", "right"]
 class CustomRenderable:
     def __init__(
         self,
@@ -26,8 +27,8 @@ class CustomRenderable:
         preview: Optional[Callable] = None, # Changed from str to Callable based on usage
         next_node: Optional[str] = None,
         selectable: bool = True,
-        type: Literal["header", "entity_profile", "note", "choices", "menu", "weapon", ""] = "", # Added "weapon"
-        h_allign: str = "center",
+        type:str = "", # Added "weapon"
+        h_allign: AlignMethod = "center",
         v_allign: str = "middle",
         on_select: Optional[Callable] = None,
         core: Optional["Core"] = None, # Added type hint
@@ -71,8 +72,8 @@ class GridOfWeapons:
     """Creates a buffer specifically for displaying weapon options."""
     def __init__(
         self,
-        ary: list["Weapon"] = None, # Specify list contains Weapon objects
-        core: "Core" = None,
+        ary: list["Weapon"] = [], # Specify list contains Weapon objects
+        core: Optional["Core"] = None,
         extra: bool = False
     ):
         if core is None:
@@ -151,13 +152,16 @@ class GridOfChoices:
     """Creates a buffer for displaying generic choice options."""
     def __init__(
         self,
-        ary: list[dict] = None, # Expects a list of dictionaries
+        ary: list[dict] = [], # Expects a list of dictionaries
         title: str = "",
         icon: str = "" # Icon parameter seems unused in render
     ):
 
-        self.raw_choices = ary or []
-        self.h_allign = "left"
+        self.raw_choices = ary 
+        from typing import Literal
+
+       
+        self.h_allign :AlignMethod = 'left'
         self.title = title
         self.selectable = True # Buffer contains selectable items
         self.ary = self._build_choice_options() # Store generated CustomRenderable objects
@@ -222,6 +226,29 @@ def ui_text_panel(option: Optional[CustomRenderable] = None, text: str = "") -> 
 
     # Return text wrapped in Padding, potentially with a style
     return Padding(display_text, style=style)
+class WeaponOption(CustomRenderable):
+    """UI representation for a weapon option."""
+    def __init__(self, **kwargs):
+        """Initializes a weapon UI element, forwarding arguments to CustomRenderable."""
+        super().__init__(**kwargs)
+        self.type  : str = "weapon" # Ensure type is set
+
+    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
+        # Use a Unicode arrow or similar indicator
+        indicator = "\uf0da" # Example: Right-pointing arrow
+        display_text = f"{indicator} {self.text} "
+        style = "dim green"
+        if self.selected:
+            style = "bold green" # Internal style tracking
+            # Preview is handled by the setter
+            return Panel(display_text, style=style, expand=False) # Wrap selected in Panel
+        else:
+            style = "dim green" # Internal style tracking
+            # Non-selected items are padded Text
+            return Padding(Text(display_text, style=style), (0, 0, 0, 0)) # No extra padding here
+
+
+
 
 
 def create_weapon_option(
@@ -286,7 +313,7 @@ def Loader() -> Padding:
     return Padding(Panel("Loading..."), pad=(2, 4, 0, 4), expand=False)
 
 
-def Reward(ary: list[str] = None) -> Panel:
+def Reward(ary: list[str] = []) -> Panel:
 
     rewards = ary or []
     grid = Table.grid(expand=True) # Use a grid to list rewards
@@ -294,11 +321,24 @@ def Reward(ary: list[str] = None) -> Panel:
     for reward_text in rewards:
         grid.add_row(Text(reward_text, style="yellow")) # Style rewards text
     return Panel(grid, title="[bold green]Rewards![/bold green]", expand=False)
+class Option(CustomRenderable):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
+        indicator = "\uf0da"
+        display_text = f"{indicator} {self.text} "
+        style :str = "dim green"
+        if self.selected:
+            style = "bold green"
+            # Preview handled by setter
+            return Panel(display_text, style=style, expand=False)
+        else:
+            style = "dim green"
+             # Add space before indicator for alignment?
+            return Padding(Text(f" {display_text}", style=style), (0, 0, 0, 0))
 
-
-def get_selectable_options(options: list) -> list[CustomRenderable]:
-
-    selectable_list = []
+def get_selectable_options(options: list) -> list[CustomRenderable]:  
+    selectable_list: list[CustomRenderable] = []
     # Iterate in reverse to maintain visual order when selecting (usually bottom-up)
     for item in reversed(options):
         # Check if the item is a buffer containing a list of options (ary)
@@ -308,7 +348,6 @@ def get_selectable_options(options: list) -> list[CustomRenderable]:
         # Check if the item itself is a selectable CustomRenderable subclass
         elif isinstance(item, CustomRenderable) and item.selectable:
             selectable_list.append(item)
-        # Add checks for other potential container types if needed
     return selectable_list
 
 
@@ -347,47 +386,10 @@ def inventory_button():
 
 # --- CustomRenderable Subclasses ---
 
-class WeaponOption(CustomRenderable):
-    """UI representation for a weapon option."""
-    def __init__(self, **kwargs):
-        """Initializes a weapon UI element, forwarding arguments to CustomRenderable."""
-        super().__init__(**kwargs)
-        self.type = "weapon" # Ensure type is set
-
-    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
-        # Use a Unicode arrow or similar indicator
-        indicator = "\uf0da" # Example: Right-pointing arrow
-        display_text = f"{indicator} {self.text} "
-
-        if self.selected:
-            self.style = "bold green" # Internal style tracking
-            # Preview is handled by the setter
-            return Panel(display_text, style=self.style, expand=False) # Wrap selected in Panel
-        else:
-            self.style = "dim green" # Internal style tracking
-            # Non-selected items are padded Text
-            return Padding(Text(display_text, style=self.style), (0, 0, 0, 0)) # No extra padding here
 
 
 
 
-
-
-class Option(CustomRenderable):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
-        indicator = "\uf0da"
-        display_text = f"{indicator} {self.text} "
-
-        if self.selected:
-            self.style = "bold green"
-            # Preview handled by setter
-            return Panel(display_text, style=self.style, expand=False)
-        else:
-            self.style = "dim green"
-             # Add space before indicator for alignment?
-            return Padding(Text(f" {display_text}", style=self.style), (0, 0, 0, 0))
 class MenuOption(CustomRenderable):
     def __init__(self, **kwargs):
         if 'h_allign' not in kwargs:
@@ -403,11 +405,11 @@ class MenuOption(CustomRenderable):
             ctext = self.text 
         except Exception: 
              ctext = f"[italic] {self.text} (art error) [/italic]"
-
+        style = "dim grey93"
         if self.selected:
-            self.style = "bold green"
+            style = "bold green"
 
-            return Panel(Align.center(f"[{self.style}]{ctext}[/{self.style}]"), border_style=self.style, expand=False)
+            return Panel(Align.center(f"[{style}]{ctext}[/{style}]"), border_style=style, expand=False)
         else:
-            self.style = "dim grey93" #
-            return Padding(Align.center(f"[{self.style}]{ctext}[/{self.style}]"), (0,0,0,0))
+            style = "dim grey93" #
+            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"), (0,0,0,0))

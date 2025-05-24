@@ -16,17 +16,17 @@ if TYPE_CHECKING:
 
 
 class CustomLayout:
-    def initialize(self, core):
+    def __init__(self, core):
         self.core = core
-
-    def update(self): ...
+        self.__post_init__()
+    def __post_init__(self):
+        ...
+    def update(self) -> Layout: ...
 
 
 class LayoutCharacterSelection(CustomLayout):
-    def initialize(self, core: "Core"):
-        self.core = core
-        #core.options = [Choices(ary=[Op() for _ in range(4)], do_build=False)]
-        core.console.renderables[0].ary[0].selected = True
+    def __post_init__(self):
+        self.core.console.renderables[0].ary[0].selected = True
 
     def update(self) -> Layout:
         table = self.core.console.fill_ui_table()
@@ -37,17 +37,14 @@ class LayoutCharacterSelection(CustomLayout):
 
 
 class LayoutDefault(CustomLayout):
-    def initialize(self, core): ...
+
     def update(self) -> Layout:
         return Layout("des")
 
 
 class Lsd(CustomLayout):
-    def initialize(self, core):
-        self.core = core
-        # TODO
-        # core.options = [Choices(ary=[Op() for _ in range(4)], do_list_build=False)]
-        core.console.renderables[0].ary[0].selected = True
+    def __post_init__(self):
+        self.core.console.renderables[0].ary[0].selected = True
 
     def update(self) -> Layout:
         layout = Layout()
@@ -65,10 +62,8 @@ class Lsd(CustomLayout):
 
 
 class LayoutInGame(CustomLayout):
-    def initialize(self, core: "Core"):
-        self.core = core
 
-
+    def __post_init__(self):
         self.core.continue_game()
     def update(self):
 
@@ -93,7 +88,7 @@ class LayoutInGame(CustomLayout):
         class Enemy:
             def __init__(self, name: str, hp: int, max_hp: int, attack: int, defense: int, speed: int,
                         image_paths: List[str], description: str = "A fearsome foe.",
-                        loot: List[str] = None, abilities: List[str] = None,
+                        loot: List[str] = [""], abilities: List[str] =[""],
                         icon_resize: Tuple[int, int] = (16, 16),
                         xp_value: int = 0, level: int = 1):
                 self.name = name
@@ -113,7 +108,7 @@ class LayoutInGame(CustomLayout):
                 # For simplicity, we'll focus on HP for the enemy vitals bar.
 
         from ui.components import enemy_tab
-        reaper_enemy = Enemy(
+        reaper_enemy:Enemy = Enemy(
         name="Grim Reaper",
         hp=150,
         max_hp=200,
@@ -145,7 +140,7 @@ class LayoutInGame(CustomLayout):
             
         elif self.core.console.state == "INVENTORY":
             table = self.core.console.fill_inventory_table()
-        content = table
+        content: Table = table
         layout["middle"].update(
             Panel(
                 content,
@@ -164,23 +159,15 @@ class LayoutInGame(CustomLayout):
 
 
 class LayoutInventory(CustomLayout):
-    def initialize(self, core: "Core"):
-        self.core = core
-
+    ...
 
 class LayoutSettings(CustomLayout):
-    def initialize(self, core: "Core"):
-        self.core = core
-
+    ...
 
 class LayoutPreGame(CustomLayout):
-    def initialize(self, core: "Core"):
-        self.core = core
-
+    ...
 
 class LayoutStartMenu(CustomLayout):
-    def initialize(self, core: "Core"):
-        self.core = core
 
     def update(self):
         table: Table = self.core.console.fill_ui_table()
@@ -205,11 +192,13 @@ class LayoutStartMenu(CustomLayout):
 
 
 class LayoutLoading(CustomLayout):
-    def initialize(self, core: "Core"):
-        self.core = core
+
+
+    def __post_init__(self ):
+
         self.core.console.renderables= ["dsiree"]
         from core.timer import Timer
-        self.core.timer = Timer(time = 3,func =core.from_loading_to_start_menu)
+        self.core.timer = Timer(time = 3,func =self.core.from_loading_to_start_menu)
     def update(self):
         from rich.align import Align
         lines = "/////////////////////////////////////////////////////////////"
@@ -220,10 +209,8 @@ class LayoutLoading(CustomLayout):
         f"{self.core.timer.time}",
         )
         ui = Layout(renderable=panel_group)
-        return Padding(renderable=ui,pad = (10,))
+        return Layout(Padding(renderable=ui,pad = (10,)))
 class LayoutInventory(CustomLayout):
-    def initialize(self, core: "Core"):
-        self.core = core
 
     def update(self):
         

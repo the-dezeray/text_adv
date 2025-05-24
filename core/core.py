@@ -6,17 +6,21 @@ from rich.layout import Layout
 from objects.entities import Entities
 from objects.item import Items
 from objects.player import Player
-from ui.console import Console
 from util.logger import logger
 from rich.padding import Padding
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
-from typing import TYPE_CHECKING, Dict, Any, Optional, List
+from typing import TYPE_CHECKING, Dict, Any, Optional, List, cast
 import datetime
 import sys
 import yaml
 from pathlib import Path
 from core.story import GameEngine
+
+if TYPE_CHECKING:
+    from ui.console import Console
+    from rich.live import Live
+    from rich.console import Console as RichConsole
 
 # Import event handlers
 from core.events.navigate import navigate
@@ -40,10 +44,10 @@ from core.events.shop import shop
 from core.events.search_in import search_in
 from core.events.skill_check import skill_check
 from core.events.receive_item import receive_item
-from core.events.escape import attempt_escapeescape
-if TYPE_CHECKING:
-    from ui.console import Console
-    from rich.live import Live
+from core.events.escape import attempt_escape
+from rich.live import Live
+
+from core.non_blocking_input import NonBlockingInput
 
 
 class Core:
@@ -52,8 +56,8 @@ class Core:
     def __init__(self) -> None:
         """Initialize the core game engine."""
         # UI Components
-        self.rich_console: Optional[Console] = None
-        self.rich_live_instance: Optional["Live"] = None
+        self.rich_console: "RichConsole"
+        self.rich_live_instance: "Live"
         self._layout = Layout()
         
         # Game State
@@ -76,7 +80,7 @@ class Core:
         self.others: List[Any] = []
         
         # Input and Control
-        self.input_block = None
+        self.input_block = NonBlockingInput()
         self.key_listener = None
         self.selected_option: int = 0
         self.s: str = "options"
@@ -92,7 +96,8 @@ class Core:
         self.overall_task = self.overall_progress.add_task("All Jobs", total=1000)
         
         # Initialize console
-        self.console: Console = Console(core=self)
+        from ui.console import Console
+        self.console = cast("Console", Console(core=self))
         
         # Post-initialization
         self._post_initialize()
@@ -108,7 +113,7 @@ class Core:
     @property
     def chapter_id(self) -> str:
         """Get the current chapter ID."""
-        return self.game_engine.current_node_id
+        return str(self.game_engine.current_node_id)
 
     @chapter_id.setter
     def chapter_id(self, value: str) -> None:
@@ -120,7 +125,7 @@ class Core:
         if value == "-1" or value == -1:
             self.game_engine.current_node_id = "-1"
         else:
-            self.game_engine.set_current_node(value)
+            self.game_engine.set_current_node(str(value))
 
     def execute_yaml_function(self, func: str) -> Any:
         """Execute a function defined in YAML.
@@ -171,14 +176,18 @@ class Core:
     def continue_game(self) -> None:
         """Continue the game from the current state."""
         if self.chapter_id == "-1":
-            #self.console.show_menu()
-            self.chapter_id = "1a"
+            self.chapter_id = 0
             return
 
         current_node = self.game_engine.get_current_node()
         if not current_node:
             logger.error(f"Current node {self.chapter_id} not found")
-            return
+            # Reset to a valid starting point
+            self.chapter_id = "0"
+            current_node = self.game_engine.get_current_node()
+            if not current_node:
+                logger.critical("Failed to load starting node")
+                return
         
         # Display chapter title
         from rich.rule import Rule

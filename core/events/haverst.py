@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from core.core import Core
 
 
-def harvest(core: "Core" = None,item="",stealth_check  =0):
+def harvest(core: "Core" ,item="",stealth_check  =0):
     core.console.clear_display()
     text = "you have obtained"
     core.console.print(

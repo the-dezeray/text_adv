@@ -237,7 +237,7 @@ def draw_enemy_bar(label: str, value: int, max_value: int, symbol: str = "█",
 class Enemy:
     def __init__(self, name: str, hp: int, max_hp: int, attack: int, defense: int, speed: int,
                  image_paths: List[str], description: str = "A fearsome foe.",
-                 loot: List[str] = None, abilities: List[str] = None,
+                 loot: List[str] = [], abilities: List[str] = [],
                  icon_resize: Tuple[int, int] = (16, 16),
                  xp_value: int = 0, level: int = 1):
         self.name = name
