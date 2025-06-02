@@ -3,18 +3,19 @@ from util.logger import logger, event_logger
 from util.file_handler import load_yaml_file
 import random
 
-def creak(core, depth=0) -> None:
+def creek(core, depth=0) -> None:
     """Creak event: Player might get hit by a boulder, taking HP damage."""
     if random.choice([True, False]):
         core.console.print(ui_text_panel(text="A boulder has fallen on you!"))
         core.player.hp -= 10
         if core.player.hp <= 0:
             core.console.print(ui_text_panel(text="You have been crushed."))
-            return
+            core.console.print(Option(text="proceed", func=lambda: core.goto_next()))
         if random.choice([True, False]) and depth < 3:
-            creak(core, depth + 1)
+            creek(core, depth + 1)
     else:
         core.console.print(ui_text_panel(text="You make it safely across the creaky terrain."))
+        core.goto_next()
 
 def swamp(core):
     """Swamp event: Player loses experience."""
@@ -47,7 +48,7 @@ def bolders(core):
 def explore(core=None, area=None):
     """Handles exploration logic for different areas."""
     areas = {
-        "creak": lambda: creak(core),
+        "creek": lambda: creek(core),
         "swamp": lambda: swamp(core),
         "webs": lambda: webs(core),
         "bolders": lambda: bolders(core)

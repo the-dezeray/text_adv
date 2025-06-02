@@ -14,6 +14,9 @@ class Player:
         self.defense = 10
         self.speed = 10
         self.name = "default-name"
+        self.cash = 0
+        self.charm = 0
+        self.dmg = 0
         self.luck = 10
         self.crit = 0
         self.max_mp = 100

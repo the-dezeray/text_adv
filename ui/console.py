@@ -148,13 +148,13 @@ class Console:
             if isinstance(option, (CustomRenderable, GridOfChoices, GridOfWeapons)):
                 renderable = option.render(core=_core)
 
-                table.add_row(Align(renderable, align=cast(Literal["left", "center", "right"],option.h_allign)))
+                table.add_row(Align(renderable, align=option.h_allign))
             elif isinstance(option, (Padding, Panel)):
                 table.add_row(Align(option))
             else:
                 from rich.console import RenderableType
-                from typing import cast
-                table.add_row(cast(RenderableType,option))
+                
+                table.add_row(option)
 
         # Second pass: handle selection state
         selectable_options = self.get_selectable_options()

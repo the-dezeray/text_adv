@@ -30,5 +30,9 @@ def receive_item(core, item: str | list[str],text = None | str) -> None:
     else:
         text = random.choice(one_item_texts) + " : " + item
     core.console.print(
-        ui_text_panel(text=text)
+      Option(
+                text="Proceed", func=lambda: core.goto_next()
+    
+        )
     )
+

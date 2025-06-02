@@ -146,19 +146,25 @@ class KeyboardControl:
         """Execute the currently selected option."""
         try:
             core: Core = self.core
-            for option in core.console.get_selectable_options():
-                if option.selected:
-                    option.selected = False
-                    for option in core.console.get_selectable_options():
-                        option.selectable = False
-                    if isinstance(option.func, str):
-                        self._execute_yaml_function(option)
-                    elif callable(option.func):
-                        self._execute_callable_function(option)
-                    else:
-                        self._execute_default_function(option)
-
-                    break
+            selectable_options = core.console.get_selectable_options()
+            
+            # Find the selected option
+            selected_option = next((opt for opt in selectable_options if opt.selected), None)
+            
+            if selected_option:
+                # Clear selection state
+                selected_option.selected = False
+                for option in selectable_options:
+                    option.selectable = False
+                
+                # Execute the appropriate function based on type
+                if isinstance(selected_option.func, str):
+                    self._execute_yaml_function(selected_option)
+                elif callable(selected_option.func):
+                    self._execute_callable_function(selected_option)
+                else:
+                    self._execute_default_function(selected_option)
+                    
         except Exception as e:
             logger.error(f"Error executing selected option: {e}")
 

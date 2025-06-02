@@ -148,7 +148,7 @@
       function: null
     - text: "Try to map the passage, relying on willpower to ignore the illusions. (Risky)"
       next_node: 16
-      function: "skill_check(skill='willpower', limit=13, on_success=None, on_fail=None, core=core)"
+      function: "skill_check(skill='hp', limit=13, on_success=None, on_fail=None, core=core)"
 
 13:
   location: "Sanctum Aftermath"
@@ -207,29 +207,79 @@
       function: "harvest(item='lunarbloom', core=core, stealth_check=True)"
 
 17:
-  location: "Crossroads of Fate"
-  text: "Your journey has brought you to a significant juncture. The Labyrinth seems to hold its breath. [Contextual updates based on quests/items]. You notice another dimly lit passage that wasn't obvious before, smelling of old wares."
+  location: "The Heart of the Labyrinth"
+  text: "You stand at the center of the Labyrinth, where all paths converge. The air hums with ancient power, and the walls pulse with a rhythmic light. Before you lies a grand chamber with three distinct paths, each representing a different fate. [Contextual updates based on quests/items]"
   choices:
-    - text: "Follow the guidance (Shard/Heart/Flow/Quest) before you."
-      next_node: 19
-      function: "display_text(text='you follow the guidance')"
-    - text: "Investigate the passage smelling of old wares."
-      next_node: 21
-      function: null
-    - text: "Pause, consume rations if you have them, and check your inventory."
-      next_node: 17
-      function: "rest(long=True, core=core); inventory_check(core=core)"
-
-18:
-  location: "The Sanctum of Choices (Garden/Moon Passage)"
-  text: "[Contextual updates] The Keeper, if present, raises a hand. 'All who reach this sanctum face a choice. Seek ultimate escape through the Shimmering Portal? Gaze into the Well of Understanding? Or accept a 'Fruit of Clarity'?'"
-  choices:
-    - text: "Step towards the Shimmering Portal (Escape)."
+    - text: "Approach the Shimmering Portal of Escape"
       next_node: 20
-      function: "exit_story(path='escape', core=core, text='you escape the labyrinth')"
-    - text: "Gaze into the Well of Understanding."
-      next_node: 19
+      function: "exit_story( core=core, text='you escape the labyrinth')"
+    - text: "Seek the Well of Understanding"
+      next_node: 18
       function: "read_note(source='well', core=core)"
-    - text: "Accept the Fruit of Clarity (Gift)."
+    - text: "Accept the Fruit of Clarity"
       next_node: 19
       function: "receive_item(item='Fruit_of_Clarity', core=core)"
+
+18:
+  location: "The Well of Understanding"
+  text: "As you gaze into the Well, visions of the Labyrinth's history flood your mind. You see its creation, its purpose, and the countless souls who have walked its paths. The knowledge is overwhelming, but it offers a choice: to become one with the Labyrinth's wisdom or to seek your own path forward."
+  choices:
+    - text: "Embrace the Labyrinth's wisdom and become its guardian"
+      next_node: 20
+      function: exit_story( core=core, "text='you become the guardian of the labyrinth')"
+    - text: "Take what you've learned and seek the Shimmering Portal"
+      next_node: 20
+      function: "exit_story(core=core, text='you escape with newfound wisdom')"
+    - text: "Return to the Heart of the Labyrinth"
+      next_node: 17
+      function: null
+
+19:
+  location: "The Chamber of Inverted Light"
+  text: "You find a room where torchlight casts shadows that seem to flee from the flames rather than extend. In the center are three ornate levers, each carved with a different, unsettling symbol: a Coiled Serpent, a Weeping Eye, a Silent Moon."
+  choices:
+    - text: "Pull the Serpent Lever."
+      next_node: 15
+      function: "trigger_trap(core=core, type='flames', lvl=2, str='poison comes upon you and you nearly die')"
+    - text: "Pull the Weeping Eye Lever."
+      next_node: 15
+      function: "apply_effect(effect='blindness', duration='medium', core=core, str='you are blinded and cannot see')"
+    - text: "Pull the Silent Moon Lever."
+      next_node: 15
+      function: "display_text(text='nothing happens')"
+
+20:
+  location: "The Shimmering Portal"
+  text: "You stand before a shimmering portal, its surface rippling with a kaleidoscope of colors. The air hums with ancient power, and the portal seems to beckon you forward. [Contextual updates based on quests/items]"
+  choices:
+    - text: "Step through the Shimmering Portal."
+      next_node: 21
+      function: "exit_story( core=core, text='you escape the labyrinth')"
+    - text: "Turn back and seek the Well of Understanding."
+      next_node: 18
+      function: "read_note(source='well', core=core)"
+    - text: "Accept the Fruit of Clarity."
+      next_node: 19
+      function: "receive_item(item='Fruit_of_Clarity', core=core)"
+
+21:
+  location: "The Resonant Chamber"
+  text: "You concentrate, and the whispers coalesce. 'Lost one,' a voice sighs directly into your mind, 'this Labyrinth feeds on choices. I can guide you... for a price. A cherished memory, perhaps?' The voice feels ancient and weary."
+  choices:
+    - text: "Offer a memory of a past triumph."
+      next_node: 6
+      function: null
+    - text: "Refuse. 'I make my own path!'"
+      next_node: 7
+      function: null
+
+22:
+  location: "The Astrologer's Sanctum"
+  text: "This hidden path leads to a circular chamber. Constellations unknown to you slowly drift across the domed ceiling. In the center, a pedestal holds a 'Star Shard', pulsing with gentle light. As you approach, a [red1]Spectral Guardian[/], formed of starlight and crackling energy, materializes, its many eyes fixed on you. It raises ethereal blades, clearly hostile."
+  choices:
+    - text: "Attempt to parley with the Celestial Guardian."
+      next_node: 13
+      function: "attempt_escape(difficulty=18, core=core)"
+    - text: "Prepare for battle! Attack the Spectral Guardian."
+      next_node: 13
+      function: "fight(entity=Entities.generate(type='starlight_guardian', lvl=7), core=core)"

@@ -10,7 +10,7 @@ from util.logger import logger
 from rich.padding import Padding
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
-from typing import TYPE_CHECKING, Dict, Any, Optional, List, cast
+from typing import TYPE_CHECKING, Dict, Any, Optional, List
 import datetime
 import sys
 import yaml
@@ -49,7 +49,14 @@ from rich.live import Live
 
 from core.non_blocking_input import NonBlockingInput
 
+def exit_story(core, text:str = "") -> None:
+    """Exit the story and show the player's statistics."""
+    logger.info("Exiting story" )
+    core.console.print(text)
 
+    #self._state = "STATS"
+    #self.console.layout = "STATS"
+    core.TERMINATE()
 class Core:
     """Core game engine that manages the game state and coordinates between components."""
 
@@ -97,7 +104,7 @@ class Core:
         
         # Initialize console
         from ui.console import Console
-        self.console = cast("Console", Console(core=self))
+        self.console = Console(core=self)
         
         # Post-initialization
         self._post_initialize()
