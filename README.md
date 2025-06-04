@@ -8,7 +8,7 @@ TermA (Terminal Adventure) is a text-based Python game set in a futuristic world
 This repository contains the core files for TermA, including the gameplay logic, puzzle mechanics, and other interactive elements. The game is currently in early development, with many features planned for future releases. You can follow the development process on YouTube at [thecherno.com/game](https://thecherno.com/game).
 
 ***
-
+a
 ## Getting Started
 To play and contribute to the development of TermA, follow these steps:
 
