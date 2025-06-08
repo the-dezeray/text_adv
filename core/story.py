@@ -149,3 +149,11 @@ class GameEngine:
         """
         self.temp_story = StoryGraph(story_data)
         self.current_node_id = "0"  # Reset to start of temp story
+    def get_all_events(self) -> List[str]:
+        """Get all events from the story."""
+        events = []
+        for node in self.story.nodes.values():
+            for choice in node.choices:
+                if choice.get("function"):
+                    events.append(choice.get("function"))
+        return events

@@ -1,5 +1,7 @@
 """Core game engine for the text adventure game."""
 
+from __future__ import annotations
+
 from util.file_handler import load_yaml_file
 from ui.options import CustomRenderable, GridOfChoices
 from rich.layout import Layout
@@ -10,44 +12,20 @@ from util.logger import logger
 from rich.padding import Padding
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
+from rich.console import Console as RichConsole
 from typing import TYPE_CHECKING, Dict, Any, Optional, List
 import datetime
 import sys
 import yaml
 from pathlib import Path
 from core.story import GameEngine
-
-if TYPE_CHECKING:
-    from ui.console import Console
-    from rich.live import Live
-    from rich.console import Console as RichConsole
+from core.keyboard import KeyboardControl
+from ui.console import Console as MainConsole
+from core.non_blocking_input import NonBlockingInput
 
 # Import event handlers
-from core.events.navigate import navigate
-from core.events.explore import explore
-from core.functions import receive
-from core.events.fight import fight
-from core.events.rest import rest
-from core.events.read import read
-from core.events.meditate import meditate
-from core.events.run import run
-from core.events.search import search
-from core.events.trap import trap
-from core.events.sneak import sneak
-from core.events.encounter import encounter
-
-from core.events.haverst import harvest
-from core.events.interact import interact
-from core.events.investigate import investigate
-from core.events.place import place
-from core.events.shop import shop
-from core.events.search_in import search_in
-from core.events.skill_check import skill_check
-from core.events.receive_item import receive_item
-from core.events.escape import attempt_escape
+from core.events import *
 from rich.live import Live
-
-from core.non_blocking_input import NonBlockingInput
 
 def exit_story(core, text:str = "") -> None:
     """Exit the story and show the player's statistics."""
@@ -57,15 +35,21 @@ def exit_story(core, text:str = "") -> None:
     #self._state = "STATS"
     #self.console.layout = "STATS"
     core.TERMINATE()
+
 class Core:
     """Core game engine that manages the game state and coordinates between components."""
 
     def __init__(self) -> None:
         """Initialize the core game engine."""
         # UI Components
-        self.rich_console: "RichConsole"
+        self.rich_console = RichConsole(color_system="truecolor", style="bold black", quiet=True)
+        self.rich_console.stderr = True
+        self.rich_console.quiet = False
         self.rich_live_instance: "Live"
         self._layout = Layout()
+        
+        # Initialize console first
+        self.console = MainConsole(core=self)
         
         # Game State
         self.running: bool = True
@@ -80,6 +64,7 @@ class Core:
         self.game_engine = GameEngine()
         self.next_node: Optional[str] = None
         self.current_entry_text: str = ""
+        self.keyboard_controller = KeyboardControl(core=self)
         
         # Player and Entities
         self.player = Player()
@@ -101,10 +86,6 @@ class Core:
         )
         self.overall_progress = Progress()
         self.overall_task = self.overall_progress.add_task("All Jobs", total=1000)
-        
-        # Initialize console
-        from ui.console import Console
-        self.console = Console(core=self)
         
         # Post-initialization
         self._post_initialize()
@@ -249,3 +230,33 @@ class Core:
         self._state = "STATS"
         self.console.layout = "STATS"
         self.console.refresh()
+
+    def run(self) -> None:
+        try:
+            with Live(
+                Layout(),
+                auto_refresh=True,
+                screen=True,
+                console=self.rich_console,
+            ) as self.rich_live_instance:
+                #core.console.show_menu()
+                self.console._transtion_layout("INGAME")
+                self.console.refresh()
+                self.keyboard_controller.execute_on_key( "\x00\x4d") # this will be fixed as of now dont touch this no time
+                while self.running:
+                    try:
+                        key = self.input_block.get_key()
+                        if key:
+                            self.keyboard_controller.execute_on_key(key)
+                        
+                        # Update progress bars
+                        for job in self.job_progress.tasks:
+                            if not job.finished:
+                                self.job_progress.advance(job.id)
+                    except Exception as e:
+                        logger.error(f"Error in main game loop: {e}")
+                        continue
+
+        except Exception as e:
+            logger.error(f"Error in Live display: {e}")
+            raise

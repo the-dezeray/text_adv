@@ -18,8 +18,8 @@ if TYPE_CHECKING:
 class CustomLayout:
     def __init__(self, core):
         self.core = core
-        self.__post_init__()
-    def __post_init__(self):
+        self.setup()
+    def setup(self):
         ...
     def update(self) -> Layout: ...
 
@@ -63,7 +63,9 @@ class Lsd(CustomLayout):
 
 class LayoutInGame(CustomLayout):
 
-    def __post_init__(self):
+    def setup(self):
+        from util.logger import logger
+        logger.info("Setting up LayoutInGame")
         self.core.continue_game()
     def update(self):
 

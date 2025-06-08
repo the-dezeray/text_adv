@@ -12,7 +12,7 @@
   choices:
     - text: "Trace the glowing veins deeper into the rock."
       next_node: 2
-      function: null
+      function: "apply_effect(effect='cold', duration='medium', core=core, str='you are charmed and cannot resist the cold')"
     - text: "Focus, try to understand the whispers."
       next_node: 3
       function: "skill_check(skill='hp',limit=2, core=core)"
@@ -32,21 +32,21 @@
   location: "The Resonant Chamber"
   text: "You concentrate, and the whispers coalesce. 'Lost one,' a voice sighs directly into your mind, 'this Labyrinth feeds on choices. I can guide you... for a price. A cherished memory, perhaps?' The voice feels ancient and weary."
   choices:
-    - text: "Offer a memory of a past triumph."
+    - text: "Concentrate on the whispers."
       next_node: 6
-      function: null
+      function: "interact(entity='whisper', core=core)"
     - text: "Refuse. 'I make my own path!'"
       next_node: 7
-      function: null
+      function: modify_player_attribute(property='luck',amount= -1,text='you lost something u dont know')
 
 4:
   location: "Chamber of Echoed Histories"
   text: "One mural depicts a figure holding a crystalline key, said to unlock the Labyrinth's secrets. As you touch it, a faint hum resonates. Two paths diverge from here: one where the mural depicts the key opening a shimmering, magical way; another, rougher path seems to lead to a grander, guarded hall."
   choices:
-    - text: "Take the newly revealed path of magic (left)."
+    - text: "Take the newly revealed path of magic >."
       next_node: 8
       function: null
-    - text: "Investigate the rougher path to the guarded hall (right)."
+    - text: "Investigate the rougher path to the guarded hall <."
       next_node: 22
       function: null
     - text: "The key is a myth. Continue down the main vein tunnel from before."
@@ -73,7 +73,7 @@
       function: "explore(core=core, area='swamp', text='you have decided to persevere')"
     - text: "The price was too high. Try to reclaim your memory."
       next_node: 7
-      function: null
+      function: "chance_event(event='fight(entity=Entities.generate(type='whisper', lvl=7), core=core)', probability=0.5, core=core)"
 
 7:
   location: "The Shifting Maze"
@@ -201,10 +201,10 @@
   choices:
     - text: "Approach the silent keeper of the garden."
       next_node: 18
-      function: null
+      function: "interact(entity='silent_keeper', core=core)"
     - text: "Cautiously harvest one of the smaller glowing plants."
       next_node: 18
-      function: "harvest(item='lunarbloom', core=core, stealth_check=True)"
+      function: "attempt_steal(item='lunarbloom', core=core, stealth_check=True,on_fail= 'fight(entity=Entities.generate(type='silent_keeper', lvl=7), core=core)')"
 
 17:
   location: "The Heart of the Labyrinth"
@@ -212,7 +212,7 @@
   choices:
     - text: "Approach the Shimmering Portal of Escape"
       next_node: 20
-      function: "exit_story( core=core, text='you escape the labyrinth')"
+      function: null
     - text: "Seek the Well of Understanding"
       next_node: 18
       function: "read_note(source='well', core=core)"
@@ -229,7 +229,7 @@
       function: exit_story( core=core, "text='you become the guardian of the labyrinth')"
     - text: "Take what you've learned and seek the Shimmering Portal"
       next_node: 20
-      function: "exit_story(core=core, text='you escape with newfound wisdom')"
+      function: null
     - text: "Return to the Heart of the Labyrinth"
       next_node: 17
       function: null

@@ -3,19 +3,32 @@ from util.logger import logger, event_logger
 from util.file_handler import load_yaml_file
 import random
 
+import random
+
 def creek(core, depth=0) -> None:
     """Creak event: Player might get hit by a boulder, taking HP damage."""
     if random.choice([True, False]):
         core.console.print(ui_text_panel(text="A boulder has fallen on you!"))
         core.player.hp -= 10
+
         if core.player.hp <= 0:
             core.console.print(ui_text_panel(text="You have been crushed."))
             core.console.print(Option(text="proceed", func=lambda: core.goto_next()))
+            return
+
         if random.choice([True, False]) and depth < 3:
+            # Continue deeper into danger
             creek(core, depth + 1)
+            return
+        else:
+            # Survived all attacks, but still needs resolution
+            core.console.print(ui_text_panel(text="You barely made it through the creaky terrain."))
+            core.console.print(Option(text="proceed", func=lambda: core.goto_next()))
+            return
     else:
         core.console.print(ui_text_panel(text="You make it safely across the creaky terrain."))
-        core.goto_next()
+        core.console.print(Option(text="proceed", func=lambda: core.goto_next()))
+
 
 def swamp(core):
     """Swamp event: Player loses experience."""

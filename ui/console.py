@@ -56,7 +56,8 @@ LAYOUTS: dict [str, type[CustomLayout]] = {
 class Console:
     def __init__(self, core: "Core"):
         self.core = core
-        self.table = None
+        self.table_count = 0
+        self.table: Optional[Table] = None
         self._layout  : CustomLayout = LayoutDefault(core=self.core)
         self.right :Optional[ConsoleRenderable] = None
         self.state: Literal["MAIN", "INVENTORY"] = "MAIN"
@@ -103,7 +104,11 @@ class Console:
             self.renderables.extend(item)
         else:
             self.renderables.append(item)
-
+        
+        if self.table_count > 9:
+                self.renderables.pop(0)
+  
+        self.refresh()
     @property
     def layout(self) -> CustomLayout:
         return self._layout
@@ -166,7 +171,7 @@ class Console:
                 # Select the first option in the last group
                 options[0].selected = True
                 self.selected_option = index
-
+        self.table_count = table.row_count
         return table
 
     def get_last_selectable(self) -> Optional[Tuple[int, List[CustomRenderable] | List[Option] | list[WeaponOption]]]:

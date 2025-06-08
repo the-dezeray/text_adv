@@ -7,7 +7,7 @@ def get_random():
 
 
 @event_logger
-def trap(core=None, type: str = None):
+def trap(core=None, type: str = None , lvl = 1):
     trap = {"name": "fire trap", "damage": 1}
     core.console.print(
         Option(

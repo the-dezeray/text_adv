@@ -1,8 +1,8 @@
 from ui.options import ui_text_panel, Option
 import random
 
-def receive_item(core, item: str | list[str],text = None | str) -> None:
-    core.console.clear_display()
+def receive_item( core ,item: str | list[str],text = None | str) -> None:
+
     one_item_texts = [
         "you have obtained",
         "you have found",
@@ -29,10 +29,9 @@ def receive_item(core, item: str | list[str],text = None | str) -> None:
         text = random.choice(multiple_items_texts) + " : " + ", ".join(item)
     else:
         text = random.choice(one_item_texts) + " : " + item
+    core.console.print(ui_text_panel(text=text))
     core.console.print(
-      Option(
-                text="Proceed", func=lambda: core.goto_next()
-    
-        )
+    #  Option( text="Proceed", func=lambda: core.goto_next() )
+    core.goto_next()
     )
 
