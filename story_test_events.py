@@ -6,19 +6,20 @@ from rich.live import Live
 from rich.console import Console
 from rich.layout import Layout
 
-def test_event(event_name, event_func, core):
-    """Test a single event and log the results."""
+def test_event_string(event_string: str, core: Core) -> bool:
+    """Test a single event string from the story."""
     try:
-        logger.info(f"Testing event: {event_name}")
+        logger.info(f"Testing event string: {event_string}")
         # Initialize rich live display for this test
         layout = Layout()
         with Live(layout, console=core.rich_console, auto_refresh=True) as live:
             core.rich_live_instance = live
-            event_func(core)
-        logger.info(f"✓ {event_name} completed successfully")
+            # Execute the event string using core's execute_yaml_function
+            core.execute_yaml_function(event_string)
+        logger.info(f"✓ Event string executed successfully")
         return True
     except Exception as e:
-        logger.error(f"✗ {event_name} failed with error: {str(e)}")
+        logger.error(f"✗ Event string failed with error: {str(e)}")
         logger.error(traceback.format_exc())
         return False
 
@@ -27,32 +28,20 @@ def main():
     core = Core()
     core.rich_console = Console(color_system="truecolor", style="bold black")
     
-    # Get all available events
-    events = {
-        'explore': explore,
-        'fight': fight,
-        'rest': rest,
-        'read': read,
-        'run': run,
-        'trap': trap,
-        'sneak': sneak,
-        'apply_effect': apply_effect,
-        'attempt_steal': attempt_steal,
-        'interact': interact,
-        'investigate': investigate,
-        'shop': shop,
-        'skill_check': skill_check,
-        'receive_item': receive_item,
-        'attempt_escape': attempt_escape
-    }
+    # Get all event strings from the story
+    event_strings = core.game_engine.get_all_events()
     
-    # Test each event
+    if not event_strings:
+        logger.error("No event strings found in the story!")
+        return
+    
+    # Test each event string
     results = {}
-    for event_name, event_func in events.items():
-        results[event_name] = test_event(event_name, event_func, core)
+    for i, event_string in enumerate(event_strings, 1):
+        results[f"Event {i}"] = test_event_string(event_string, core)
     
     # Print summary
-    print("\n=== Event Test Summary ===")
+    print("\n=== Story Event Test Summary ===")
     successful = sum(1 for result in results.values() if result)
     total = len(results)
     print(f"Successfully tested: {successful}/{total} events")
@@ -62,10 +51,7 @@ def main():
         for event_name, success in results.items():
             if not success:
                 print(f"- {event_name}")
-                print(f"  Function: {event_func}")
+                print(f"  Event string: {event_strings[int(event_name.split()[1]) - 1]}")
 
 if __name__ == "__main__":
     main()
-
-
-
