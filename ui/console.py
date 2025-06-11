@@ -20,6 +20,7 @@ from ui.layouts import (
     LayoutStartMenu,
     LayoutLoading,
     LayoutInventory,
+    LayoutSelectStory,
 )
 from ui.components import player_tab
 from rich.console import ConsoleRenderable, group, RichCast
@@ -50,6 +51,7 @@ LAYOUTS: dict [str, type[CustomLayout]] = {
     "CHARACTER_SELECTION": Lsd,
     "DEFAULT": LayoutDefault,
     "LOADING": LayoutLoading,
+    "SELECTSTORY": LayoutSelectStory,
 }
 
 
@@ -114,8 +116,8 @@ class Console:
         return self._layout
 
     @layout.setter
-    def layout(self, value: str):
-        _layout  = LAYOUTS.get(value, LayoutDefault)
+    def layout(self, value: str)->None:
+        _layout:type[CustomLayout]  = LAYOUTS.get(value, LayoutDefault)
      
         if _layout is None:
             raise ValueError("Expected a value, but got None")
@@ -132,19 +134,22 @@ class Console:
     def fill_inventory_table(self) -> Table:
         self.clear_display()
         self.print(Panel("weapons"))
+        
         return self.fill_ui_table()
 
-    def fill_ui_table(self) -> Table:
+    def fill_ui_table(self,expand:bool = True,title:str = "",caption:str = " - ",show_edge:bool = False,show_lines:bool = False,show_header:bool = False,style:str = "bold red1",box:box.Box = box.ROUNDED) -> Table:
         """returns rich table after filling it with options"""
         _core = self.core
         table = Table(
-            expand=True,
-            caption=" - ",  # Default caption
-            show_edge=False,
-            show_lines=False,
-            show_header=False,
-            style="bold red1",  # Default style
-            box=box.ROUNDED,  # Use rounded box characters
+            expand=expand,
+            caption=caption,  # Default caption
+            show_edge=show_edge,
+            show_lines=show_lines,
+            title = title,
+
+            show_header=show_header,
+            style=style,  # Default style
+            box=box  # Use rounded box characters
         )
         table.add_column(justify="center")
 
@@ -187,8 +192,8 @@ class Console:
             elif isinstance(item, CustomRenderable) and item.selectable:
                 return (i, [item])
         return None
-
-    def _transtion_layout(self, layout):
+    layout_list =Literal["MENU","INGAME","SHOP","STATS","INVENTORY","SCROLL_READING","FIGHT","SETTINGS","AI_STUDY","ABOUT","CHARACTER_SELECTION","DEFAULT","LOADING","SELECTSTORY"]
+    def _transtion_layout(self, layout:layout_list):
         self.core.console.clear_display()
         self.layout = layout
 

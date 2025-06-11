@@ -400,7 +400,7 @@ class MenuOption(CustomRenderable):
     def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
         try:
             from art import text2art 
-            ctext = text2art(self.text, font="tarty2") # Example font
+            ctext = self.text # Example font
         except ImportError:
             ctext = self.text 
         except Exception: 
@@ -408,8 +408,65 @@ class MenuOption(CustomRenderable):
         style = "dim grey93"
         if self.selected:
             style = "bold green"
+            s = "> " + self.text
 
-            return Panel(Align.center(f"[{style}]{ctext}[/{style}]"), border_style=style, expand=False)
+            core.console.current_layout.layout["right"].update(Panel("new selection"))
+            ctext = s
+            return Panel(Align.center(f"[{style}]{ctext}[/{style}]"),width=20)
         else:
             style = "dim grey93" #
-            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"), (0,0,0,0))
+            return Panel(Align.center(f"[{style}]{ctext}[/{style}]"), width=20)
+
+class MinimalMenuOption(CustomRenderable):
+    def __init__(self, **kwargs):
+        if 'h_allign' not in kwargs:
+            kwargs['h_allign'] = "left"
+        super().__init__(**kwargs)
+        self.type = "menu" # Ensure type is set
+
+    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
+        try:
+            from art import text2art 
+            ctext = self.text # Example font
+        except ImportError:
+            ctext = self.text 
+        except Exception: 
+             ctext = f"[italic] {self.text} (art error) [/italic]"
+        style = "dim grey93"
+        if self.selected:
+            style = "bold green"
+            s = "> " + self.text 
+            
+            core.console.current_layout.layout["right"].update(Panel("new selection"))
+            ctext = s
+            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
+        else:
+            style = "dim grey93" #
+            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
+
+class MinimalTextOption(CustomRenderable):
+    def __init__(self, **kwargs):
+        if 'h_allign' not in kwargs:
+            kwargs['h_allign'] = "left"
+        super().__init__(**kwargs)
+        self.type = "menu" # Ensure type is set
+
+    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
+        try:
+            from art import text2art 
+            ctext = self.text # Example font
+        except ImportError:
+            ctext = self.text 
+        except Exception: 
+             ctext = f"[italic] {self.text} (art error) [/italic]"
+        style = "dim grey93"
+        if self.selected:
+            style = "bold green"
+            s = "> " + self.text 
+            
+   
+            ctext = s
+            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
+        else:
+            style = "dim grey93" #
+            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))

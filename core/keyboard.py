@@ -20,7 +20,7 @@ class KeyboardControl:
     It provides a centralized way to handle all keyboard interactions.
     """
     
-    def __init__(self, core: Core):
+    def __init__(self, core:"Core"):
         """Initialize the keyboard controller.
         
         Args:

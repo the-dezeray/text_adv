@@ -40,6 +40,9 @@ class LayoutDefault(CustomLayout):
 
     def update(self) -> Layout:
         return Layout("des")
+class LayoutAi(CustomLayout):
+    def update(self) -> Layout:
+        ...
 
 
 class Lsd(CustomLayout):
@@ -170,28 +173,53 @@ class LayoutPreGame(CustomLayout):
     ...
 
 class LayoutStartMenu(CustomLayout):
-
+    def __init__(self, core):
+        self.core = core
+        self.layout = Layout()
+        self.layout.split_row(Layout(name="left"), Layout(name="right"))
     def update(self):
         table: Table = self.core.console.fill_ui_table()
         content = table
-        layout = Layout()
-        layout.split_column(Layout(name="up", size=1), Layout(name="down"))
+        
+
 
         def top_bar():
             ui = "Home Inventory Settings "
             return ui
 
-        layout["up"].update(top_bar())
-        layout["down"].split_row(
-            Layout(name="menus", ratio=3),
+        self.layout["left"].split_row(
+            Layout(name="menus"),
         )
 
 
         ui = self.core.console.fill_ui_table()
-        layout["menus"].update(Panel(ui))
+        self.layout["menus"].update(ui)
 
-        return layout
+        return self.layout
 
+
+class LayoutSelectStory(CustomLayout):
+    def __init__(self, core:"Core"):
+        self.core = core
+        self.layout = Layout()
+        
+    def update(self):
+        
+        table: Table = self.core.console.fill_ui_table()
+        content = table
+        
+
+
+        def top_bar():
+            ui = "Home Inventory Settings "
+            return ui
+
+ 
+
+        ui = self.core.console.fill_ui_table(show_lines=True,show_edge = True)
+        self.layout.update(Align(ui,align="center"))
+
+        return self.layout
 
 class LayoutLoading(CustomLayout):
 

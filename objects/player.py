@@ -38,13 +38,34 @@ class Player:
         if trap != None:
             logger.info(f"trap invalid -CURRENT CHAPTER - {self.chapter_id}")
         pass
-
+    def modify_attribute(self,property:str,amount: int,text:str)-> None:
+        property_map: dict[str,int]     = {
+            "hp": self.hp,
+            "max_hp": self.max_hp,
+            "exp": self.exp,
+            "level": self.level,
+            "max_exp": self.max_exp,
+            "luck": self.luck,
+            "crit": self.crit,
+            "mp": self.mp,
+            "max_mp": self.max_mp,
+            "faith": self.faith,
+            "agility": self.agility,
+            "armor": self.armor,
+        }
+        if property in property_map:
+            property_map[property] += amount
+            logger.info(f"Player {property} modified by {amount} to {property_map[property]}")
+        else:
+            logger.error(f"Player {property} not found")
+            
     def add_basic_resistance(self):
         pass
 
     def add_basic_skills(self):
         pass
-
+    def contact_with_trap(self, type: str, lvl: int)->None:
+        ...
     def add_basic_weapons(self):
         self.inventory.add(Weapon.generate(name="shield"))
         self.inventory.add(Weapon.generate(name="sword"))

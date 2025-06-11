@@ -37,7 +37,7 @@
       function: "interact(entity='whisper', core=core)"
     - text: "Refuse. 'I make my own path!'"
       next_node: 7
-      function: modify_player_attribute(property='luck',amount= -1,text='you lost something u dont know')
+      function: modify_player_attribute(core=core,property='luck',amount= -1,text='you lost something u dont know')
 
 4:
   location: "Chamber of Echoed Histories"
@@ -204,7 +204,7 @@
       function: "interact(entity='silent_keeper', core=core)"
     - text: "Cautiously harvest one of the smaller glowing plants."
       next_node: 18
-      function: "attempt_steal(item='lunarbloom', core=core, stealth_check=True,on_fail= 'fight(entity=Entities.generate(type='silent_keeper', lvl=7), core=core)')"
+      function: "attempt_steal(item='lunarbloom', core=core, stealth_check=True,on_fail= 'fight(entity=Entities.generate(type=\"silent_keeper\", lvl=7), core=core)')"
 
 17:
   location: "The Heart of the Labyrinth"
@@ -215,7 +215,7 @@
       function: null
     - text: "Seek the Well of Understanding"
       next_node: 18
-      function: "read_note(source='well', core=core)"
+      function: "read(text_id='well', core=core)"
     - text: "Accept the Fruit of Clarity"
       next_node: 19
       function: "receive_item(item='Fruit_of_Clarity', core=core)"
@@ -226,7 +226,7 @@
   choices:
     - text: "Embrace the Labyrinth's wisdom and become its guardian"
       next_node: 20
-      function: exit_story( core=core, "text='you become the guardian of the labyrinth')"
+      function: "exit_story( core=core, text='you become the guardian of the labyrinth')"
     - text: "Take what you've learned and seek the Shimmering Portal"
       next_node: 20
       function: null
@@ -240,7 +240,7 @@
   choices:
     - text: "Pull the Serpent Lever."
       next_node: 15
-      function: "trigger_trap(core=core, type='flames', lvl=2, str='poison comes upon you and you nearly die')"
+      function: "trigger_trap(core=core, type='flames', lvl=2, text='flames comes upon you and you nearly die')"
     - text: "Pull the Weeping Eye Lever."
       next_node: 15
       function: "apply_effect(effect='blindness', duration='medium', core=core, str='you are blinded and cannot see')"
@@ -257,7 +257,7 @@
       function: "exit_story( core=core, text='you escape the labyrinth')"
     - text: "Turn back and seek the Well of Understanding."
       next_node: 18
-      function: "read_note(source='well', core=core)"
+      function: "read(text_id='well', core=core)"
     - text: "Accept the Fruit of Clarity."
       next_node: 19
       function: "receive_item(item='Fruit_of_Clarity', core=core)"

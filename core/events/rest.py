@@ -7,8 +7,8 @@ if TYPE_CHECKING:
 
 
 @event_logger
-def rest( event = None,probability = 0):
-    global core
+def rest( core:"Core", event = None,probability = 0):
+    
     logger.info("You rest for a while")
     core.console.clear_display()
     core.console.print(ui_text_panel(text="You rest for a while"))
