@@ -8,3 +8,5 @@ class AI:
         self.core = core
     def generate_note(self, id: str) -> str:
         return "note is not implemented yet"
+    def prompt(self, prompt: str) -> str:
+        ...

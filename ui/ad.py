@@ -30,7 +30,7 @@ def new_game_menu_items(core):
     ),
     MinimalMenuOption(
         text="generate your own story with with ai",
-        func=lambda: console._transtion_layout("AI_PROMPT"),
+        func=lambda: console._transtion_layout("AI_STUDIO"),
         next_node=None,
         type="menu"
     ),

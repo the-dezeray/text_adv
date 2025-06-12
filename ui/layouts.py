@@ -10,22 +10,27 @@ from ui.components import player_tab,command_mode_layout
 from ui.options import CustomRenderable
 from rich.layout import Layout
 from typing import TYPE_CHECKING, Tuple
-
+from abc import ABC , abstractmethod 
 if TYPE_CHECKING:
     from core.core import Core
 
 
-class CustomLayout:
-    def __init__(self, core):
+class CustomLayout(ABC):
+    def __init__(self, core)->None:
         self.core = core
+        self.layout = Layout()
         self.setup()
-    def setup(self):
-        ...
-    def update(self) -> Layout: ...
+        
+    @abstractmethod
+    def setup(self)->None:
+        raise NotImplementedError("setup method must be implemented")
+    @abstractmethod
+    def update(self) -> Layout:
+        raise NotImplementedError("update method must be implemented")
 
 
 class LayoutCharacterSelection(CustomLayout):
-    def __post_init__(self):
+    def setup(self):
         self.core.console.renderables[0].ary[0].selected = True
 
     def update(self) -> Layout:
@@ -37,16 +42,19 @@ class LayoutCharacterSelection(CustomLayout):
 
 
 class LayoutDefault(CustomLayout):
-
+    def setup(self):
+        ...
     def update(self) -> Layout:
         return Layout("des")
-class LayoutAi(CustomLayout):
+class LayoutAIStudio(CustomLayout):
+    def setup(self)  :
+        self.core.command_mode = True
     def update(self) -> Layout:
-        ...
-
+        from  ui.components import input_mode_layout
+        return Layout(Align(input_mode_layout(self.core),align="center",vertical="middle"))
 
 class Lsd(CustomLayout):
-    def __post_init__(self):
+    def setup(self):
         self.core.console.renderables[0].ary[0].selected = True
 
     def update(self) -> Layout:
@@ -173,8 +181,9 @@ class LayoutPreGame(CustomLayout):
     ...
 
 class LayoutStartMenu(CustomLayout):
-    def __init__(self, core):
-        self.core = core
+    
+    def setup(self)->None:
+  
         self.layout = Layout()
         self.layout.split_row(Layout(name="left"), Layout(name="right"))
     def update(self):
@@ -224,7 +233,7 @@ class LayoutSelectStory(CustomLayout):
 class LayoutLoading(CustomLayout):
 
 
-    def __post_init__(self ):
+    def setup(self ):
 
         self.core.console.renderables= ["dsiree"]
         from core.timer import Timer

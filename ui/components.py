@@ -198,6 +198,45 @@ def command_mode_layout(core):
         yield hgrid
 
     return layout()
+def input_mode_layout(core):
+    from rich.table import Table
+
+    grid = Table.grid(expand=True)
+    grid.add_column()
+    stext = "t"
+    try:
+        stext = core.current_entry_text
+    except Exception:
+        stext = "hehe"
+    grid.add_row(
+        Panel(
+            f"> + {stext}",
+            title="input",
+            title_align="right",
+            border_style="green",
+            expand=True,
+        )
+    )
+
+    hgrid = Table.grid(expand=True)
+    hgrid.add_column()
+    instructions = "goto \[chapter\] \nreload \nkill \nheal \nrestart"
+    grid.add_row(
+        Panel(
+            instructions,
+            title="input",
+            title_align="right",
+            border_style="yellow",
+            expand=True,
+        )
+    )
+
+    @group()
+    def layout():
+        yield grid
+        yield hgrid
+
+    return layout()
 
 
 import random

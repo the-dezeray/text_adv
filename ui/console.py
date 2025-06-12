@@ -21,6 +21,7 @@ from ui.layouts import (
     LayoutLoading,
     LayoutInventory,
     LayoutSelectStory,
+    LayoutAIStudio,
 )
 from ui.components import player_tab
 from rich.console import ConsoleRenderable, group, RichCast
@@ -52,6 +53,7 @@ LAYOUTS: dict [str, type[CustomLayout]] = {
     "DEFAULT": LayoutDefault,
     "LOADING": LayoutLoading,
     "SELECTSTORY": LayoutSelectStory,
+    "AI_STUDIO": LayoutAIStudio,
 }
 
 
@@ -192,7 +194,7 @@ class Console:
             elif isinstance(item, CustomRenderable) and item.selectable:
                 return (i, [item])
         return None
-    layout_list =Literal["MENU","INGAME","SHOP","STATS","INVENTORY","SCROLL_READING","FIGHT","SETTINGS","AI_STUDY","ABOUT","CHARACTER_SELECTION","DEFAULT","LOADING","SELECTSTORY"]
+    layout_list =Literal["MENU","AI_STUDIO","INGAME","SHOP","STATS","INVENTORY","SCROLL_READING","FIGHT","SETTINGS","AI_STUDY","ABOUT","CHARACTER_SELECTION","DEFAULT","LOADING","SELECTSTORY"]
     def _transtion_layout(self, layout:layout_list):
         self.core.console.clear_display()
         self.layout = layout

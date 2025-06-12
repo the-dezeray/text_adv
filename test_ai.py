@@ -5,6 +5,10 @@ from google.generativeai.types import content_types
 from collections.abc import Iterable
 from pydantic import BaseModel, ConfigDict
 from typing import Optional,List ,Dict
+
+
+
+
 def get_schema():
     schema = ""
     with open("data/structure.txt","r") as content:
@@ -98,4 +102,4 @@ while True:
 
     # Print the regular message response (if present)
     if response.parts:
-        print(f"LIGHTBOT: {response.parts[0].text}")
+        print(f"LIGHTBOT: {response.parts[0].text}")        

@@ -62,6 +62,8 @@ class Core:
         self.in_fight: bool = False
         self.in_game: bool = True
         self.move_on: bool = True
+        self.ai_studio: bool = False
+        
         self._state: str = "INGAME"
         self._command_mode: bool = False
         self._disable_command_mode: bool = False

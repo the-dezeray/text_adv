@@ -69,6 +69,7 @@ class KeyboardControl:
             logger.error(f"Error executing key action: {e}")
 
     def _handle_command_mode_input(self, key: str) -> None:
+        
         """Handle input while in command mode.
         
         Args:
@@ -79,7 +80,10 @@ class KeyboardControl:
         elif key == ":":
             self.handle_command_mode()
         elif key == KEY.ENTER:
-            self._execute_command()
+            if not self.core.ai_studio:
+                self._execute_command()
+            else:
+                self.core.ai.prompt(self.core.current_entry_text)
         elif key == KEY.BACKSPACE:
             self.handle_backspace()
         else:
