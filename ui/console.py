@@ -47,7 +47,7 @@ LAYOUTS: dict [str, type[CustomLayout]] = {
     "SCROLL_READING": LayoutDefault,
     "FIGHT": LayoutDefault,
     "SETTINGS": LayoutDefault,
-    "AI_STUDIO": LayoutDefault,
+ 
     "ABOUT": LayoutDefault,
     "CHARACTER_SELECTION": Lsd,
     "DEFAULT": LayoutDefault,

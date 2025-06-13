@@ -3,8 +3,10 @@ from rich.panel import Panel
 from rich.padding import Padding
 from rich.align import Align
 from rich.console import group
-from typing import List
+from typing import List,TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from core.core import Core
 def stats_tab(player)-> Table:
     stat_grid = Table.grid(padding=(0, 2))
     stat_grid.add_column(justify="left", style="bold yellow")
@@ -198,7 +200,7 @@ def command_mode_layout(core):
         yield hgrid
 
     return layout()
-def input_mode_layout(core):
+def input_mode_layout(core:"Core"):
     from rich.table import Table
 
     grid = Table.grid(expand=True)
@@ -222,19 +224,14 @@ def input_mode_layout(core):
     hgrid.add_column()
     instructions = "goto \[chapter\] \nreload \nkill \nheal \nrestart"
     grid.add_row(
-        Panel(
-            instructions,
-            title="input",
-            title_align="right",
-            border_style="yellow",
-            expand=True,
-        )
+       Padding("[dim green]enter  the description of your story  and press enter to generate story [dim green]\nhint: the morre specific and detailed the summary, the better the result", 1)
     )
-
+   
     @group()
     def layout():
         yield grid
-        yield hgrid
+      
+        yield core.console.fill_ui_table()
 
     return layout()
 

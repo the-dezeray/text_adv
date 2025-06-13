@@ -20,6 +20,10 @@ def new_game_menu_items(core):
             ))
         console.clear_display()
         core.console.print(items)
+    def ds():   
+        console._transtion_layout("AI_STUDIO")
+        console._layout.update()
+        console.refresh()
     items = [
 
     MinimalMenuOption(
@@ -30,7 +34,7 @@ def new_game_menu_items(core):
     ),
     MinimalMenuOption(
         text="generate your own story with with ai",
-        func=lambda: console._transtion_layout("AI_STUDIO"),
+        func=lambda: ds(),
         next_node=None,
         type="menu"
     ),

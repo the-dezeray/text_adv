@@ -62,7 +62,7 @@ class Core:
         self.in_fight: bool = False
         self.in_game: bool = True
         self.move_on: bool = True
-        self.ai_studio: bool = False
+        self.ai_studio: bool = True
         
         self._state: str = "INGAME"
         self._command_mode: bool = False
@@ -156,8 +156,9 @@ class Core:
         if not self._disable_command_mode:
             self._command_mode = bool(value)
             self.console.toggle_command_mode()
-            self.chapter_id = "1"
-            self.console.layout = "INGAME"
+            if not self.ai_studio:
+                self.chapter_id = "1"
+                self.console.layout = "INGAME"
 
     def TERMINATE(self) -> None:
         """Terminate the game and clean up resources."""

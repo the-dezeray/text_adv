@@ -49,6 +49,8 @@ class LayoutDefault(CustomLayout):
 class LayoutAIStudio(CustomLayout):
     def setup(self)  :
         self.core.command_mode = True
+        self.core.console.clear_display()
+     
     def update(self) -> Layout:
         from  ui.components import input_mode_layout
         return Layout(Align(input_mode_layout(self.core),align="center",vertical="middle"))
