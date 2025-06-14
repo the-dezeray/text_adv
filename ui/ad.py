@@ -22,8 +22,9 @@ def new_game_menu_items(core):
         core.console.print(items)
     def ds():   
         console._transtion_layout("AI_STUDIO")
-        console._layout.update()
+    
         console.refresh()
+        core.ai.fake_prompt('d')
     items = [
 
     MinimalMenuOption(
