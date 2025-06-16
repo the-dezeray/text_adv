@@ -89,7 +89,8 @@ class AI:
         )
         logger.debug("Received story generation response")
         logger.debug(response.text)
-        self.core.console.print(ui_text_panel(text=response.text))    # Use instantiated objects.
+        from 
+        self.core.console.print()    # Use instantiated objects.
         
         story: list[Node] = response.parsed
         return {"story": story}

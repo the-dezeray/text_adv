@@ -40,7 +40,7 @@ class AI:
         # For now returning a simple example
         print("generating story")
 
-        response = self.client.models._generate_content(
+        response = self.client.models.generate_content_stream(
             model="gemini-2.0-flash",
             contents=f"Create a story  adventure  game with some nodes and choices based on the idea {idea}.",
             config={
@@ -49,10 +49,24 @@ class AI:
             },
         )
         # Use the response as a JSON string.
+        full_response_text = ""
+        for chunk in response:
+            
+            full_response_text += chunk.text or ""
+            print(full_response_text[-100:])
+        print(full_response_text)    # Use instantiated objects.
+        try:
+            import json
+            # Once all chunks are received, parse the complete JSON string.
+            story_data = json.loads(full_response_text)
+            story_nodes = [Node(**node_data) for node_data in story_data]
 
-        print(response.text)    # Use instantiated objects.
-        story: list[Node] = response.parsed
-        return {"story": story}
+            print("Successfully generated and parsed the story from stream!")
+            return {"story": story_nodes}
+        except json.JSONDecodeError as e:
+            print(f"Error parsing JSON from streamed response: {e}")
+            print("Raw response text:", full_response_text)
+            return {"story": []}
 
     
     
