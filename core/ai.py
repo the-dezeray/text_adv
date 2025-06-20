@@ -41,7 +41,7 @@ class AI:
         )
            
         self.config = types.GenerateContentConfig(
-            system_instruction="You are a system the user will  provide an idea   and you will  pass that idea to the generate function and then use the validate function to validate the return value",
+            system_instruction="You will first call the generate_story tool with the user's idea. After that, call validate_story with the result. ! do not call any more functions or return anything else.",
             tools=[self.generate_story, self.validate_story],
             tool_config=tool_config
         )
@@ -58,6 +58,9 @@ class AI:
     @event_logger
     def prompt(self, message: str) -> None:
         logger.info(f"Processing prompt: {message[:50]}...")
+        if "enter dugeon" in message:
+            self.core.console.print(ui_text_panel(text="entering story"))
+            
         responce = self._prompt_model(message)
         logger.debug(f"Received response of length: {len(responce)}")
         self.core.console.print(ui_text_panel(text=responce))
@@ -87,23 +90,27 @@ class AI:
                 response_schema=list[Node]
             )
         )
+   
+    
         logger.debug("Received story generation response")
         logger.debug(response.text)
-        from 
-        self.core.console.print()    # Use instantiated objects.
+        self.core.console.print(ui_text_panel(text="done generating story"))    # Use instantiated objects.
         
         story: list[Node] = response.parsed
-        return {"story": story}
+        return story
 
-    def validate_story( self,story: list[Node]) -> dict:
-        """Validate the story checking if all nodes are there .
+    def validate_story(self, story: list[Node]) -> str:
+        """Validates the whole story checking if all nodes are there .
+
         
         Args:
-            story: List of Node objects representing the story
+            story: The list of nodes for the story 
             
         Returns:
-            A dictionary containing validation status and any issues found
+            A string  if validation was succefull or not and if process should be stopped
         """
+        self.core.console.print(ui_text_panel(text="validating story"))
         logger.info(f"Validating story with {len(story)} nodes")
         self.core.console.print(ui_text_panel(text="done validating story"))
-        return {"status": "success", "issues": []}
+
+        return "Validation successful. End the process here."
