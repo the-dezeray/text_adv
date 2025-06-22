@@ -187,7 +187,7 @@ class LayoutStartMenu(CustomLayout):
     def setup(self)->None:
   
         self.layout = Layout()
-        self.layout.split_row(Layout(name="left"), Layout(name="right"))
+        self.layout.split_row(Layout(name="left"), Layout(visible=False,name="right"))
     def update(self):
         table: Table = self.core.console.fill_ui_table()
         content = table
@@ -203,8 +203,8 @@ class LayoutStartMenu(CustomLayout):
         )
 
 
-        ui = self.core.console.fill_ui_table()
-        self.layout["menus"].update(ui)
+        ui = Panel( self.core.console.fill_ui_table(),width =50,title="terminal adventure",title_align="center",subtitle ="v3",subtitle_align="right")
+        self.layout["menus"].update(Align(ui,align="center",vertical = "middle"))
 
         return self.layout
 
