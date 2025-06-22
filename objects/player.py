@@ -1,5 +1,5 @@
 from objects.inventory import Inventory
-from objects.weapon import Weapon
+from objects.weapon import WeaponFactory
 from util.logger import logger
 
 
@@ -67,14 +67,14 @@ class Player:
     def contact_with_trap(self, type: str, lvl: int)->None:
         ...
     def add_basic_weapons(self):
-        self.inventory.add(Weapon.generate(name="shield"))
-        self.inventory.add(Weapon.generate(name="sword"))
-        self.inventory.add(Weapon.generate(name="rusted_shiv"))
-        self.inventory.add(Weapon.generate(name="bone_club"))
-        self.inventory.add(Weapon.generate(name="gate_shield"))
-        self.inventory.add(Weapon.generate(name="whip"))
-        self.inventory.add(Weapon.generate(name="barbed_flail"))
-        self.inventory.add(Weapon.generate(name="furnace_poker"))
+        self.inventory.add(WeaponFactory.generate(name="shield"))
+        self.inventory.add(WeaponFactory.generate(name="sword"))
+        self.inventory.add(WeaponFactory.generate(name="rusted_shiv"))
+        self.inventory.add(WeaponFactory.generate(name="bone_club"))
+        self.inventory.add(WeaponFactory.generate(name="gate_shield"))
+        self.inventory.add(WeaponFactory.generate(name="whip"))
+        self.inventory.add(WeaponFactory.generate(name="barbed_flail"))
+        self.inventory.add(WeaponFactory.generate(name="furnace_poker"))
   
   
     def is_revivable(self):

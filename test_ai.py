@@ -60,7 +60,7 @@ def generate_plot_as_nodes(plot: str) -> str:
     }
 
     # Create a properly formatted prompt with the plot and schema
-    prompt = f"""Generate a story based on this plot: {plot}. which you present in a form of nodes like this ones {schema}.JSON should include a maximum of 10 story nodes. functions are know as events  fight ,read , rest  fight  """
+    prompt = f"""Generate a story based on this plot: {plot}. which you present in a form of nodes like this ones {schema}.JSON should include a maximum of 5 story nodes. functions are know as events  fight ,read , rest  fight  """
     
     con = genai.GenerationConfig(response_mime_type= "application/json",response_schema=response_schema)
     
@@ -70,9 +70,15 @@ def generate_plot_as_nodes(plot: str) -> str:
     
     print(f"Response = {response.text}")
     return response.text
-
+def validate(story: str):
+    """validate the strng convertable to a dict
+    Args:
+        story(str): A string convertable to adict 
+    Returns: 
+        A bool True if string is valid and False if string is not valide
+    """
 # Register functions
-light_controls = [generate_plot_as_nodes]
+light_controls = [generate_plot_as_nodes,validate]
 
 # System instructions
 instruction = "You are part of a game engine story builder. A user will give you a story idea, and you will generate a plot of no less than 15 words. Then use the generate_plot_as_nodes function to get a structured version of the story."

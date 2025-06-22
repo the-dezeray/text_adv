@@ -6,7 +6,7 @@ from util.file_handler import load_yaml_file
 from ui.options import CustomRenderable, GridOfChoices
 from rich.layout import Layout
 from objects.entities import Entities
-from objects.item import Items
+from objects.item import ItemFactory
 from objects.player import Player
 from util.logger import logger
 from rich.padding import Padding

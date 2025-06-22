@@ -1,8 +1,19 @@
 from ui.options import ui_text_panel, Option
 import random
-
+from  objects.item import ItemFactory
+from objects.weapon import WeaponFactory
 def receive_item( core ,item: str | list[str],text = None | str) -> None:
 
+
+    item_instance = None
+    if item in ItemFactory.ITEM_DICT :
+        item_instance = ItemFactory.generate(item)
+    if item in WeaponFactory.WEAPON_DICT:
+        item_instance = WeaponFactory.generate(item)
+    if not item_instance:
+        text ="the system has failed to grant you"+ str(item)
+        core.console.print(ui_text_panel(text=text))
+        core.goto_next()
     one_item_texts = [
         "you have obtained",
         "you have found",

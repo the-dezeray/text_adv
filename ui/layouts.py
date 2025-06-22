@@ -157,7 +157,9 @@ class LayoutInGame(CustomLayout):
             table = self.core.console.fill_inventory_table()
         content: Table = table
         layout["middle"].update(
-            Panel(
+            Padding(content)
+        )
+        """          Panel(
                 content,
                 padding=(0, 0),
                 title="A fallen room",
@@ -167,9 +169,7 @@ class LayoutInGame(CustomLayout):
                 subtitle_align="right",
                 style="",
                 border_style="bold light_slate_grey",
-            )
-        )
-
+            )"""
         return layout
 
 

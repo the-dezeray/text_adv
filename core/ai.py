@@ -36,7 +36,7 @@ class AI:
         logger.debug("Created Gemini client")
         tool_config = types.ToolConfig(
             function_calling_config=types.FunctionCallingConfig(
-                mode="ANY"
+                mode="AUTO"
             )
         )
            
@@ -100,17 +100,16 @@ class AI:
         return story
 
     def validate_story(self, story: list[Node]) -> str:
-        """Validates the whole story checking if all nodes are there .
+        """Validates the story returns  .
 
         
         Args:
             story: The list of nodes for the story 
             
         Returns:
-            A string  if validation was succefull or not and if process should be stopped
+            A string if story is valid end process 
         """
         self.core.console.print(ui_text_panel(text="validating story"))
         logger.info(f"Validating story with {len(story)} nodes")
         self.core.console.print(ui_text_panel(text="done validating story"))
-
-        return "Validation successful. End the process here."
+        return "story is valid"
