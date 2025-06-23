@@ -1,0 +1,11 @@
+
+whisper:
+  greeting: 
+    text: "Welcome, young traveler! I am Elder Thorne. What brings you to our humble village?"
+    responses:
+      - text: "I'm just passing through."
+        next_node: null
+        function : null
+      - text: "wat do you have to offer."
+        next_node: null
+        function : "show_shop(core = core)"
