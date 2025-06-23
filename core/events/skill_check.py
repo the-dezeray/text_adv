@@ -6,12 +6,19 @@ if TYPE_CHECKING:
       from core.core import Core
 def skill_check(core:"Core", skill:str = "",limit:int = 0,on_success =None,on_sucess = None,on_fail = None) -> None:
     notices = [""]
-    skills = {"hp":core.player.hp,"dmg":core.player.dmg,"charm":core.player.charm,"mp":core.player.mp,"cash":core.player.cash}
-    if skill in skills:
-            #if limit >= skills[skill] :
-                if on_success:
-                    on_success()
-                core.goto_next()
+
+    skill_value = core.player.get_attribute(key=skill)
+    if  not skill_value :
+        logger.info(skill+"not definded ")
+        core.console.print(f"[red]Skill {skill} not defined[/red]")
+        return
+
+    if skill_value >= limit:
+        if on_success:
+            on_success()
+            core.goto_next()
     else:
-        logger.info("skill not defined")
-        return 
+        if on_fail:
+            on_fail()
+            core.goto_next()
+    return

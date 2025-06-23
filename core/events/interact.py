@@ -1,2 +1,2 @@
-def interact(core=None,id: str = None):
+def interact(core=None,enitty: str = ""):
     pass

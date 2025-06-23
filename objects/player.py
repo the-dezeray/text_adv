@@ -79,3 +79,9 @@ class Player:
   
     def is_revivable(self):
         return False
+    def get_attribute(self, key: str):
+        if hasattr(self, key):
+            return getattr(self, key)
+        else:
+            logger.error(f"Player attribute {key} not found")
+            return None
