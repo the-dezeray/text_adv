@@ -35,7 +35,7 @@ def swamp(core):
     loss = random.randint(5, 15)
     core.player.exp = max(0, core.player.exp - loss)
     core.console.print(ui_text_panel(text=f"The swamp drains your energy... you lose {loss} EXP!"))
-
+    core.goto_next()
 def webs(core):
     """Webs event: Player loses some gold."""
     if hasattr(core.player, "gold"):
@@ -44,7 +44,7 @@ def webs(core):
         core.console.print(ui_text_panel(text=f"Sticky webs slow you down! You drop {loss} gold."))
     else:
         core.console.print(ui_text_panel(text="The webs tangle you, but you have no gold to lose."))
-
+    core.goto_next()
 def bolders(core):
     """Boulders event: Player loses a random attribute."""
     possible_attrs = ['hp', 'dmg', 'mp']
@@ -58,7 +58,7 @@ def bolders(core):
         core.console.print(ui_text_panel(text="A boulder crashes nearby, but you're unharmed... for now."))
 
 @event_logger
-def explore(core=None, area=None):
+def explore(core=None, area=None,text:str = ""):
     """Handles exploration logic for different areas."""
     areas = {
         "creek": lambda: creek(core),

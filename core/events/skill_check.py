@@ -16,9 +16,9 @@ def skill_check(core:"Core", skill:str = "",limit:int = 0,on_success =None,on_su
     if skill_value >= limit:
         if on_success:
             on_success()
-            core.goto_next()
+        core.goto_next()
     else:
         if on_fail:
             on_fail()
-            core.goto_next()
+        core.goto_next()
     return
