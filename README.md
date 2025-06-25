@@ -45,7 +45,7 @@ By the end of 2025, we aim to complete the following milestones:
 
 - Finalize the first set of levels with unique challenges.
 - Introduce basic NPC interactions with dialogues.
-- Create a more immersive and dynamic world by incorporating various environments and quests.
+- Create a more immersive and dynamic world by incorporating vake tlohela ho uena ho rera letsatsirious environments and quests.
 - Implement save/load functionality so players can track their progress.
 - Allow users to contribute additional levels and puzzles to the game.
   
@@ -57,4 +57,3 @@ With these updates, TermA will become an even more robust and interactive experi
 [![Discord](https://img.shields.io/badge/TheCherno%20Server--blue.svg?style=social&logo=Discord)](https://discord.gg/K2eSyQA)
 [![Patreon](https://img.shields.io/badge/%40thecherno--green.svg?style=social&logo=Patreon)](https://patreon.com/thecherno)
 
-daily update 2

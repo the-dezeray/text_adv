@@ -1,89 +1,91 @@
-"""core of the game"""
+"""Core game engine for the text adventure game."""
 
-from util.file_handler import load_yaml_file  # pylint: disable=unused-import
-from ui.options import Option,buffer_display_choices
+from __future__ import annotations
+
+from util.file_handler import load_yaml_file
+from ui.options import CustomRenderable, GridOfChoices
 from rich.layout import Layout
-from objects.entities import Entities  # pylint: disable=unused-import
-from objects.item import Items
+from objects.entities import Entities
+from objects.item import ItemFactory
 from objects.player import Player
-from ui.console import Console
-
 from util.logger import logger
-
-# Unused functions called using the exec functions
-from core.events.navigate import navigate  # noqa: F401  # type: ignore
-from core.events.explore import explore  # noqa: F401
-from core.functions import receive  # noqa: F401  # type: ignore
-from core.events.fight import fight  # noqa: F401  # type: ignorei
-from core.events.rest import rest  # noqa: F401  # type: ignore
-from core.events.read import read  # noqa: F401  # type: ignore
-from core.events.meditate import meditate  # noqa: F401  # type: ignore
-from core.events.run import run  # noqa: F401  # type: ignore
-from core.events.search import search  # noqa: F401  # type: ignore
-from core.events.trap import trap  # noqa: F401  # type: ignore
-from core.events.sneak import sneak  # noqa: F401  # type: ignore
-from core.events.encounter import encounter  # noqa: F401  # type: ignore
-from core.events.goto import goto  # noqa: F401  # type: ignore
-from core.events.haverst import harvest  # noqa: F401  # type: ignore
-from core.events.interact import interact  # noqa: F401  # type: ignore
-from core.events.investigate import investigate  # noqa: F401  # type: ignore
-from core.events.place import place  # noqa: F401  # type: ignore
-from core.events.shop import shop  # noqa: F401  # type: ignore
-from core.events.search_in import search_in  # noqa: F401  # type: ignore
-
-
-#from core.sound_player import SoundPlayer
 from rich.padding import Padding
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
-from typing import TYPE_CHECKING
+from rich.console import Console as RichConsole
+from typing import TYPE_CHECKING, Dict, Any, Optional, List
 import datetime
 import sys
+import time
+import yaml
+from pathlib import Path
+from core.story import GameEngine
+from core.keyboard import KeyboardControl
+from ui.console import Console as MainConsole
+from core.non_blocking_input import NonBlockingInput
+from core.ai import AI
+# Import event handlers
+from core.events import *
+from rich.live import Live
+import traceback
 
-if TYPE_CHECKING:
-    from ui.console import Console
-    from rich.live import Live
+def exit_story(core, text:str = "") -> None:
+    """Exit the story and show the player's statistics."""
+    if not core.test_mode:
+        logger.info("Exiting story" )
+        core.console.print(text)
 
-
+        #self._state = "STATS"
+        #self.console.layout = "STATS"
+        core.TERMINATE()
+    else: 
+        core.console.print(text)
 class Core:
-    def __init__(self) -> None:
-        self.rich_console = None
-        self.running: bool = True
-        self.ant = []
-        self.input_block = None
-        self.in_fight: bool = False
-        self.story: dict = load_yaml_file("data/story.yaml")
-        self._chapter_id = -1  # default value
-        self.progress = Progress()
-        self.in_game = True
-        self.rich_live_instance: "Live"
-        self.temp_story = None
-        self.move_on = True
-        self.timer = None
-        #self.sound_player = SoundPlayer()
-        self.entity = None
-        self.key_listener = None
-        self.s = "options"
-        self.selected_option: int = 0
-        self.others = []
-        self._disable_command_mode = False
-        self._layout = Layout()
-        self.player = Player()
+    """Core game engine that manages the game state and coordinates between components."""
 
-        self.player_turn: bool = False
-        self.next_node: str = None
-        self.options = []
-        self.current_entry_text: str = ""
+    def __init__(self) -> None:
+        """Initialize the core game engine."""
+        # UI Components
+        self.rich_console = RichConsole(color_system="truecolor", style="bold black", quiet=True)
+        self.rich_console.stderr = True
+        self.rich_console.quiet = False
+        self.rich_live_instance: "Live"
+        self._layout = Layout()
+        self.auto_generate_text: bool = False
+        self.ai = AI(core=self)
+        # Initialize console first
+        self.console = MainConsole(core=self)
+        
+        # Game State
+        self.running: bool = True
+        self.test_mode: bool = False
+        self.in_fight: bool = False
+        self.in_game: bool = True
+        self.move_on: bool = True
+        self.ai_studio: bool = True
+        
+        self._state: str = "INGAME"
         self._command_mode: bool = False
-        self._state = "INGAME"
-        self.job_progress = Progress(
-            "{task.description}",
-            SpinnerColumn(),
-            BarColumn(),
-            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
-        )
-        self.console: Console = Console(core=self)
-        self._post_initialize()
+        self._disable_command_mode: bool = False
+        
+        # Story and Progress
+        self.game_engine = GameEngine()
+        self.next_node: Optional[str] = None
+        self.current_entry_text: str = ""
+        self.keyboard_controller = KeyboardControl(core=self)
+        
+        # Player and Entities
+        self.player = Player()
+        self.entity: Optional[Entities] = None
+        self.others: List[Any] = []
+        
+        # Input and Control
+        self.input_block = NonBlockingInput()
+        self.key_listener = None
+        self.selected_option: int = 0
+        self.s: str = "options"
+        
+        # Progress Tracking
         self.job_progress = Progress(
             "{task.description}",
             SpinnerColumn(),
@@ -91,140 +93,272 @@ class Core:
             TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
         )
         self.overall_progress = Progress()
-        self.overall_task = self.overall_progress.add_task("All Jobs", total=int(1000))
-    def create_timer(sec: float, func : callable):
-            timer = None
-    def _get_next_nodes():
-        story = load_yaml_file("data/story.yaml")
-        ary = []
-        for _chapter in story.items():
-            for i in _chapter[1]["choices"]:
-                ary.append(i["next_node"])
-        return ary
+        self.overall_task = self.overall_progress.add_task("All Jobs", total=1000)
+        
+        # Post-initialization
+        self._post_initialize()
+        
+        logger.info("Core game engine initialized")
 
-    def exit() -> None:
-        sys.exit()
-
-    def from_loading_to_start_menu(self):
-        self.console.layout = "MENU"
     def _post_initialize(self) -> None:
+        """Perform post-initialization tasks."""
         current_time = datetime.datetime.now()
         logger.info(f"New game instance {current_time}")
-        self.check_story()
-        # self.sound_player.load_music_track("main_theme", "data/cin1.mp3")
-        # self.sound_player.play_music("main_theme")
-
-
-
-
-    def show_settings(self):
-        self.state = "SETTINGS"
-
-    def show_stats(self):
-        self.state = "STATS"
-
-
-    def check_story(self) -> None:
-        ...
+        self.game_engine.validate_story()
 
     @property
     def chapter_id(self) -> str:
-        return self._chapter_id
-
-    @chapter_id.getter
-    def chapter_id(self) -> str:
-        return self._chapter_id
+        """Get the current chapter ID."""
+        return str(self.game_engine.current_node_id)
 
     @chapter_id.setter
-    def chapter_id(self, value) -> None:
-        story = self.story if self.temp_story is None else self.temp_story
+    def chapter_id(self, value: str) -> None:
+        """Set the current chapter ID.
+        
+        Args:
+            value: The chapter ID to set
+        """
         if value == "-1" or value == -1:
-            value = -1
-        elif value not in story:
-            logger.critical(
-                f"The chapter '{value}' is not defined in the default yaml file. check if defined in yaml"
-            )
-            raise ValueError(
-                f"The chapter '{value}' is not defined in the default yaml file. check if defined in yaml"
-            )
+            self.game_engine.current_node_id = "-1"
+        else:
+            self.game_engine.set_current_node(str(value))
 
-        self._chapter_id = value
-
-    def execute_yaml_function(self, func: str) -> any:
-        core = self
+    def execute_yaml_function(self, func: str) -> Any:
+        """Execute a function defined in YAML.
+        
+        Args:
+            func: The function to execute
+            
+        Returns:
+            Any: The result of the function execution
+        """
         logger.info(f"Executing function: {func}")
-        local_scope = {"core": core}  # Define the scope where 'core' is available
+        local_scope = {"core": self}
+        
         try:
-            exec(func, globals(), local_scope)
+            return exec(func, globals(), local_scope)
         except Exception as e:
-            logger.error(f"chapter : {self.chapter_id}")
-            logger.error(
-                f"Error executing function: {func} - {e} : function exists in yaml file however execution failed mostly likely to the function not defined as  a local or global variable"
-            )
+            logger.error(f"Error executing function {func}: {e}")
+            raise
 
     @property
-    def command_mode(self):
-        return self._command_mode
-
-    @command_mode.getter
-    def command_mode(self):
+    def command_mode(self) -> bool:
+        """Get the command mode state."""
         return self._command_mode
 
     @command_mode.setter
-    def command_mode(self, value):
+    def command_mode(self, value: bool) -> None:
+        """Set the command mode state.
+        
+        Args:
+            value: The new command mode state
+        """
         if not self._disable_command_mode:
-            self._command_mode = bool(value)  # Ensure it is a boolean
+            self._command_mode = bool(value)
             self.console.toggle_command_mode()
+            if not self.ai_studio:
+                self.chapter_id = "1"
+                self.console.layout = "INGAME"
 
-        self.chapter_id = "1a"
-        self.console.layout = "INGAME"
-
-    def TERMINATE(self):
-        self.sound_player.close()
+    def TERMINATE(self) -> None:
+        """Terminate the game and clean up resources."""
+        logger.info("Terminating game")
         self.running = False
-        self.rich_live_instance.stop()
-        self.input_block.stop()
-        quit()
+        if self.rich_live_instance:
+            self.rich_live_instance.stop()
+        if self.input_block:
+            self.input_block.stop()
+        sys.exit(0)
 
     def continue_game(self) -> None:
-        # set the selected option to 0
-  
-        """if self.chapter_id == -1:
-            self.console.layout = "CHARACTER_SELECTION"""
-        if self.chapter_id == -1:
-            self.console.show_menu()
+        """Continue the game from the current state."""
+        if self.chapter_id == "-1":
+            self.chapter_id = 0
+            return
 
-        else:
-            if self.temp_story is not None:
-                story = self.story
-            else:
-                story = self.temp_story
-            current_chapter = self.story[self.chapter_id]
-      
-            from ui.options import ui_text_panel
-            tit  ="[b green]\uf1bb Deep Forest[/b green]"
-            from rich.table import Table
-            from rich.rule import Rule
-            
-            self.options.append(Rule(title=tit,align="left",style="cyan"))
-            from rich.text import Text
-            ui_text = Text(text = current_chapter["text"],justify= "full")
-            self.options.append(Padding(ui_text))    
-
-            # or index,choice in enumerate(current_chapter["choices"]):
-            self.options.append(buffer_display_choices(current_chapter["choices"]))
-        self.selected_option = len(self.options)-1
-        self.options[-1].selected = True
+        current_node = self.game_engine.get_current_node()
+        if not current_node:
+            logger.error(f"Current node {self.chapter_id} not found")
+            # Reset to a valid starting point
+            self.chapter_id = "0"
+            current_node = self.game_engine.get_current_node()
+            if not current_node:
+                logger.critical("Failed to load starting node")
+                return
+        
+        # Display chapter title
+        from rich.rule import Rule
+        title = "[b green]\uf1bb Deep Forest[/b green]"
+        self.console.print(Rule(title=title, align="left", style="cyan"))
+        
+        # Display chapter text
+        from rich.text import Text
+        ui_text = Text(text=current_node.text, justify="full")
+        self.console.print(Padding(ui_text))
+        
+        # Display choices
+        self.console.print(GridOfChoices(current_node.choices))
+        
         self.console.refresh()
 
-
     def goto_next(self) -> None:
-        """Go to the next node in the story"""
-        logger.info("Going to next node")
-
+        """Go to the next node in the story."""
+        if not self.next_node:
+            logger.error("No next node specified")
+            return
+            
+        logger.info(f"Going to next node: {self.next_node}")
         self.chapter_id = self.next_node
         self.continue_game()
 
-    def clear_logs(): ...
-    def restart(): ...
-    def raw_exec(): ...
+    def execute_command(self, command: str) -> None:
+        """Execute a game command.
+        
+        Args:
+            command: The command to execute
+        """
+        try:
+            match command.lower():
+                case "kill":
+                    self.TERMINATE()
+                case _:
+                    logger.warning(f"Unknown command: {command}")
+        except Exception as e:
+            logger.error(f"Error executing command {command}: {e}")
+
+    def show_settings(self) -> None:
+        """Show the game settings menu."""
+        logger.info("Showing settings menu")
+        self._state = "SETTINGS"
+        self.console.layout = "SETTINGS"
+        self.console.refresh()
+
+    def show_stats(self) -> None:
+        """Show the player's statistics."""
+        logger.info("Showing player stats")
+        self._state = "STATS"
+        self.console.layout = "STATS"
+        self.console.refresh()
+
+    def run(self) -> None:
+        try:
+            with Live(
+                Layout(),
+                auto_refresh=True,
+                screen=True,
+                console=self.rich_console,
+            ) as self.rich_live_instance:
+                
+                self.console._transtion_layout("MENU")
+                self.console.refresh()
+                self.console.show_menu()
+                self.keyboard_controller.execute_on_key( "\x00\x4d") # this will be fixed as of now dont touch this no time
+                while self.running:
+                    time.sleep(0.2)
+                    try:
+                        key = self.input_block.get_key()
+                        if key:
+                            self.keyboard_controller.execute_on_key(key)
+                        
+                        # Update progress bars
+                        for job in self.job_progress.tasks:
+                            if not job.finished:
+                                self.job_progress.advance(job.id)
+                    except Exception as e:
+                        logger.error(f"Error in main game loop: {e}")
+                        continue
+        except Exception as e:
+            logger.error(f"Error in main game execution: {e}")
+            raise
+
+    def run_test(self):
+        """Run tests for story events and return test results."""
+        try:
+            # Get all event strings from the story
+            event_strings = self.game_engine.get_all_events()
+            
+            if not event_strings:
+                logger.error("No event strings found in the story!")
+                return None
+            
+            # Initialize test results
+            results = []
+            self.rich_console.soft_wrap = True
+            with Live(
+                Layout(),
+                auto_refresh=True,
+                screen=True,
+                console=self.rich_console,
+            ) as self.rich_live_instance:
+                            #core.console.show_menu()
+                
+                self.console._transtion_layout("INGAME")
+                self.console.refresh()
+                self.keyboard_controller.execute_on_key( "\x00\x4d") # 
+                # Test each event string
+                for i, event_string in enumerate(event_strings, 1):
+                    try:
+                        logger.info(f"Testing event string {i}: {event_string}")
+                        self.execute_yaml_function(event_string)
+                        logger.info(f"✓ Event string {i} executed successfully")
+                        
+                        results.append({
+                            'success': True,
+                            'event_index': i,
+                            'event_string': event_string
+                        })
+                        
+                    except Exception as e:
+                        logger.error(f"✗ Event string {i} failed with error: {str(e)}")
+                        
+                        # Extract function name if possible
+                        function_name = None
+                        try:
+                            lines = event_string.strip().split('\n')
+                            for line in lines:
+                                if 'function:' in line.lower():
+                                    function_name = line.split(':')[-1].strip()
+                                    break
+                                if line.strip() and not line.startswith('#') and not line.startswith('-'):
+                                    function_name = line.strip().split('(')[0] if '(' in line else line.strip()
+                                    break
+                        except:
+                            pass
+                        
+                        results.append({
+                            'success': False,
+                            'event_index': i,
+                            'event_string': event_string,
+                            'function_name': function_name,
+                            'error_message': str(e),
+                            'traceback': traceback.format_exc()
+                        })
+                 
+                # Generate summary
+                failed_events = [r for r in results if not r['success']]
+                summary = {
+                    'total_events': len(results),
+                    'successful_events': len(results) - len(failed_events),
+                    'failed_events': len(failed_events),
+                    'failures': failed_events
+                }
+                from ui.options import ui_text_panel
+                # Print test results
+                self.console.clear_display()
+                self.console.print(ui_text_panel(text=f"\n=== Story Event Test Results ==="))
+                self.console.print(f"Total: {summary['total_events']} | Success: {summary['successful_events']} | Failed: {summary['failed_events']}")
+                
+                if summary['failed_events'] > 0:
+                    self.console.print("\nFailed Events:")
+                    for failure in summary['failures']:
+                        self.console.print(f"Event {failure['event_index']}: {failure.get('function_name', 'unknown')} - {failure['error_message'][:50]}...")
+            
+                return {
+                    'results': results,
+                    'summary': summary
+                }
+                
+        except Exception as e:
+            logger.error(f"Error in test execution: {e}")
+            raise
+

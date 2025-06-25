@@ -11,6 +11,7 @@ dependencies = [
     "markdown-it-py==3.0.0",
     "mdurl==0.1.2",
     "numpy>=2.2.4",
+    "overrides>=7.7.0",
     "pygments==2.19.1",
     "python-dotenv>=1.0.1",
     "pyyaml==6.0.2",
@@ -21,4 +22,9 @@ dependencies = [
     "six==1.17.0",
     "sounddevice>=0.5.1",
     "soundfile>=0.13.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
 ]

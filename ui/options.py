@@ -5,11 +5,11 @@ from rich.table import Table
 from rich.align import Align
 from rich.layout import Layout
 from rich.text import Text
-from rich import box
+
 from rich.console import ConsoleRenderable
 
 if TYPE_CHECKING:
-    from core import Core
+    from core.core import Core
     from objects.weapon import Weapon
 
 
@@ -18,7 +18,8 @@ def yy():
     pass
 
 
-class Option:
+AlignMethod = Literal["left", "center", "right"]
+class CustomRenderable:
     def __init__(
         self,
         text: str = "",
@@ -26,8 +27,8 @@ class Option:
         preview: Optional[Callable] = None, # Changed from str to Callable based on usage
         next_node: Optional[str] = None,
         selectable: bool = True,
-        type: Literal["header", "entity_profile", "note", "choices", "menu", "weapon", ""] = "", # Added "weapon"
-        h_allign: str = "center",
+        type:str = "", # Added "weapon"
+        h_allign: AlignMethod = "center",
         v_allign: str = "middle",
         on_select: Optional[Callable] = None,
         core: Optional["Core"] = None, # Added type hint
@@ -67,26 +68,26 @@ class Option:
         raise NotImplementedError("Subclasses must implement the render method.")
 
 
-class buffer_create_weapons:
+class GridOfWeapons:
     """Creates a buffer specifically for displaying weapon options."""
     def __init__(
         self,
-        ary: list["Weapon"] = None, # Specify list contains Weapon objects
-        core: "Core" = None,
+        ary: list["Weapon"] = [], # Specify list contains Weapon objects
+        core: Optional["Core"] = None,
         extra: bool = False
     ):
         if core is None:
-            raise ValueError("Core must be provided for buffer_create_weapons.")
+            raise ValueError("Core must be provided for GridOfWeapons.")
         self.extra = extra
         # Initialize with an empty list if ary is None
         self.weapons = ary or []
         self.h_allign = "left"
         self.core = core
         self.selectable = True # This buffer itself isn't selectable, but its contents are
-        self.ary = self._build_weapon_options() # Store the generated Option objects
+        self.ary = self._build_weapon_options() # Store the generated CustomRenderable objects
 
-    def _build_weapon_options(self) -> list["wep__ui"]:
-        """Builds a list of wep__ui options from the weapon data."""
+    def _build_weapon_options(self) -> list["WeaponOption"]:
+        """Builds a list of WeaponOption options from the weapon data."""
         from core.events.fight import deal_damage # Local import to prevent circular dependency
 
         options_list = []
@@ -94,10 +95,10 @@ class buffer_create_weapons:
         preview_func = self.core.console.show_weapon if self.extra and hasattr(self.core, 'console') and hasattr(self.core.console, 'show_weapon') else None
 
         for weapon in self.weapons:
-            # Create a WeaponOption for each weapon
+            # Create a create_weapon_option for each weapon
             # Use a lambda with a default argument to capture the current weapon
             options_list.append(
-                WeaponOption(
+                create_weapon_option(
                     weapon=weapon,
                     # Pass the specific weapon to deal_damage
                     func=lambda w=weapon: deal_damage(self.core, w),
@@ -110,7 +111,7 @@ class buffer_create_weapons:
     def render(self, core: Optional["Core"] = None) -> ConsoleRenderable:
         renderables = [option.render() for option in self.ary] # Render each weapon option
 
-        grid = ui_grid(colomuns=1)
+        grid = create_grid(colomuns=1)
         for r in renderables:
             grid.add_row(r)
 
@@ -147,28 +148,31 @@ class buffer_create_weapons:
             return grid
 
 
-class buffer_display_choices:
+class GridOfChoices:
     """Creates a buffer for displaying generic choice options."""
     def __init__(
         self,
-        ary: list[dict] = None, # Expects a list of dictionaries
+        ary: list[dict] = [], # Expects a list of dictionaries
         title: str = "",
         icon: str = "" # Icon parameter seems unused in render
     ):
 
-        self.raw_choices = ary or []
-        self.h_allign = "left"
+        self.raw_choices = ary 
+        from typing import Literal
+
+       
+        self.h_allign :AlignMethod = 'left'
         self.title = title
         self.selectable = True # Buffer contains selectable items
-        self.ary = self._build_choice_options() # Store generated Option objects
+        self.ary = self._build_choice_options() # Store generated CustomRenderable objects
 
-    def _build_choice_options(self) -> list["new__ui"]:
-        """Builds a list of new__ui options from the choice data."""
+    def _build_choice_options(self) -> list["Option"]:
+        """Builds a list of Option options from the choice data."""
         options_list = []
         for choice_data in self.raw_choices:
-            # Create a new__ui option for each dictionary in the list
+            # Create a Option option for each dictionary in the list
             options_list.append(
-                new__ui(
+                Option(
                     text=choice_data.get("text", "Missing text"), # Provide default
                     func=choice_data.get("function"), # Function can be None
                     next_node=choice_data.get("next_node"), # next_node can be None
@@ -189,61 +193,15 @@ class buffer_display_choices:
         """
         renderables = [option.render() for option in self.ary]
 
-        grid = ui_grid(colomuns=1)
+        grid = create_grid(colomuns=1)
         for r in renderables:
             grid.add_row(r)
         return grid
 
 
-class buffer_display_menu_items:
-    """Creates a buffer for displaying menu items (similar to choices)."""
-    def __init__(
-        self,
-        ary: list[dict] = None, # Expects a list of dictionaries
-        title: str = "",
-        icon: str = "" # Icon parameter seems unused in render
-    ):
-
-        self.raw_items = ary or []
-        self.h_allign = "left"
-        self.title = title
-        # Menu items are typically selectable
-        self.ary = self._build_menu_item_options() # Store generated Option objects
-
-    def _build_menu_item_options(self) -> list["new__ui"]:
-        """Builds a list of new__ui options from the menu item data."""
-        options_list = []
-        for item_data in self.raw_items:
-            # Create a new__ui option for each dictionary
-            options_list.append(
-                new__ui(
-                    text=item_data.get("text", "Menu Item"), # Provide default
-                    func=item_data.get("function"),
-                    next_node=item_data.get("next_node"),
-                    selectable=True,
-                )
-            )
-        return options_list
-
-    def render(self, core: Optional["Core"] = None) -> Table:
-        """
-        Renders the list of menu items within a grid.
-
-        Args:
-            core (Optional["Core"]): Reference to the core object. Defaults to None.
-
-        Returns:
-            Table: A Table (grid) containing the rendered menu item options.
-        """
-        renderables = [option.render() for option in self.ary]
-
-        grid = ui_grid(colomuns=1)
-        for r in renderables:
-            grid.add_row(r)
-        return grid
 
 
-def ui_grid(colomuns: int = 1) -> Table:
+def create_grid(colomuns: int = 1) -> Table:
 
     grid = Table.grid(expand=True) # Expand grid to fill available space
     for _ in range(colomuns):
@@ -251,7 +209,7 @@ def ui_grid(colomuns: int = 1) -> Table:
     return grid
 
 
-def ui_text_panel(option: Optional[Option] = None, text: str = "") -> Padding:
+def ui_text_panel(option: Optional[CustomRenderable] = None, text: str = "") -> Padding:
 
     display_text = text
     style = "" # Default style
@@ -261,22 +219,45 @@ def ui_text_panel(option: Optional[Option] = None, text: str = "") -> Padding:
             display_text = option.text
             if option.selected:
                 style = "bold green"
-                # Preview is handled by the Option's selected setter, not here.
+                # Preview is handled by the CustomRenderable's selected setter, not here.
         else:
             # Raise error if there's nothing to display
             raise ValueError("ui_text_panel requires either an 'option' or 'text'.")
 
     # Return text wrapped in Padding, potentially with a style
     return Padding(display_text, style=style)
+class WeaponOption(CustomRenderable):
+    """UI representation for a weapon option."""
+    def __init__(self, **kwargs):
+        """Initializes a weapon UI element, forwarding arguments to CustomRenderable."""
+        super().__init__(**kwargs)
+        self.type  : str = "weapon" # Ensure type is set
+
+    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
+        # Use a Unicode arrow or similar indicator
+        indicator = "\uf0da" # Example: Right-pointing arrow
+        display_text = f"{indicator} {self.text} "
+        style = "dim green"
+        if self.selected:
+            style = "bold green" # Internal style tracking
+            # Preview is handled by the setter
+            return Panel(display_text, style=style, expand=False) # Wrap selected in Panel
+        else:
+            style = "dim green" # Internal style tracking
+            # Non-selected items are padded Text
+            return Padding(Text(display_text, style=style), (0, 0, 0, 0)) # No extra padding here
 
 
-def WeaponOption(
+
+
+
+def create_weapon_option(
     weapon: "Weapon",
     func: Callable,
     preview: Optional[Callable] = None,
     core: Optional["Core"] = None
-) -> "wep__ui":
-    return wep__ui(
+) -> "WeaponOption":
+    return WeaponOption(
         text=weapon.name,
         func=func,
         selectable=True,
@@ -287,7 +268,7 @@ def WeaponOption(
 
 
 def new_ui_button(
-    option: Option,
+    option: CustomRenderable,
     # style: str = "", # Style is determined by selection state
     # selected: bool = False, # Selection is determined by option.selected
     top_padding: int = 0,
@@ -303,7 +284,7 @@ def new_ui_button(
     if option.selected:
         border_style = "bold green" # Highlight border when selected
         current_left_padding += 5 # Indent when selected
-        # Preview is handled by the Option's selected setter, not here.
+        # Preview is handled by the CustomRenderable's selected setter, not here.
 
     # Create the Panel for the button appearance
     button_panel = Panel(
@@ -327,31 +308,12 @@ def load_shop():
     pass
 
 
-def ui_table() -> Table:
-    """
-    Creates a predefined Rich Table suitable for displaying options or data.
-
-    Returns:
-        Table: A configured Rich Table object.
-    """
-    table = Table(
-        expand=True,
-        caption=" - ", # Default caption
-        show_edge=False,
-        show_lines=False,
-        show_header=False,
-        style="bold red1", # Default style
-        box=box.ROUNDED, # Use rounded box characters
-    )
-    table.add_column(justify="center") # Add a single centered column
-    return table
-
 
 def Loader() -> Padding:
     return Padding(Panel("Loading..."), pad=(2, 4, 0, 4), expand=False)
 
 
-def Reward(ary: list[str] = None) -> Panel:
+def Reward(ary: list[str] = []) -> Panel:
 
     rewards = ary or []
     grid = Table.grid(expand=True) # Use a grid to list rewards
@@ -359,21 +321,33 @@ def Reward(ary: list[str] = None) -> Panel:
     for reward_text in rewards:
         grid.add_row(Text(reward_text, style="yellow")) # Style rewards text
     return Panel(grid, title="[bold green]Rewards![/bold green]", expand=False)
+class Option(CustomRenderable):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
+        indicator = "\uf0da"
+        display_text = f"{indicator} {self.text} "
+        style :str = "dim green"
+        if self.selected:
+            style = "bold green"
+            # Preview handled by setter
+            return Panel(display_text, style=style, expand=False)
+        else:
+            style = "dim green"
+             # Add space before indicator for alignment?
+            return Padding(Text(f" {display_text}", style=style), (0, 0, 0, 0))
 
-
-def get_selectable_options(options: list) -> list[Option]:
-
-    selectable_list = []
+def get_selectable_options(options: list) -> list[CustomRenderable]:  
+    selectable_list: list[CustomRenderable] = []
     # Iterate in reverse to maintain visual order when selecting (usually bottom-up)
     for item in reversed(options):
         # Check if the item is a buffer containing a list of options (ary)
-        if isinstance(item, (buffer_display_choices, buffer_create_weapons, buffer_display_menu_items)):
+        if isinstance(item, (GridOfChoices, GridOfWeapons)):
              # Add all options from the buffer's list
             selectable_list.extend(item.ary)
-        # Check if the item itself is a selectable Option subclass
-        elif isinstance(item, Option) and item.selectable:
+        # Check if the item itself is a selectable CustomRenderable subclass
+        elif isinstance(item, CustomRenderable) and item.selectable:
             selectable_list.append(item)
-        # Add checks for other potential container types if needed
     return selectable_list
 
 
@@ -410,60 +384,13 @@ def inventory_button():
     pass
 
 
-# --- Option Subclasses ---
-
-class wep__ui(Option):
-    """UI representation for a weapon option."""
-    def __init__(self, **kwargs):
-        """Initializes a weapon UI element, forwarding arguments to Option."""
-        super().__init__(**kwargs)
-        self.type = "weapon" # Ensure type is set
-
-    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
-        # Use a Unicode arrow or similar indicator
-        indicator = "\uf0da" # Example: Right-pointing arrow
-        display_text = f"{indicator} {self.text} "
-
-        if self.selected:
-            self.style = "bold green" # Internal style tracking
-            # Preview is handled by the setter
-            return Panel(display_text, style=self.style, expand=False) # Wrap selected in Panel
-        else:
-            self.style = "dim green" # Internal style tracking
-            # Non-selected items are padded Text
-            return Padding(Text(display_text, style=self.style), (0, 0, 0, 0)) # No extra padding here
+# --- CustomRenderable Subclasses ---
 
 
-class new__ui(Option):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
-        indicator = "\uf0da"
-        display_text = f"{indicator} {self.text} "
-
-        if self.selected:
-            self.style = "bold green"
-            # Preview handled by setter
-            return Panel(display_text, style=self.style, expand=False)
-        else:
-            self.style = "dim green"
-             # Add space before indicator for alignment?
-            return Padding(Text(f" {display_text}", style=self.style), (0, 0, 0, 0))
 
 
-class choose_me(Option):
-    """A distinct UI option type, possibly for confirmation or special choices."""
-    def __init__(self, **kwargs):
-        """Initializes a 'choose_me' UI element, forwarding arguments to Option."""
-        super().__init__(**kwargs)
 
-    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> Panel:
-        if self.selected:
-            current_style = "bold green"
-        return Panel(Align.center(self.text), style=current_style, expand=False)
-
-
-class menu__ui(Option):
+class MenuOption(CustomRenderable):
     def __init__(self, **kwargs):
         if 'h_allign' not in kwargs:
             kwargs['h_allign'] = "left"
@@ -473,16 +400,73 @@ class menu__ui(Option):
     def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
         try:
             from art import text2art 
-            ctext = text2art(self.text, font="tarty2") # Example font
+            ctext = self.text # Example font
         except ImportError:
             ctext = self.text 
         except Exception: 
              ctext = f"[italic] {self.text} (art error) [/italic]"
-
+        style = "dim grey93"
         if self.selected:
-            self.style = "bold green"
+            style = "bold green"
+            s = "> " + self.text
 
-            return Panel(Align.center(f"[{self.style}]{ctext}[/{self.style}]"), border_style=self.style, expand=False)
+            core.console.current_layout.layout["right"].update(Panel("new selection"))
+            ctext = s
+            return Panel(Align.center(f"[{style}]{ctext}[/{style}]"),width=20)
         else:
-            self.style = "dim grey93" #
-            return Padding(Align.center(f"[{self.style}]{ctext}[/{self.style}]"), (0,0,0,0))
+            style = "dim grey93" #
+            return Panel(Align.center(f"[{style}]{ctext}[/{style}]"), width=20)
+
+class MinimalMenuOption(CustomRenderable):
+    def __init__(self, **kwargs):
+        if 'h_allign' not in kwargs:
+            kwargs['h_allign'] = "left"
+        super().__init__(**kwargs)
+        self.type = "menu" # Ensure type is set
+
+    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
+        try:
+            from art import text2art 
+            ctext = self.text # Example font
+        except ImportError:
+            ctext = self.text 
+        except Exception: 
+             ctext = f"[italic] {self.text} (art error) [/italic]"
+        style = "dim grey93"
+        if self.selected:
+            style = "bold green"
+            s = "> " + self.text 
+            
+            core.console.current_layout.layout["right"].update(Panel("new selection"))
+            ctext = s
+            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
+        else:
+            style = "dim grey93" #
+            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
+
+class MinimalTextOption(CustomRenderable):
+    def __init__(self, **kwargs):
+        if 'h_allign' not in kwargs:
+            kwargs['h_allign'] = "left"
+        super().__init__(**kwargs)
+        self.type = "menu" # Ensure type is set
+
+    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
+        try:
+            from art import text2art 
+            ctext = self.text # Example font
+        except ImportError:
+            ctext = self.text 
+        except Exception: 
+             ctext = f"[italic] {self.text} (art error) [/italic]"
+        style = "dim grey93"
+        if self.selected:
+            style = "bold green"
+            s = "> " + self.text 
+            
+   
+            ctext = s
+            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
+        else:
+            style = "dim grey93" #
+            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))

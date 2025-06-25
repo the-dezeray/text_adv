@@ -1,6 +1,6 @@
 """This module contains the run event."""
 
-from ui.options import Option, Loader
+from ui.options import CustomRenderable, Loader
 from util.logger import logger, event_logger
 from random import randint
 from typing import TYPE_CHECKING, Optional
@@ -15,7 +15,7 @@ def run(
     core: "Core", fail: Optional[bool] = None, decision: Optional[bool] = None
 ) -> None:
     if decision is None:
-        core.options.append(
+        core.console.print(
             Loader(
                 "attempting escape",
                 function=lambda: run(core=core, decision=True, fail=fail),

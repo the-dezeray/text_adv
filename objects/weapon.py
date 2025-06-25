@@ -2,9 +2,10 @@ from util.file_handler import load_yaml_file
 from util.logger import logger
 from objects.item import Item
 from enum import Enum
+from typing import List, TypedDict, Optional,cast
 
 
-class EFFECTS(Enum):
+class EffectType(Enum):
     BLEED = "bleed"
     STUN = "stun"
     BURN = "burn"
@@ -14,43 +15,64 @@ class EFFECTS(Enum):
     HOLY = "holy"
 
 
+
+
+
 class WeaponItem(Item):
     """
-    weapon class
-    effects: ["bleed","stun","burn","slow","vamperism","shock","holy"] are the possible effects
-
+    A class representing a weapon item.
     """
 
     def __init__(self, **kwargs) -> None:
         super().__init__(type="weapon")
-        self.type = "weapon"  # there will be the same for all
 
-        self.name: str = kwargs.pop("name", None)  # Extract 'name' from kwargs
-        self.effects: list[str] = kwargs.pop(
-            "effects", []
-        )  # Extract 'effects' from kwargs
-        self.defence: int = kwargs.pop("defence", 0)  # Extract 'defence' from kwargs
-        self.damage: int = kwargs.pop("damage", 0)  # Extract 'damage' from kwargs
-        self.condition: str = kwargs.pop(
-            "condition", None
-        )  # Extract 'condition' from kwargs
-        self.crit: int = kwargs.pop("crit", 0)  # Extract 'crit' from kwargs
-        self.cursed: bool = kwargs.pop("cursed", False)  # Extract 'cursed' from kwargs
-        self.description: str = kwargs.pop(
-            "description", None
-        )  # Extract 'description' from kwargs
-        self.rarity: int = kwargs.pop(
-            "rarity", None
-        )  # Extract 'rarity' from kwargs 0 to 10
+        self.name: Optional[str] = kwargs.get("name")
+        self.effects: List[EffectType] = self._parse_effects(kwargs.get("effects", []))
+        self.defence: int = kwargs.get("defence", 0)
+        self.damage: int = kwargs.get("damage", 0)
+        self.condition: Optional[str] = kwargs.get("condition")
+        self.crit: int = kwargs.get("crit", 0)
+        self.cursed: bool = kwargs.get("cursed", False)
+        self.description: Optional[str] = kwargs.get("description")
+        self.rarity: Optional[int] = kwargs.get("rarity")
+
+    def _parse_effects(self, effects: List[str]) -> List[EffectType]:
+        valid_effects = []
+        for effect in effects:
+            if effect in EffectType._value2member_map_:
+                valid_effects.append(EffectType(effect))
+            else:
+                logger.warning(f"Ignoring unknown effect: {effect}")
+        return valid_effects
 
     def deal_damage(self, player=None) -> None:
-        pass
+        """
+        Example damage dealing logic.
+        """
+        total_damage = self.damage
+        if self.crit > 0:
+            total_damage += int(self.damage * (self.crit / 100))
+        logger.info(f"{self.name} deals {total_damage} damage{' with effects: ' + ', '.join(e.value for e in self.effects) if self.effects else ''}.")
+        # Actual logic to affect `player` would go here
+
+    def __repr__(self):
+        return f"<WeaponItem name={self.name}, damage={self.damage}, effects={[e.value for e in self.effects]}, rarity={self.rarity}>"
 
 
-class Weapon:
+class WeaponFactory:
     WEAPON_DICT = load_yaml_file("data/weapons.yaml")
 
     @classmethod
-    def generate(cls, name) -> WeaponItem:
-        logger.info(f"Generating weapon {name}")
-        return WeaponItem(**cls.WEAPON_DICT[name])
+    def load_data(cls, path="data/weapons.yaml"):
+        cls.WEAPON_DICT = load_yaml_file(path)
+        logger.info(f"Loaded {len(cls.WEAPON_DICT)} weapons from {path}")
+
+    @classmethod
+    def generate(cls, name: str) -> Optional[WeaponItem]:
+        args = cls.WEAPON_DICT.get(name)
+        if args:
+            logger.info(f"Generating weapon '{name}'")
+            return WeaponItem(**args)
+        else:
+            logger.warning(f"Weapon '{name}' not found in weapon data.")
+            return None

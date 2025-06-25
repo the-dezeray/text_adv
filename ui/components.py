@@ -3,8 +3,10 @@ from rich.panel import Panel
 from rich.padding import Padding
 from rich.align import Align
 from rich.console import group
-from typing import List
+from typing import List,TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from core.core import Core
 def stats_tab(player)-> Table:
     stat_grid = Table.grid(padding=(0, 2))
     stat_grid.add_column(justify="left", style="bold yellow")
@@ -198,3 +200,242 @@ def command_mode_layout(core):
         yield hgrid
 
     return layout()
+def input_mode_layout(core:"Core"):
+    from rich.table import Table
+
+    grid = Table.grid(expand=True)
+    grid.add_column()
+    stext = "t"
+    try:
+        stext = core.current_entry_text
+    except Exception:
+        stext = "hehe"
+    grid.add_row(
+        Panel(
+            f"> + {stext}",
+            title="input",
+            title_align="right",
+            border_style="green",
+            expand=True,
+        )
+    )
+
+    hgrid = Table.grid(expand=True)
+    hgrid.add_column()
+    instructions = "goto \[chapter\] \nreload \nkill \nheal \nrestart"
+    grid.add_row(
+       Padding("[dim green]enter  the description of your story  and press enter to generate story [dim green]\nhint: the morre specific and detailed the summary, the better the result", 1)
+    )
+   
+    @group()
+    def layout():
+        yield grid
+      
+        yield core.console.fill_ui_table()
+
+    return layout()
+
+
+import random
+from typing import List, Dict, Tuple # Added Tuple for consistency
+
+from rich.panel import Panel
+from rich.table import Table
+from rich.text import Text # Included for consistency, though not directly used for new Text objects
+from rich_pixels import Pixels # Assuming rich_pixels is installed
+
+from rich.console import Console
+from rich.layout import Layout
+from rich.padding import Padding # For the main layout example
+# It's good practice to have the draw_bar function accessible if it's not globally defined
+# or passed around. Assuming it's available in the same scope or imported.
+# If not, you'd redefine it here or in a shared utility module.
+# For this example, I'll copy it here for completeness of the enemy_tab section.
+
+def draw_enemy_bar(label: str, value: int, max_value: int, symbol: str = "█",
+             fill_color: str = "green", background_color: str = "grey23", width: int = 20) -> str:
+    """Draws a progress bar with custom label, colors, and symbol."""
+    # Ensure value does not exceed max_value for bar calculation
+    value = min(value, max_value)
+    if max_value == 0: # Avoid division by zero
+        filled_length = 0
+    else:
+        filled_length = int((value / max_value) * width)
+    
+    bar_fill = symbol * filled_length
+    bar_empty = symbol * (width - filled_length)
+    
+    # Applying colors separately to fill and empty parts
+    return f"[bold]{label}[/bold] {value}/{max_value} [{fill_color}]{bar_fill}[/{fill_color}][{background_color}]{bar_empty}[/{background_color}]"
+
+
+# Define a placeholder Enemy class for demonstration
+class Enemy:
+    def __init__(self, name: str, hp: int, max_hp: int, attack: int, defense: int, speed: int,
+                 image_paths: List[str], description: str = "A fearsome foe.",
+                 loot: List[str] = [], abilities: List[str] = [],
+                 icon_resize: Tuple[int, int] = (16, 16),
+                 xp_value: int = 0, level: int = 1):
+        self.name = name
+        self.hp = hp
+        self.max_hp = max_hp
+        self.attack = attack
+        self.defense = defense
+        self.speed = speed
+        self.image_paths = image_paths
+        self.description = description
+        self.loot = loot if loot else []
+        self.abilities = abilities if abilities else []
+        self.icon_resize = icon_resize
+        self.xp_value = xp_value
+        self.level = level
+        # For draw_bar, an enemy might have a 'fury' or 'stamina' bar instead of MP/EXP
+        # For simplicity, we'll focus on HP for the enemy vitals bar.
+
+
+def enemy_tab(enemy: Enemy):
+    """
+    Creates a Rich renderable tab for displaying enemy information,
+    including a pixel art image, vitals, stats, and other details.
+    """
+    grid = Table.grid(expand=True)
+    grid.add_column() # Single column layout for the main grid
+
+    # --- Enemy Image Panel ---
+    if enemy.image_paths:
+        icon_path = random.choice(enemy.image_paths)
+        try:
+            # Attempt to load pixels, ensure image path is valid and accessible
+            pixels = Pixels.from_image_path(icon_path, resize=enemy.icon_resize)
+            # The user's example used a sub-grid for the image panel, which is fine.
+            # Alternatively, the Panel can directly contain the Pixels object.
+            image_panel_content = pixels
+        except Exception as e: # Catch potential errors like FileNotFoundError
+            # Fallback text if image loading fails
+            image_panel_content = Text(f"Error loading image:\n{icon_path}\n{e}", style="bold red")
+    else:
+        image_panel_content = Text("No Image", style="dim_italic")
+
+    # Panel for the image itself, styled for an enemy
+    # The user's snippet mentioned width=23 for the image panel
+    image_display_panel = Panel(
+        image_panel_content,
+        title=f"[b white on red]\uf071 {enemy.name} (Lvl {enemy.level}) \uf071[/b white on red]", # Using a skull icon or similar for enemy
+        title_align="center",
+        border_style="bold red",
+        expand=False, # As per user's example for the image panel part
+        width=(enemy.icon_resize[0] * 2) + 7 if enemy.image_paths else 23 # Adjust width based on image, or fixed
+    )
+    grid.add_row(image_display_panel)
+
+
+    # --- Enemy Vitals Panel ---
+    # Simplified vitals for enemy, focusing on HP
+    # Using different colors and symbols for the enemy HP bar
+    enemy_hp_bar = draw_enemy_bar(
+        label="HP", # Simpler label for enemy
+        value=enemy.hp,
+        max_value=enemy.max_hp,
+        symbol="=", # Different symbol
+        fill_color="bright_red",
+        background_color="rgb(50,0,0)", # Dark red background
+        width=25 # Slightly wider bar
+    )
+    vitals_panel = Panel(
+        enemy_hp_bar,
+        title="[b red]\uf21e Vitals[/b red]", # Heartbeat icon
+        title_align="left",
+        border_style="red"
+    )
+    grid.add_row(vitals_panel)
+
+    # --- Enemy Stats Panel ---
+    stat_grid = Table.grid(expand=True, padding=(0,1))
+    stat_grid.add_column(style="bright_yellow", justify="right", width=10) # Stat name
+    stat_grid.add_column(style="white", justify="left") # Stat value
+
+    # Defining enemy stats to display
+    enemy_stats_display = {
+        "Attack": enemy.attack,
+        "Defense": enemy.defense,
+        "Speed": enemy.speed,
+        "XP Value": enemy.xp_value,
+    }
+    for key, value in enemy_stats_display.items():
+        stat_grid.add_row(f"{key}:", str(value))
+
+    stats_panel = Panel(
+        stat_grid,
+        title="[b red1]Estadísticas[/b red1]", # Using a generic stats/monster icon (placeholder)
+        title_align="left",
+        border_style="orange_red1"
+    )
+    grid.add_row(stats_panel)
+
+    # --- Enemy Description/Abilities Panel ---
+    info_lines = []
+    if enemy.description:
+        info_lines.append(f"[i grey70]{enemy.description}[/i grey70]")
+        info_lines.append("") # Spacer
+
+    if enemy.abilities:
+        info_lines.append("[bold bright_red]Abilities:[/bold bright_red]")
+        for ability in enemy.abilities:
+            info_lines.append(f"  \uf118 {ability}") # Using a generic "skill" or "action" icon
+
+    if enemy.loot:
+        info_lines.append("") # Spacer
+        info_lines.append("[bold gold1]Potential Loot:[/bold gold1]")
+        for item in enemy.loot:
+            info_lines.append(f"  \uf0b0 {item}") # Gem icon for loot
+
+    if not info_lines:
+        info_lines.append("[dim]No additional intel.[/dim]")
+
+    intel_renderable = "\n".join(info_lines)
+    intel_panel = Panel(
+        intel_renderable,
+        title="[b grey50]\uf21b Intel[/b grey50]", # Scroll icon for intel/description
+        title_align="left",
+        border_style="grey37",
+        padding=(1, 2)
+    )
+    grid.add_row(intel_panel)
+
+    return grid
+
+
+
+# --- Player Tab (for context, slightly modified from your original) ---
+# Assuming 'stats_tab' would be a function similar to the stat display logic
+# For now, I'll inline a simple stat display for the player as well.
+
+
+
+from PIL import Image
+import os
+
+
+
+
+
+goblin_enemy = Enemy(
+    name="Cave Goblin",
+    hp=30,
+    max_hp=30,
+    attack=8,
+    defense=3,
+    speed=10,
+    image_paths="2.png", # Reusing dummy images
+    description="A small, vicious creature lurking in the dark.",
+    abilities=["Rusty Shiv", "Throw Rock"],
+    loot=["Rupees", "Goblin Ear"],
+    icon_resize=(16,16),
+    xp_value=50,
+    level=3
+)
+
+
+
+
+
