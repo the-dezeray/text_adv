@@ -24,6 +24,7 @@ from core.keyboard import KeyboardControl
 from ui.console import Console as MainConsole
 from core.non_blocking_input import NonBlockingInput
 from core.ai import AI
+from core.sound_player import SoundPlayer
 # Import event handlers
 from core.events import *
 from rich.live import Live
@@ -102,6 +103,9 @@ class Core:
 
     def _post_initialize(self) -> None:
         """Perform post-initialization tasks."""
+        self.sound_player = SoundPlayer()
+        self.sound_player.load_music_track("cin","  data/cin1.mp3")
+        self.sound_player.play_music("cin")
         current_time = datetime.datetime.now()
         logger.info(f"New game instance {current_time}")
         self.game_engine.validate_story()

@@ -205,9 +205,10 @@ class Console:
 
     def show_menu(self):
         self.core.console.clear_display()
-        from ui.ad import menu_items
-
-        self.core.console.print(menu_items(self.core))
+        from ui.ad import generate_main_menu_options
+        from ui.options import MinimalMenuOption
+        menu: List[MinimalMenuOption] = generate_main_menu_options(self.core)
+        self.core.console.print(menu)
         self.layout = "MENU"
 
     def get_selectable_options(self) -> list[CustomRenderable]:
