@@ -23,7 +23,7 @@ from core.story import GameEngine
 from core.keyboard import KeyboardControl
 from ui.console import Console as MainConsole
 from core.non_blocking_input import NonBlockingInput
-from core.ai import AI
+
 
 # Import event handlers
 from core.events import *
@@ -54,7 +54,7 @@ class Core:
         self.sound_enabled= False
         self._layout = Layout()
         self.auto_generate_text: bool = False
-        self.ai = AI(core=self)
+        ##self.ai = AI(core=self)
         # Initialize console first
         self.console = MainConsole(core=self)
         
