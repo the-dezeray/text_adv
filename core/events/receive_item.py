@@ -2,7 +2,11 @@ from ui.options import ui_text_panel, Option
 import random
 from  objects.item import ItemFactory
 from objects.weapon import WeaponFactory
-def receive_item( core ,item: str | list[str],text = None | str) -> None:
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from core.core import Core
+def receive_item( core :"Core",item: str | list[str],text = None | str) -> None:
 
 
     item_instance = None
@@ -14,6 +18,7 @@ def receive_item( core ,item: str | list[str],text = None | str) -> None:
         text ="the system has failed to grant you"+ str(item)
         core.console.print(ui_text_panel(text=text))
         core.goto_next()
+    core.player.inventory.add(item_instance)
     one_item_texts = [
         "you have obtained",
         "you have found",
