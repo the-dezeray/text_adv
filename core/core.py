@@ -57,8 +57,9 @@ class Core:
         ##self.ai = AI(core=self)
         # Initialize console first
         self.console = MainConsole(core=self)
-        
+        self.menu: bool = False
         # Game State
+
         self.running: bool = True
         self.test_mode: bool = False
         self.in_fight: bool = False
@@ -257,9 +258,11 @@ class Core:
                 console=self.rich_console,
             ) as self.rich_live_instance:
                 
-                self.console._transtion_layout("MENU")
+                self.console._transtion_layout("INGAME")
                 self.console.refresh()
-                self.console.show_menu()
+                if self.menu:
+                    self.console._transtion_layout("MENU")
+                    self.console.show_menu()
                 self.keyboard_controller.execute_on_key( "\x00\x4d") # this will be fixed as of now dont touch this no time
                 while self.running:
                     time.sleep(0.2)
