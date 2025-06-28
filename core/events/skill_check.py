@@ -17,7 +17,7 @@ def skill_check(core:"Core", skill:str = "",limit:int = 0,on_success =None,on_su
     if skill_value >= limit:
         if on_success:
             on_success()
-        core.console.print(Rule("[red]You were tessted [/red]", align="center", style="bold red"))
+        core.console.print(Rule("[blink]You were tessted", align="center", style="bold red1"))
         core.goto_next()
     else:
         if on_fail:
