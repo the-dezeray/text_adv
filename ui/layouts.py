@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 class CustomLayout(ABC):
-    def __init__(self, core)->None:
+    def __init__(self, core: "Core")->None:
         self.core = core
         self.layout = Layout()
         self.setup()

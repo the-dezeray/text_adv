@@ -12,6 +12,7 @@ from ui.options import (
     get_selectable_options,
     GridOfChoices,
     GridOfWeapons,
+    TyperWritter,
 )
 from ui.layouts import (
     LayoutInGame,
@@ -31,7 +32,7 @@ from typing import TYPE_CHECKING, Tuple, Optional, Literal, List
 from enum import Enum
 from ui.options import Option ,WeaponOption
 from ui.components import stats_tab
-
+import time
 if TYPE_CHECKING:
     from core.core import Core
     from objects.weapon import Weapon
@@ -130,7 +131,7 @@ class Console:
 
     def refresh(self) -> None:
         """Refresh the console layout by updating the rich live object with the current layout"""
-        _layout: Layout= self.current_layout.update()
+        _layout: Layout = self.current_layout.update()
         self.core.rich_live_instance.update(_layout)
 
     def fill_inventory_table(self) -> Table:
@@ -155,12 +156,27 @@ class Console:
         )
         table.add_column(justify="center")
 
+        # Update typing animations first
+        any_typing = False
+        for option in self.renderables:
+            if isinstance(option, TyperWritter):
+                if option.update():  # Update the typing animation
+                    any_typing = True
+                    _core.is_typing = True
+
         # First pass: render all options
         for option in self.renderables:
+
             if isinstance(option, (CustomRenderable, GridOfChoices, GridOfWeapons)):
                 renderable = option.render(core=_core)
 
                 table.add_row(Align(renderable, align=option.h_allign))
+            elif isinstance(option,TyperWritter):
+                if option.is_typing:
+                    table.add_row(Align(option.typed))
+                else:
+                    table.add_row(Align(option.text))
+
             elif isinstance(option, (Padding, Panel)):
                 table.add_row(Align(option))
             else:
@@ -179,6 +195,11 @@ class Console:
                 options[0].selected = True
                 self.selected_option = index
         self.table_count = table.row_count
+        
+        # If no typing is happening, clear the typing flag
+        if not any_typing:
+            _core.is_typing = False
+            
         return table
 
     def get_last_selectable(self) -> Optional[Tuple[int, List[CustomRenderable] | List[Option] | list[WeaponOption]]]:

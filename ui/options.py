@@ -5,7 +5,8 @@ from rich.table import Table
 from rich.align import Align
 from rich.layout import Layout
 from rich.text import Text
-
+import time
+from typing import Generator
 from rich.console import ConsoleRenderable
 
 if TYPE_CHECKING:
@@ -470,3 +471,28 @@ class MinimalTextOption(CustomRenderable):
         else:
             style = "dim grey93" #
             return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
+        
+
+class TyperWritter():
+    def __init__(self,text:str,delay:float = 0.05):
+        self.text = text
+        self.delay = delay
+        self.typed = ""
+        self.is_typing = True
+        self.current_index = 0
+        self.last_update_time = time.time()
+        
+    def update(self) -> bool:
+        """Update the typing animation. Returns True if still typing, False if done."""
+        current_time = time.time()
+        if current_time - self.last_update_time >= self.delay:
+            if self.current_index < len(self.text):
+                self.typed += self.text[self.current_index]
+                self.current_index += 1
+                self.last_update_time = current_time
+            else:
+                self.is_typing = False
+        return self.is_typing
+        
+    def render(self,style:str = "",left_padding:int = 0,core:Optional["Core"] = None):
+        return self.typed

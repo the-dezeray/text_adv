@@ -1,76 +1,35 @@
-from rich.console import Console
-from rich.text import Text
-import time
+from rich.live import Live
+from rich.layout import Layout
+from rich.table import Table
+from time import sleep
+import random
 
-console = Console()
+# Create a shared mutable table
+table = Table(title="📊 Temperature Logs")
+table.add_column("Time", style="bold cyan")
+table.add_column("Temperature (°C)", style="bold green")
 
-def display_status_effect(
-    effect_name: str,
-    target: str,
-    description: str,
-    icon: str,
-    color: str,
-    duration: int = 0
-):
-    """
-    Displays a minimal, one-line status effect notification.
-    """
-    
-    # The '»' character (U+00BB) acts as a clean separator
-    separator = Text(" » ", style="dim")
-    
-    # Build the text components
-    icon_text = Text(f"{icon} {effect_name}", style=f"bold {color}")
-    target_text = Text(target, style="bold white")
-    description_text = Text(f" {description}", style="italic")
-    
-    # Assemble the final line
-    output_text = Text.assemble(
-        icon_text,
-        separator,
-        target_text,
-        description_text
-    )
-
-    # Add duration if provided
-    if duration > 0:
-        duration_text = f" ({duration} turns)"
-        output_text.append(duration_text)
-        from rich.panel import Panel
-        output_text = Panel(" you have  been fozen \n [red]|||[/red]||||  [bold]-35#[/bold] ",border_style = f"{color}",title=icon_text,title_align="left",expand=False,width=40 ,subtitle="-35HP",subtitle_align="right")
-
-    console.print(output_text)
-    time.sleep(0.5) # A shorter sleep for a quick effect
-
-
-# --- Example Usage ---
-
-# 1. The requested "Frost" effect
-display_status_effect(
-    effect_name="Frost",
-    target="You",
-    description="are slowed.",
-    icon="",  # Nerd Font: nf-weather-snowflake
-    color="bright_cyan",
-    duration=3
+# Create a layout and assign table to a visible area
+layout = Layout()
+layout.split_column(
+    Layout(name="header", size=3),
+    Layout(name="body"),
 )
 
-# 2. A "Poison" debuff example
-display_status_effect(
-    effect_name="Poison",
-    target="Goblin",
-    description="is taking damage over time.",
-    icon="",  # Nerd Font: nf-md-skull_crossbones
-    color="bright_green",
-    duration=5
-)
-
-# 3. A "Haste" buff example
-display_status_effect(
-    effect_name="Haste",
-    target="You",
-    description="feel faster!",
-    icon="ﯙ",  # Nerd Font: nf-fa-bolt
-    color="yellow",
-    duration=4
-)
+layout["header"].update("[bold magenta]Live System Monitor")
+layout["body"].update(table)
+def a():
+    b = Table(title="📊 Temperature Logs")
+    b.add_column("Time", style="bold cyan")
+    b.add_column("Temperature (°C)", style="bold green")
+    for i in range(1):
+        temp = round(random.uniform(20.0, 30.0), 2)
+        b.add_row(f"{i+1}s", f"{temp}")
+        yield b
+# Start live auto-refresh
+with Live(layout, refresh_per_second=5, auto_refresh=True):
+    for i in range(10):
+        # Add a new row to the table (mutating in-place)
+        temp = round(random.uniform(20.0, 30.0), 2)
+        table.add_row(f"{i+1}s", f"{temp}")
+        sleep(1)

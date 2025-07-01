@@ -57,6 +57,7 @@ class Core:
         ##self.ai = AI(core=self)
         # Initialize console first
         self.console = MainConsole(core=self)
+        self.is_typing: bool = False
         self.menu: bool = False
         # Game State
 
@@ -265,7 +266,7 @@ class Core:
                     self.console.show_menu()
                 self.keyboard_controller.execute_on_key( "\x00\x4d") # this will be fixed as of now dont touch this no time
                 while self.running:
-                    time.sleep(0.2)
+                    time.sleep(0.01)
                     try:
                         key = self.input_block.get_key()
                         if key:
@@ -275,6 +276,10 @@ class Core:
                         for job in self.job_progress.tasks:
                             if not job.finished:
                                 self.job_progress.advance(job.id)
+                        
+                        # Refresh console if typing is happening
+                        if self.is_typing:
+                            self.console.refresh()
                     except Exception as e:
                         logger.error(f"Error in main game loop: {e}")
                         continue
