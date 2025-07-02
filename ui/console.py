@@ -13,6 +13,7 @@ from ui.options import (
     GridOfChoices,
     GridOfWeapons,
     TyperWritter,
+    Delay,
 )
 from ui.layouts import (
     LayoutInGame,
@@ -156,14 +157,20 @@ class Console:
         )
         table.add_column(justify="center")
 
-        # Update typing animations first
+        # Update typing animations and delays first
         any_typing = False
+        any_delaying = False
         for option in self.renderables:
             if isinstance(option, TyperWritter):
                 if option.update():  # Update the typing animation
                     any_typing = True
                     _core.is_typing = True
-
+                    break
+            elif isinstance(option, Delay):
+                if option.update():  # Update the delay
+                    any_delaying = True
+                    _core.is_typing = True
+                    break
         # First pass: render all options
         for option in self.renderables:
 
@@ -176,6 +183,13 @@ class Console:
                     table.add_row(Align(option.typed))
                 else:
                     table.add_row(Align(option.text))
+            elif isinstance(option, Delay):
+                if option.is_delaying:
+                    
+                    return table
+                else:
+                    # Delay is complete, don't add anything
+                    pass
 
             elif isinstance(option, (Padding, Panel)):
                 table.add_row(Align(option))
@@ -196,8 +210,8 @@ class Console:
                 self.selected_option = index
         self.table_count = table.row_count
         
-        # If no typing is happening, clear the typing flag
-        if not any_typing:
+        # If no typing or delaying is happening, clear the typing flag
+        if not any_typing and not any_delaying:
             _core.is_typing = False
             
         return table

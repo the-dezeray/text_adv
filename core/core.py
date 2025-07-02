@@ -254,7 +254,7 @@ class Core:
         try:
             with Live(
                 Layout(),
-                auto_refresh=True,
+                refresh_per_second=10,
                 screen=True,
                 console=self.rich_console,
             ) as self.rich_live_instance:
