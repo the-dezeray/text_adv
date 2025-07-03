@@ -5,9 +5,9 @@
 **TermA (Terminal Adventure)** is a rich text-based adventure game built with Python and the Rich library. It features an interactive story system with configurable chapters, sound effects, and a modern terminal interface.
 
 ## Demo
+https://github.com/the-dezeray/text_adv/demo_vid.mp4
 
-https://github.com/the-dezeray/text_adv/assets/demo_vid.mp4
-
+![Fight Demo](/demo.gif?raw=true "Demo")
 ![Fight Demo](/fight_demo.png?raw=true "Combat System Demo")
 
 ## Features
