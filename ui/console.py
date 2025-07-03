@@ -12,6 +12,8 @@ from ui.options import (
     get_selectable_options,
     GridOfChoices,
     GridOfWeapons,
+    TyperWritter,
+    Delay,
 )
 from ui.layouts import (
     LayoutInGame,
@@ -31,7 +33,7 @@ from typing import TYPE_CHECKING, Tuple, Optional, Literal, List
 from enum import Enum
 from ui.options import Option ,WeaponOption
 from ui.components import stats_tab
-
+import time
 if TYPE_CHECKING:
     from core.core import Core
     from objects.weapon import Weapon
@@ -130,7 +132,7 @@ class Console:
 
     def refresh(self) -> None:
         """Refresh the console layout by updating the rich live object with the current layout"""
-        _layout: Layout= self.current_layout.update()
+        _layout: Layout = self.current_layout.update()
         self.core.rich_live_instance.update(_layout)
 
     def fill_inventory_table(self) -> Table:
@@ -155,12 +157,40 @@ class Console:
         )
         table.add_column(justify="center")
 
+        # Update typing animations and delays first
+        any_typing = False
+        any_delaying = False
+        for option in self.renderables:
+            if isinstance(option, TyperWritter):
+                if option.update():  # Update the typing animation
+                    any_typing = True
+                    _core.is_typing = True
+                    break
+            elif isinstance(option, Delay):
+                if option.update():  # Update the delay
+                    any_delaying = True
+                    _core.is_typing = True
+                    break
         # First pass: render all options
         for option in self.renderables:
+
             if isinstance(option, (CustomRenderable, GridOfChoices, GridOfWeapons)):
                 renderable = option.render(core=_core)
 
                 table.add_row(Align(renderable, align=option.h_allign))
+            elif isinstance(option,TyperWritter):
+                if option.is_typing:
+                    table.add_row(Align(option.typed))
+                else:
+                    table.add_row(Align(option.text))
+            elif isinstance(option, Delay):
+                if option.is_delaying:
+                    
+                    return table
+                else:
+                    # Delay is complete, don't add anything
+                    pass
+
             elif isinstance(option, (Padding, Panel)):
                 table.add_row(Align(option))
             else:
@@ -179,6 +209,11 @@ class Console:
                 options[0].selected = True
                 self.selected_option = index
         self.table_count = table.row_count
+        
+        # If no typing or delaying is happening, clear the typing flag
+        if not any_typing and not any_delaying:
+            _core.is_typing = False
+            
         return table
 
     def get_last_selectable(self) -> Optional[Tuple[int, List[CustomRenderable] | List[Option] | list[WeaponOption]]]:
@@ -205,9 +240,10 @@ class Console:
 
     def show_menu(self):
         self.core.console.clear_display()
-        from ui.ad import menu_items
-
-        self.core.console.print(menu_items(self.core))
+        from ui.ad import generate_main_menu_options
+        from ui.options import MinimalMenuOption
+        menu: List[MinimalMenuOption] = generate_main_menu_options(self.core)
+        self.core.console.print(menu)
         self.layout = "MENU"
 
     def get_selectable_options(self) -> list[CustomRenderable]:

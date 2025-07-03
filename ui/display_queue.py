@@ -1,7 +1,10 @@
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from ui.console import Console
 class DisplayQueue:
     def __init__(self, initial_list=None,console=None):
         self._data : list = list(initial_list) if initial_list else []
-        self.console = console
+        self.console: "Console" = console
     def append(self, item):
         
         self._data.append(item)

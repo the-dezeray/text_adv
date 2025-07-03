@@ -2,7 +2,8 @@ from ui.options import CustomRenderable, Option
 from util.logger import logger, event_logger
 from rich.panel import Panel
 from rich.table import Table
-
+from rich.rule import Rule
+from rich.style import Style
 from time import sleep
 
 from rich.live import Live
@@ -24,10 +25,20 @@ def read(core:"Core", text_id: str = "ancient_scroll") -> None:
     string = texts.get(text_id, None)
     if string :
         core.console.clear_display()
+        rule_style = Style(color="orange3", bold=True)
+        core.console.print(Rule(title="reading the scroll", align="center", style=rule_style))
 
         core.console.print(
-            ui_text_panel(text=string)
+            Panel(
+                renderable=string,
+                title=text_id,
+                title_align="left",
+                border_style="dark_orange",
+                style=Style(color="light_goldenrod2")
+            )
         )
+
+        
         core.console.print( Option(text="Proceed", func=lambda: core.goto_next()))
     elif string == None and core.auto_generate_text:
         node =core.game_engine.get_current_node()

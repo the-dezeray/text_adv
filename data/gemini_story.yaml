@@ -59,6 +59,7 @@
   choices:
     - text: "Risk the rope bridge."
       next_node: 9
+
       function: "skill_check(skill='agility', difficulty=12, core=core)"
     - text: "Search for another way around the chasm."
       next_node: 10

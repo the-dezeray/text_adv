@@ -1,10 +1,9 @@
-import sounddevice as sd
-import soundfile as sf
+import pygame
 import threading
-import queue
 import time
 from typing import Dict, Optional
 from util.logger import logger
+
 class SoundPlayer:
     def __init__(self, music_volume: float = 0.5, effects_volume: float = 0.7):
         """
@@ -13,9 +12,17 @@ class SoundPlayer:
         :param music_volume: Volume for background music (0.0 to 1.0)
         :param effects_volume: Volume for sound effects (0.0 to 1.0)
         """
+        # Initialize pygame mixer
+        try:
+            pygame.mixer.init()
+            logger.info("Pygame mixer initialized successfully")
+        except Exception as e:
+            logger.error(f"Failed to initialize pygame mixer: {e}")
+            raise
+        
         # Sound collections
         self._music_tracks: Dict[str, str] = {}
-        self._sound_effects: Dict[str, str] = {}
+        self._sound_effects: Dict[str, pygame.mixer.Sound] = {}
         
         # Volume settings
         self._music_volume = max(0.0, min(1.0, music_volume))
@@ -23,8 +30,6 @@ class SoundPlayer:
         
         # Music playback management
         self._current_music: Optional[str] = None
-        self._music_stop_event = threading.Event()
-        self._music_thread: Optional[threading.Thread] = None
         
     def load_music_track(self, track_name: str, file_path: str):
         """
@@ -34,12 +39,12 @@ class SoundPlayer:
         :param file_path: Path to the music file
         """
         try:
-            # Verify file can be opened
-            with sf.SoundFile(file_path) as f:
-                pass
+            # Verify file can be opened by pygame
+            pygame.mixer.music.load(file_path)
             self._music_tracks[track_name] = file_path
+            logger.info(f"Music track loaded: {track_name} -> {file_path}")
         except Exception as e:
-            logger.critical(e)
+            logger.critical(f"Music file error: {file_path} - {e}")
             raise FileNotFoundError(f"Music file error: {file_path} - {e}")
 
     def load_sound_effect(self, effect_name: str, file_path: str):
@@ -50,30 +55,13 @@ class SoundPlayer:
         :param file_path: Path to the sound effect file
         """
         try:
-            # Verify file can be opened
-            with sf.SoundFile(file_path) as f:
-                pass
-            self._sound_effects[effect_name] = file_path
+            # Load sound effect with pygame
+            sound = pygame.mixer.Sound(file_path)
+            self._sound_effects[effect_name] = sound
+            logger.info(f"Sound effect loaded: {effect_name} -> {file_path}")
         except Exception as e:
+            logger.error(f"Sound effect file error: {file_path} - {e}")
             raise FileNotFoundError(f"Sound effect file error: {file_path} - {e}")
-
-    def _play_music_loop(self, file_path: str):
-        """
-        Internal method to continuously play music in a thread.
-        
-        :param file_path: Path to the music file
-        """
-        while not self._music_stop_event.is_set():
-            data, samplerate = sf.read(file_path)
-            # Apply volume scaling
-            data = data * self._music_volume
-            
-            try:
-                sd.play(data, samplerate)
-                sd.wait()
-            except sd.PortAudioError:
-                # Handle potential playback interruptions
-                break
 
     def play_music(self, track_name: str, loops: int = -1):
         """
@@ -85,22 +73,21 @@ class SoundPlayer:
         if track_name not in self._music_tracks:
             raise ValueError(f"Music track '{track_name}' not loaded")
         
-        # Stop current music if playing
-        self.stop_music()
-        
-        # Reset stop event
-        self._music_stop_event.clear()
-        
-        # Start new music thread
-        music_path = self._music_tracks[track_name]
-        self._music_thread = threading.Thread(
-            target=self._play_music_loop, 
-            args=(music_path,), 
-            daemon=True
-        )
-        self._music_thread.start()
-        
-        self._current_music = track_name
+        try:
+            # Stop current music if playing
+            self.stop_music()
+            
+            # Load and play the music track
+            music_path = self._music_tracks[track_name]
+            pygame.mixer.music.load(music_path)
+            pygame.mixer.music.set_volume(self._music_volume)
+            pygame.mixer.music.play(loops)
+            
+            self._current_music = track_name
+            logger.info(f"Playing music: {track_name}")
+        except Exception as e:
+            logger.error(f"Error playing music {track_name}: {e}")
+            raise
 
     def play_sound_effect(self, effect_name: str):
         """
@@ -111,19 +98,15 @@ class SoundPlayer:
         if effect_name not in self._sound_effects:
             raise ValueError(f"Sound effect '{effect_name}' not loaded")
         
-        # Read and play sound effect
-        effect_path = self._sound_effects[effect_name]
-        data, samplerate = sf.read(effect_path)
-        
-        # Apply volume scaling
-        data = data * self._effects_volume
-        
-        # Play in a separate thread to avoid blocking
-        def play_effect():
-            sd.play(data, samplerate)
-            sd.wait()
-        
-        threading.Thread(target=play_effect, daemon=True).start()
+        try:
+            # Get the sound effect and play it
+            sound = self._sound_effects[effect_name]
+            sound.set_volume(self._effects_volume)
+            sound.play()
+            logger.info(f"Playing sound effect: {effect_name}")
+        except Exception as e:
+            logger.error(f"Error playing sound effect {effect_name}: {e}")
+            raise
 
     def set_music_volume(self, volume: float):
         """
@@ -132,6 +115,8 @@ class SoundPlayer:
         :param volume: Volume level (0.0 to 1.0)
         """
         self._music_volume = max(0.0, min(1.0, volume))
+        pygame.mixer.music.set_volume(self._music_volume)
+        logger.info(f"Music volume set to: {self._music_volume}")
 
     def set_effects_volume(self, volume: float):
         """
@@ -140,29 +125,47 @@ class SoundPlayer:
         :param volume: Volume level (0.0 to 1.0)
         """
         self._effects_volume = max(0.0, min(1.0, volume))
+        # Update volume for all loaded sound effects
+        for sound in self._sound_effects.values():
+            sound.set_volume(self._effects_volume)
+        logger.info(f"Effects volume set to: {self._effects_volume}")
 
     def stop_music(self):
         """Stop the current music track."""
-        if self._music_thread:
-            # Signal the music thread to stop
-            self._music_stop_event.set()
-            
-            # Wait a short time for the thread to terminate
-            self._music_thread.join(timeout=1)
-            
-            # Stop any ongoing sound playback
-            sd.stop()
-            
+        try:
+            pygame.mixer.music.stop()
             self._current_music = None
-            self._music_thread = None
+            logger.info("Music stopped")
+        except Exception as e:
+            logger.error(f"Error stopping music: {e}")
+
+    def pause_music(self):
+        """Pause the current music track."""
+        try:
+            pygame.mixer.music.pause()
+            logger.info("Music paused")
+        except Exception as e:
+            logger.error(f"Error pausing music: {e}")
+
+    def unpause_music(self):
+        """Unpause the current music track."""
+        try:
+            pygame.mixer.music.unpause()
+            logger.info("Music unpaused")
+        except Exception as e:
+            logger.error(f"Error unpausing music: {e}")
 
     def close(self):
         """
         Clean up and stop all sound playback.
         Call this when closing the game.
         """
-        self.stop_music()
-        sd.stop()
+        try:
+            self.stop_music()
+            pygame.mixer.quit()
+            logger.info("Sound player closed")
+        except Exception as e:
+            logger.error(f"Error closing sound player: {e}")
 
 
 
