@@ -496,3 +496,26 @@ class TyperWritter():
         
     def render(self,style:str = "",left_padding:int = 0,core:Optional["Core"] = None):
         return self.typed
+
+class Delay:
+    """Creates a delay/pause for a specified duration when rendered."""
+    def __init__(self, duration: float = 1.0):
+        self.duration = duration
+        self.renderable = ""
+        self.start_time = None
+        self.is_delaying = True
+        
+    def update(self) -> bool:
+        """Update the delay. Returns True if still delaying, False if done."""
+        if self.start_time is None:
+            self.start_time = time.time()
+            
+        current_time = time.time()
+        if current_time - self.start_time >= self.duration:
+            self.is_delaying = False
+            return False
+        return True
+        
+    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None):
+        """Render an empty string during delay."""
+        return ""
