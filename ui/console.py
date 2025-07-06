@@ -12,6 +12,7 @@ from ui.options import (
     get_selectable_options,
     GridOfChoices,
     GridOfWeapons,
+    GridOfWeaponsShop,
     TyperWritter,
     Delay,
 )
@@ -57,15 +58,25 @@ LAYOUTS: dict [str, type[CustomLayout]] = {
     "SELECTSTORY": LayoutSelectStory,
     "AI_STUDIO": LayoutAIStudio,
 }
-
+class DummyTable(Table):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.border_style = None
+        self.caption = None
+        self.title = None
+        self.style = None
+        self.show_edge = None
+        self.show_lines = None
+        self.show_header = None
+        self.expand = None
 
 class Console:
     def __init__(self, core: "Core"):
         self.core = core
         self.table_count = 0
-        self.table: Optional[Table] = None
+        self.table: Optional[DummyTable] = DummyTable()
         self._layout  : CustomLayout = LayoutDefault(core=self.core)
-        self.right :Optional[ConsoleRenderable] = None
+        self.right :Optional[ConsoleRenderable] = ""
         self.state: Literal["MAIN", "INVENTORY"] = "MAIN"
         self.left_tab: Optional[ConsoleRenderable] = None
         self.temp_right_tab: Optional[ConsoleRenderable] =None
@@ -141,11 +152,22 @@ class Console:
         
         return self.fill_ui_table()
 
-    def fill_ui_table(self,expand:bool = True,title:str = "",caption:str = " - ",show_edge:bool = False,show_lines:bool = False,show_header:bool = False,style:str = "bold red1",box:box.Box = box.ROUNDED) -> Table:
+    def fill_ui_table(self,expand:bool = True,title:str = "",caption:str = " - ",border_style:str = "",show_edge:bool = False,show_lines:bool = False,show_header:bool = False,style:str = "",box:box.Box = box.ROUNDED) -> Table:
         """returns rich table after filling it with options"""
+        border_style = border_style if not self.table.border_style else self.table.border_style
+        caption = caption if not self.table.caption else self.table.caption
+        title = title if not self.table.title else self.table.title
+        style = style if not self.table.style else self.table.style
+        box = box if not self.table.box else self.table.box
+        show_edge = show_edge if not self.table.show_edge else self.table.show_edge
+        show_lines = show_lines if not self.table.show_lines else self.table.show_lines
+        show_header = show_header if not self.table.show_header else self.table.show_header
+        expand = expand if not self.table.expand else self.table.expand
         _core = self.core
         table = Table(
             expand=expand,
+            
+            border_style=border_style,
             caption=caption,  # Default caption
             show_edge=show_edge,
             show_lines=show_lines,
@@ -174,7 +196,7 @@ class Console:
         # First pass: render all options
         for option in self.renderables:
 
-            if isinstance(option, (CustomRenderable, GridOfChoices, GridOfWeapons)):
+            if isinstance(option, (CustomRenderable, GridOfChoices, GridOfWeapons,GridOfWeaponsShop)):
                 renderable = option.render(core=_core)
 
                 table.add_row(Align(renderable, align=option.h_allign))
@@ -224,7 +246,7 @@ class Console:
             or None if no selectable options are found.
         """
         for i, item in enumerate(reversed(self.renderables)):
-            if isinstance(item, (GridOfChoices, GridOfWeapons)):
+            if isinstance(item, (GridOfChoices, GridOfWeapons,GridOfWeaponsShop)):
                 return (i, item.ary)
             elif isinstance(item, CustomRenderable) and item.selectable:
                 return (i, [item])
@@ -252,7 +274,7 @@ class Console:
         # Iterate in reverse to maintain visual order when selecting (usually bottom-up)
         for item in reversed(self.renderables):
             # Check if the item is a buffer containing a list of options (ary)
-            if isinstance(item, (GridOfChoices, GridOfWeapons)):
+            if isinstance(item, (GridOfChoices, GridOfWeapons,GridOfWeaponsShop)):
                 # Add all options from the buffer's list
                 for i in item.ary:
                     if i.selectable:

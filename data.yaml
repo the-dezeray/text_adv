@@ -1,0 +1,15 @@
+
+USER_NAME:
+current_stories:
+  - id: 1
+    current_node: 1
+attempted_stories:
+  - id: 1
+stories-won:
+  -id: 2
+settings:
+  volume: 1
+  mute: false
+  menu: false
+  color: false
+

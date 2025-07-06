@@ -37,13 +37,16 @@ def main(**kwargs) -> None:
             "mute": kwargs.get("mute", False),
             "tank": kwargs.get("tank", False),
             "subchapter": kwargs.get("subchapter", "areas_to_explore.yaml"),
-            "menu": kwargs.get("menu", False)
+            "menu": kwargs.get("menu",False),
+            "mute": kwargs.get("mute",False),
         }
         
         logger.info(f"Starting game with config: {config}")
         # Initialize core components
         core = Core()
         core.menu = config["menu"]
+        core.sound_enabled = config["mute"]
+        
         install(show_locals=True, console=core.rich_console)
         core.chapter_id = config["chapter_id"]
         #core.rich_console.force_terminal = True

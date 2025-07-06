@@ -3,7 +3,7 @@ from .fight import fight
 from .rest import rest
 from .read import read
 from .run import run
-
+from .display_text import display_text
 from .sneak import sneak
 from .apply_effect import apply_effect, remove_effect
 from .attempt_steal import attempt_steal

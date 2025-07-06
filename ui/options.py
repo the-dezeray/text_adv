@@ -248,6 +248,30 @@ class WeaponOption(CustomRenderable):
             # Non-selected items are padded Text
             return Padding(Text(display_text, style=style), (0, 0, 0, 0)) # No extra padding here
 
+class MiniWeaponOption(CustomRenderable):
+    """UI representation for a weapon option."""
+    def __init__(self, **kwargs):
+        """Initializes a weapon UI element, forwarding arguments to CustomRenderable."""
+        super().__init__(**kwargs)
+        self.type  : str = "weapon" # Ensure type is set
+
+    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
+        # Use a Unicode arrow or similar indicator
+        indicator = "\uf0da" # Example: Right-pointing arrow
+        display_text = f"{indicator} {self.text} "
+        from rich.style import Style
+        style = "dim green"
+        if self.selected:
+            style = "bold green" # Internal style tracking
+            style = Style(bgcolor="green",color="black")
+            # Preview is handled by the setter
+            return Padding(display_text, style=style, expand=True) # Wrap selected in Panel
+        else:
+            style = "dim green" # Internal style tracking
+            # Non-selected items are padded Text
+            return Padding(display_text, style=style, pad=(0, 0, 0, 0),expand=True) # No extra padding here
+
+
 
 
 
@@ -260,6 +284,21 @@ def create_weapon_option(
 ) -> "WeaponOption":
     return WeaponOption(
         text=weapon.name,
+        func=func,
+        selectable=True,
+        type="weapon", # Set type explicitly
+        preview=preview,
+        core=core
+    )
+def create_mini_weapon_option(
+    weapon: "Weapon",
+    func: Callable,
+    preview: Optional[Callable] = None,
+    core: Optional["Core"] = None
+) -> "MiniWeaponOption":
+
+    return MiniWeaponOption(
+        text=f"{weapon.name}                        [red]{weapon.damage}[/red] [cyan]{weapon.defence}[/cyan]  {weapon.rarity} {weapon.condition})",
         func=func,
         selectable=True,
         type="weapon", # Set type explicitly
@@ -343,7 +382,7 @@ def get_selectable_options(options: list) -> list[CustomRenderable]:
     # Iterate in reverse to maintain visual order when selecting (usually bottom-up)
     for item in reversed(options):
         # Check if the item is a buffer containing a list of options (ary)
-        if isinstance(item, (GridOfChoices, GridOfWeapons)):
+        if isinstance(item, (GridOfChoices, GridOfWeapons,GridOfWeaponsShop )):
              # Add all options from the buffer's list
             selectable_list.extend(item.ary)
         # Check if the item itself is a selectable CustomRenderable subclass
@@ -519,3 +558,84 @@ class Delay:
     def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None):
         """Render an empty string during delay."""
         return ""
+
+
+
+class   GridOfWeaponsShop:
+    """Creates a buffer specifically for displaying weapon options."""
+    def __init__(
+        self,
+        ary: list["Weapon"] = [], # Specify list contains Weapon objects
+        core: Optional["Core"] = None,
+        extra: bool = False
+    ):
+        if core is None:
+            raise ValueError("Core must be provided for GridOfWeapons.")
+        self.extra = extra
+        # Initialize with an empty list if ary is None
+        self.weapons = ary or []
+        self.h_allign = "left"
+        self.core = core
+        self.selectable = True # This buffer itself isn't selectable, but its contents are
+        self.ary = self._build_weapon_options() # Store the generated CustomRenderable objects
+
+    def _build_weapon_options(self) -> list["WeaponOption"]:
+        """Builds a list of WeaponOption options from the weapon data."""
+        from core.events.fight import deal_damage # Local import to prevent circular dependency
+
+        options_list = []
+        # Determine the preview function based on the 'extra' flag
+        preview_func = self.core.console.show_weapon if self.extra and hasattr(self.core, 'console') and hasattr(self.core.console, 'show_weapon') else None
+
+        for weapon in self.weapons:
+            # Create a create_weapon_option for each weapon
+            # Use a lambda with a default argument to capture the current weapon
+            options_list.append(
+                create_mini_weapon_option(
+                    weapon=weapon,
+                    # Pass the specific weapon to deal_damage
+                    func=lambda w=weapon: self.core.player.inventory.add( w),
+                    preview=preview_func,
+                    core=self.core
+                )
+            )
+        return options_list
+
+    def render(self, core: Optional["Core"] = None) -> ConsoleRenderable:
+        renderables = [option.render() for option in self.ary] # Render each weapon option
+
+        grid = create_grid(colomuns=1)
+        for r in renderables:
+            grid.add_row(r)
+
+        # Different layout based on the 'extra' flag
+        if not self.extra:
+            from rich_pixels import Pixels # Local import for optional dependency
+            layout = Layout()
+            layout.split_row(Layout(name="options"), Layout(name="preview"))
+            try:
+                # Attempt to load and display an icon
+                cc =[]
+                for i in range(0,49):
+                    cc.append(f"a/{i}.png")
+                cc =["1.png","2.png","3.png"]
+                import random
+                icon = random.choice(cc)
+                from rich_pixels import FullcellRenderer
+                pixels = Pixels.from_image_path(icon,resize=(16,16))
+                a = Table.grid(expand=False)
+                a.add_column()
+                a.add_row(Panel(pixels,border_style="cyan",subtitle="reaper",subtitle_align="right",expand=False,width=23))
+
+                a.add_row("󰦝 dmg [ [bold red1]43[/bold red1] ]")
+                a.add_row("󰄽 spd 23")
+                a.add_row("[white]EFFECTS[/white]\n [red]bleed 1[/red][cyan]frost[/cyan]\n slow and blinding")
+                core.console.right = (Padding(a, expand=False))
+            except Exception: # Catch potential file not found or loading errors
+                 core.console.right = (Panel("[dim]No preview[/dim]", height=2)) # Fallback text
+
+           
+            return Panel(grid,title="weapons",title_align="left",border_style="cyan1")
+        else:
+            # If 'extra' is true, just return the grid
+            return grid

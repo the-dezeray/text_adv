@@ -149,7 +149,7 @@
       function: null
     - text: "Try to map the passage, relying on willpower to ignore the illusions. (Risky)"
       next_node: 16
-      function: "skill_check(skill='hp', limit=13, on_success=None, on_fail=None, core=core)"
+      function: "skill_check(core=core,skill='hp', limit=13, on_success=None, on_fail=None)"
 
 13:
   location: "Sanctum Aftermath"
@@ -227,7 +227,7 @@
   choices:
     - text: "Embrace the Labyrinth's wisdom and become its guardian"
       next_node: 20
-      function: "exit_story( core=core, text='you become the guardian of the labyrinth')"
+      function: "shop( core=core, text='you find youself in a shop', items=['sword','shield'], prices=[100,200])"
     - text: "Take what you've learned and seek the Shimmering Portal"
       next_node: 20
       function: null
@@ -247,7 +247,7 @@
       function: "apply_effect(effect='blindness', duration='medium', core=core, str='you are blinded and cannot see')"
     - text: "Pull the Silent Moon Lever."
       next_node: 15
-      function: "display_text(text='nothing happens')"
+      function: "display_text(text='nothing happens',core=core)"
 
 20:
   location: "The Shimmering Portal"

@@ -145,7 +145,7 @@ class LayoutInGame(CustomLayout):
         else:
             layout["left"].update("")
 
-            layout["right"].update(t if self.core.command_mode else "")
+            layout["right"].update(self.core.console.right )
         
 
         #layout["right"].update(self.core.console.right)
