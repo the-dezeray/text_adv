@@ -74,7 +74,13 @@
       function: "explore(core=core, area='swamp', text='you have decided to persevere')"
     - text: "The price was too high. Try to reclaim your memory."
       next_node: 7
-      function: "chance_event(event='fight(entity=Entities.generate(type='whisper', lvl=7), core=core)', probability=0.5, core=core)"
+      function: >
+          chance_event(
+            on_success="fight(entity=Entities.generate(type='snake', lvl=7))",
+            on_fail="you fail",
+            probability=0.5,
+            core=core
+          )
 
 7:
   location: "The Shifting Maze"
@@ -107,10 +113,14 @@
   choices:
     - text: "(If successful crossing) Search the explorer's pack."
       next_node: 14
-      function: "loot(container='explorers_pack', core=core)"
+      function: > 
+        generate_weapons(core ="core",count =2,level="low");
+        generate_potions(core ="core",count =2,level="low");
+        generate_items(core ="core",count =2,level="mid");
     - text: "Continue into the passage/crawlspace ahead."
       next_node: 14
-      function: null
+      function: >
+        show_items(("sword",3))
 
 10:
   location: "The Geothermal Vents"

@@ -1,3 +1,4 @@
+
 """Core game engine for the text adventure game."""
 
 from __future__ import annotations
@@ -13,7 +14,7 @@ from rich.padding import Padding
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
 from rich.console import Console as RichConsole
-from typing import TYPE_CHECKING, Dict, Any, Optional, List
+from typing import TYPE_CHECKING, Dict, Any, Optional, List,Callable
 import datetime
 import sys
 import time
@@ -49,8 +50,10 @@ class Core:
         # UI Components
         self.rich_console = RichConsole(color_system="truecolor", style="bold black", quiet=True)
         self.rich_console.stderr = True
+        self.saved_game: bool = False
         self.rich_console.quiet = False
         self.rich_live_instance: "Live"
+        self.current_pane : Callable = lambda: print("d") 
         self.sound_enabled= False
         self._layout = Layout()
         self.auto_generate_text: bool = False

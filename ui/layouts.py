@@ -207,13 +207,41 @@ class LayoutStartMenu(CustomLayout):
         self.layout["menus"].update(Align(ui,align="center",vertical = "middle"))
 
         return self.layout
+class LayoutAboutUs(CustomLayout):
+    
+    def setup(self)->None:
+  
+        self.layout = Layout()
+        self.layout.split_row(Layout(name="left"), Layout(visible=False,name="right"))
+    def update(self):
+        table: Table = self.core.console.fill_ui_table()
+        content = table
+        
 
+
+        def top_bar():
+            ui = "Home Inventory Settings "
+            return ui
+
+        self.layout["left"].split_row(
+            Layout(name="menus"),
+        )
+
+
+        ui =self.core.console.fill_ui_table()
+        self.layout["menus"].update(Align(ui,align="center",vertical = "middle"))
+
+        return self.layout
 
 class LayoutSelectStory(CustomLayout):
     def __init__(self, core:"Core"):
         self.core = core
         self.layout = Layout()
-        
+    
+    def setup(self)->None:
+  
+        self.layout = Layout()
+        self.layout.split_row(Layout(name="left"), Layout(visible=False,name="right"))        
     def update(self):
         
         table: Table = self.core.console.fill_ui_table()

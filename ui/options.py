@@ -364,7 +364,7 @@ def Reward(ary: list[str] = []) -> Panel:
 class Option(CustomRenderable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
+    def render(self, style: str =   "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
         indicator = "\uf0da"
         display_text = f"{indicator} {self.text} "
         style :str = "dim green"
@@ -639,3 +639,31 @@ class   GridOfWeaponsShop:
         else:
             # If 'extra' is true, just return the grid
             return grid
+class StoryTextOption(CustomRenderable):
+    def __init__(self, **kwargs):
+        if 'h_allign' not in kwargs:
+            kwargs['h_allign'] = "left"
+        super().__init__(**kwargs)
+        self.type = "menu" # Ensure type is set
+
+    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
+        try:
+            from art import text2art 
+            ctext = self.text # Example font
+        except ImportError:
+            ctext = self.text 
+        except Exception: 
+             ctext = f"[italic] {self.text} (art error) [/italic]"
+        style = "dim grey93"
+        if self.selected:
+            from rich.style import Style
+            style = Style(bold=True,bgcolor="green",color="black")
+            s = "> " + self.text 
+            
+   
+            ctext = s
+            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"),pad=(0,0,0,0))
+        else:
+            style = "dim grey93" #
+            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"),pad=(0,0,0,0))
+        

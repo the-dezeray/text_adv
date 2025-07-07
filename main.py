@@ -37,7 +37,7 @@ def main(**kwargs) -> None:
             "mute": kwargs.get("mute", False),
             "tank": kwargs.get("tank", False),
             "subchapter": kwargs.get("subchapter", "areas_to_explore.yaml"),
-            "menu": kwargs.get("menu",False),
+            "menu": kwargs.get("menu",True),
             "mute": kwargs.get("mute",False),
         }
         

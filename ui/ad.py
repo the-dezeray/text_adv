@@ -1,21 +1,35 @@
 from PIL.ImageMath import lambda_eval
 from typing import TYPE_CHECKING , List
+from ui.options import Option
+from rich.panel import Panel
+from ui.options import MenuOption,Option,MinimalMenuOption,MinimalTextOption, StoryTextOption
 if TYPE_CHECKING:
     from ui.console import Console
+    from core.core import Core
 def get_user_stories():
     #TODO implement get user stories from path 
-    return ["story 1","story 2","story 3","story 132","story 232","story 323"]
+    return ["the story of the lost city"," A Lost city","Dying Angel","The dungeaon of death","Solace"," Missing the rage"]
+def  generate_load_personal_story_pane(core:"Core"):
+        core.console.clear_display()
+        instructions: str = "if you find a story place it in the storie files you can even manually type you own story out as long "
+
+        core.console.print(Panel(renderable=instructions))
+        core.console.print(
+            StoryTextOption(text= "back",func = lambda:generate_previous_menu_options(core) )
+            )
+        
 def generate_new_game_menu_options(core):   
     console:"Console" = core.console
     from art import text2art
-    from ui.options import MenuOption,Option,MinimalMenuOption,MinimalTextOption
+  
     # Define menu options with ASCII text
     def transition_to_story_select(console:"Console"):
-        console._transtion_layout("SELECTSTORY")
+        console.table.show_lines = True
+    
         stories = get_user_stories()
         items = []
         for story in stories:
-            items.append(MinimalTextOption(
+            items.append(StoryTextOption(
                 text=story,
                 func=lambda: console._transtion_layout("INGAME"),
                 next_node=None,
@@ -28,10 +42,12 @@ def generate_new_game_menu_options(core):
     
         console.refresh()
         core.ai.fake_prompt('d')
+
     list_of_options = {
         "enter the library of stories": lambda: transition_to_story_select(console),
         "generate your own story with with ai": lambda: ds(),
-        "load a personal story ": lambda: console.TERMINATE(),
+        "load a personal story ": lambda: generate_load_personal_story_pane(core),
+           "back": lambda: generate_previous_menu_options(core),
     }
     menu: List[MinimalMenuOption] = []
     for key,value in list_of_options.items():
@@ -54,7 +70,7 @@ def generate_settings_menu_options(core):
         "set api keys": lambda: generate_api_keys_menu_options(core),
         "visuals": lambda: generate_visuals_menu_options(core),
         "clear data": lambda: generate_clear_data_menu_options(core),
-        "back": lambda: console._transtion_layout("CREDITS"),
+        "back": lambda: generate_previous_menu_options(core),
     }
     menu: List[MinimalMenuOption] = []
     for key,value in list_of_options.items():
@@ -83,14 +99,16 @@ def generate_keybindings_menu_options(core):
     from ui.options import MinimalMenuOption
     list_of_options = {
         "keybindings": lambda: console._transtion_layout("MENU"),
+           "back": lambda: generate_previous_menu_options(core),
         "shorcuts": lambda: console._transtion_layout("MENU"),
     }
 
 def generate_api_keys_menu_options(core):
-    console = core
+    console = core.console
     from ui.options import MinimalMenuOption
     list_of_options = {
-        "api keys": lambda: console._transtion_layout("MENU"),
+        "api keys": lambda: print("d"),
+           "back": lambda: generate_previous_menu_options(core),
     }
     menu: List[MinimalMenuOption] = []
     for key,value in list_of_options.items():
@@ -100,11 +118,14 @@ def generate_api_keys_menu_options(core):
             next_node=None,
             type="menu"
         ))
+    console.clear_display()
+    core.console.print(menu)
 def generate_visuals_menu_options(core):
     console = core.console
     from ui.options import MinimalMenuOption
     list_of_options = {
         "visuals": lambda: console._transtion_layout("MENU"),
+           "back": lambda: generate_previous_menu_options(core),
     }
     menu: List[MinimalMenuOption] = []
     for key,value in list_of_options.items():
@@ -114,11 +135,13 @@ def generate_visuals_menu_options(core):
             next_node=None,
             type="menu"
         ))
-def generate_about_us_menu_options(core):
-    console = core.console
+def generate_about_us_menu_options(core: "Core"):
+
     from ui.options import MinimalMenuOption
     list_of_options = {
-        "about us": lambda: console._transtion_layout("MENU"),
+        "sponsor project": lambda: generate_about_us_menu_options(core),
+        "more about me ": lambda: generate_about_us_menu_options(core),
+        "back": lambda: generate_previous_menu_options(core),
     }
     menu: List[MinimalMenuOption] = []
     for key,value in list_of_options.items():
@@ -128,6 +151,13 @@ def generate_about_us_menu_options(core):
             next_node=None,
             type="menu"
         ))
+    
+    about_me_text  = "I am desiree creator of this project feel free to by me a coffe PS:saving to get a decent laptop"
+    core.console._transtion_layout("ABOUT_US")
+    core.console.clear_display()
+    core.console.print(Panel("image to be rended"))
+    core.console.print(Panel(about_me_text))
+    core.console.print(menu)
 def generate_clear_data_menu_options(core):
     console = core.console
     from ui.options import MinimalMenuOption
@@ -142,7 +172,7 @@ def generate_clear_data_menu_options(core):
             next_node=None,
             type="menu"
         ))
-def generate_main_menu_options(core):
+def generate_main_menu_options(core: "Core"):
     console = core.console
     from art import text2art
     from ui.options import MenuOption,Option,MinimalMenuOption
@@ -153,8 +183,10 @@ def generate_main_menu_options(core):
         "new game": lambda: generate_new_game_menu_options(core),
         "settings": lambda: generate_settings_menu_options(core),
         "about us": lambda: generate_about_us_menu_options(core),
-        "leave": lambda: console.TERMINATE(),
+        "leave": lambda: core.TERMINATE(),
     }
+    if not core.saved_game:
+        del List_of_options["continue"]
     menu: List[MinimalMenuOption] =[]
     for key,value in  List_of_options.items():
         menu.append(MinimalMenuOption(
@@ -164,4 +196,8 @@ def generate_main_menu_options(core):
             type="menu"
         ))
     return menu
-   
+def generate_previous_menu_options(core:"Core")->None:
+    if core.current_pane:
+        core.console.clear_display()
+        core.current_pane()
+    

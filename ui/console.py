@@ -25,6 +25,7 @@ from ui.layouts import (
     LayoutInventory,
     LayoutSelectStory,
     LayoutAIStudio,
+    LayoutAboutUs
 )
 from ui.components import player_tab
 from rich.console import ConsoleRenderable, group, RichCast
@@ -51,7 +52,7 @@ LAYOUTS: dict [str, type[CustomLayout]] = {
     "FIGHT": LayoutDefault,
     "SETTINGS": LayoutDefault,
  
-    "ABOUT": LayoutDefault,
+    "ABOUT_US": LayoutAboutUs,
     "CHARACTER_SELECTION": Lsd,
     "DEFAULT": LayoutDefault,
     "LOADING": LayoutLoading,
@@ -74,7 +75,7 @@ class Console:
     def __init__(self, core: "Core"):
         self.core = core
         self.table_count = 0
-        self.table: Optional[DummyTable] = DummyTable()
+        self.table: DummyTable = DummyTable()
         self._layout  : CustomLayout = LayoutDefault(core=self.core)
         self.right :Optional[ConsoleRenderable] = ""
         self.state: Literal["MAIN", "INVENTORY"] = "MAIN"
@@ -251,7 +252,7 @@ class Console:
             elif isinstance(item, CustomRenderable) and item.selectable:
                 return (i, [item])
         return None
-    layout_list =Literal["MENU","AI_STUDIO","INGAME","SHOP","STATS","INVENTORY","SCROLL_READING","FIGHT","SETTINGS","AI_STUDY","ABOUT","CHARACTER_SELECTION","DEFAULT","LOADING","SELECTSTORY"]
+    layout_list =Literal["MENU","ABOUT_US","AI_STUDIO","INGAME","SHOP","STATS","INVENTORY","SCROLL_READING","FIGHT","SETTINGS","AI_STUDY","ABOUT","CHARACTER_SELECTION","DEFAULT","LOADING","SELECTSTORY"]
     def _transtion_layout(self, layout:layout_list):
         self.core.console.clear_display()
         self.layout = layout
@@ -262,6 +263,8 @@ class Console:
 
     def show_menu(self):
         self.core.console.clear_display()
+        self.core.current_pane = lambda: self.core.console.show_menu()
+
         from ui.ad import generate_main_menu_options
         from ui.options import MinimalMenuOption
         menu: List[MinimalMenuOption] = generate_main_menu_options(self.core)

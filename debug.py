@@ -21,7 +21,7 @@ parser.add_argument("-sub", "--subchapter", help="a sub chapter to start from")
 parser.add_argument("-s", "--story", help="path to the story")
 parser.add_argument('--menu', dest='menu', action='store_true', help="show menu")
 parser.add_argument('--no-menu', dest='menu', action='store_false', help="hide menu")
-parser.set_defaults(menu=False)  # or False if you prefer hidden by default
+parser.set_defaults(menu=True)  # or False if you prefer hidden by default
 args = parser.parse_args()
 chapter = args.chatper
 main(chapter_id= int(chapter),menu=args.menu)
