@@ -275,7 +275,7 @@ class Console:
   
         selectable_list :list[CustomRenderable] = []
         # Iterate in reverse to maintain visual order when selecting (usually bottom-up)
-        for item in reversed(self.renderables):
+        for item in self.renderables:
             # Check if the item is a buffer containing a list of options (ary)
             if isinstance(item, (GridOfChoices, GridOfWeapons,GridOfWeaponsShop)):
                 # Add all options from the buffer's list

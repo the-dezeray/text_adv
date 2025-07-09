@@ -2,12 +2,14 @@ sword:
     name: sword
     damage: 30
     crit: 23
+    lvl: "low"
     description: simple sword
 shield:
     name: shield
     damage: 0
     crit: 0
     defence: 10
+    lvl: "low"
     description: a simple shield
 bat:
     name: bat
@@ -16,12 +18,14 @@ bat:
     crit: 10
     defence: -1
     img: bat
+    lvl: "low"
     cursed: false
     description: bat
 rusted_shiv:
     name: "Prison Shiv"
     damage: 12
     crit: 10
+    lvl: "mid"
     effects: ["bleed"]
     description: "Sharpened bed spring. Sticky with old infections."
     rarity: 1
@@ -30,6 +34,7 @@ bone_club:
     name: "Thighbone Crusher"
     damage: 15
     crit: 5
+    lvl: "high"
     effects: []
     description: "Femur wrapped in chain. Still bears teeth marks."
     rarity: 0
@@ -38,6 +43,7 @@ gate_shield:
     name: "Cell Door"
     damage: 8
     defence: 12
+    lvl: "mid"
     effects: ["slow"]
     description: "Ripped dungeon hinges. Makes movement ponderous."
     rarity: 2
@@ -46,6 +52,7 @@ whip:
     name: "Flayer's Tongue"
     damage: 10
     crit: 25
+    lvl : "mid"
     effects: []
     description: "Braided leather strips. Cracks like gunshots."
     rarity: 1
@@ -55,6 +62,7 @@ barbed_flail:
     name: "Chain of Tears"
     damage: 28
     crit: 15
+    lvl: "high"
     effects: ["bleed", "slow"]
     description: "Spiked ball drips anticoagulant. Whimpers when still."
     rarity: 4
@@ -63,6 +71,7 @@ furnace_poker:
     name: "Incinerator's Rod"
     damage: 22
     crit: 20
+    lvl : "mid"
     effects: ["burn"]
     description: "Glowing tip leaves smoldering wounds. Smells of barbecue."
     rarity: 5
@@ -71,6 +80,7 @@ warden_mace:
     name: "Jailer's Fist"
     damage: 32
     crit: 10
+    lvl : "low" 
     effects: ["stun"]
     description: "Cast iron head shaped like screaming face. Humiliates armor."
     rarity: 6
@@ -79,6 +89,7 @@ plague_spear:
     name: "Blight Lancet"
     damage: 18
     crit: 30
+    lvl : "low"
     effects: ["poison"]
     description: "Green-crusted tip. Carries ancient diseases."
     rarity: 4
@@ -87,6 +98,7 @@ voltaic_chain:
     name: "Storm Lash"
     damage: 25
     crit: 25
+    lvl : "mid"
     effects: ["shock"]
     description: "Crackling copper links. Makes hair stand on end."
     rarity: 5
@@ -95,6 +107,7 @@ confessor_axe:
     name: "Penitent's Edge"
     damage: 35
     crit: 15
+    lvl : "mid"
     effects: ["holy"]
     description: "Engraved with martyr prayers. Burns heretics."
     rarity: 6
@@ -103,6 +116,7 @@ marrow_bow:
     name: "Screaming Spine"
     damage: 20
     crit: 40
+    lvl : "low"
     effects: []
     description: "Bowstring from tendons. Arrows of sharpened bone."
     rarity: 4
@@ -112,6 +126,7 @@ bloodking_sword:
     name: "Hemogoblet"
     damage: 45
     crit: 20
+    lvl : "high"
     effects: ["vamperism", "cursed"]
     cursed: true
     description: "Blade drinks blood to grow heavier. Addictive warmth."
@@ -121,6 +136,7 @@ void_scythe:
     name: "Starving Void"
     damage: 50
     crit: 25
+    lvl : "mid"
     effects: ["shock", "slow"]
     description: "Harvests light and sound. Leaves silent wounds."
     rarity: 9
@@ -129,6 +145,7 @@ martyr_spike:
     name: "Sacred Impaler"
     damage: 38
     crit: 35
+    lvl : "mid"
     effects: ["holy", "burn"]
     description: "Glows with trapped saint. Screams on impact."
     rarity: 7
@@ -137,6 +154,7 @@ black_chorus:
     name: "Plaguebearer"
     damage: 30
     crit: 20
+    lvl: "high"
     effects: ["poison", "bleed"]
     description: "Oozes black pus. Spreads gangrenous rot."
     rarity: 8
@@ -145,6 +163,7 @@ tormentor:
     name: "Nerveflayer"
     damage: 28
     crit: 50
+    lvl: "extreme"
     effects: ["stun", "slow"]
     description: "Needle-covered whip. Causes neural overload."
     rarity: 9
@@ -153,6 +172,7 @@ sunken_crown:
     name: "Drowned King's Scepter"
     damage: 40
     crit: 15
+    lvl: "mid"
     effects: ["vamperism", "cursed"]
     cursed: true
     description: "Weighted with coral growths. Pulls wielder downward."
@@ -162,6 +182,7 @@ oblivion_dagger:
     name: "MemoryRazor"
     damage: 15
     crit: 100
+    lvl: "high"
     effects: ["cursed"]
     cursed: true
     description: "Steals memories with each cut. Leaves existential wounds."

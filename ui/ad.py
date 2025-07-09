@@ -27,16 +27,17 @@ def generate_new_game_menu_options(core):
         console.table.show_lines = True
     
         stories = get_user_stories()
-        items = []
+        menu = []
         for story in stories:
-            items.append(StoryTextOption(
+            menu.append(StoryTextOption(
                 text=story,
                 func=lambda: console._transtion_layout("INGAME"),
                 next_node=None,
                 type="menu"
             ))
         console.clear_display()
-        core.console.print(items)
+        menu[0].selected = True
+        core.console.print(menu)
     def ds():   
         console._transtion_layout("AI_STUDIO")
     
@@ -60,6 +61,7 @@ def generate_new_game_menu_options(core):
 
 
     console.clear_display()
+    menu[0].selected = True
     core.console.print(menu)
 def generate_settings_menu_options(core):
     console = core.console
@@ -175,6 +177,7 @@ def generate_clear_data_menu_options(core):
 def generate_main_menu_options(core: "Core"):
     console = core.console
     from art import text2art
+    
     from ui.options import MenuOption,Option,MinimalMenuOption
     # Define menu options with ASCII text
 
@@ -195,6 +198,7 @@ def generate_main_menu_options(core: "Core"):
             next_node=None,
             type="menu"
         ))
+    menu[0].selected = True
     return menu
 def generate_previous_menu_options(core:"Core")->None:
     if core.current_pane:

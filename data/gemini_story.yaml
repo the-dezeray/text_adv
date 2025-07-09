@@ -114,9 +114,8 @@
     - text: "(If successful crossing) Search the explorer's pack."
       next_node: 14
       function: > 
-        generate_weapons(core ="core",count =2,level="low");
-        generate_potions(core ="core",count =2,level="low");
-        generate_items(core ="core",count =2,level="mid");
+        randomly_generate_weapons(core =core,count =2,level="low");
+        randomly_generate_items(core =core,count =2,level="mid");
     - text: "Continue into the passage/crawlspace ahead."
       next_node: 14
       function: >

@@ -62,7 +62,31 @@ class WeaponItem(Item):
 class WeaponFactory:
     WEAPON_DICT = load_yaml_file("data/weapons.yaml")
 
+    mid_level_weapons = [name for name, data in WEAPON_DICT.items() if data.get("lvl") == "mid"]
+    high_level_weapons = [name for name, data in WEAPON_DICT.items() if data.get("lvl") == "high"]
+    low_level_weapons = [name for name, data in WEAPON_DICT.items()  if data.get("lvl") == "low"]
+
+
     @classmethod
+    def generate_randomly(cls,level:str = "low",count:int = 1) -> List[WeaponItem]:
+        """
+        Generate a list of random weapons based on the specified level.
+        """
+        if level == "mid":
+            weapon_names = cls.mid_level_weapons
+        elif level == "high":
+            weapon_names = cls.high_level_weapons
+        else:
+            weapon_names = cls.low_level_weapons
+
+        if not weapon_names:
+            logger.warning(f"No weapons found for level '{level}'.")
+            return []
+
+        from random import sample
+        selected_names = sample(weapon_names, min(count, len(weapon_names)))
+        return [weapon for name in selected_names if (weapon := cls.generate(name)) is not None]
+
     def load_data(cls, path="data/weapons.yaml"):
         cls.WEAPON_DICT = load_yaml_file(path)
         logger.info(f"Loaded {len(cls.WEAPON_DICT)} weapons from {path}")

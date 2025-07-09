@@ -16,3 +16,4 @@ from .escape import attempt_escape
 from .modify_player_attribute import modify_player_attribute
 from .trigger_trap import trigger_trap
 from .chance_event import chance_event
+from .generators import (randomly_generate_weapons, randomly_generate_items)

@@ -1,4 +1,35 @@
 gold:
     name: gold
+    type: currency
     amount: 0
     description: value so great
+juice:
+    name: juice
+    type: consumable
+    amount: 1
+    description: "A refreshing drink. Restores 5 health."
+    effects: ["heal"]
+    heal_amount: 5
+    img: juice
+    lvl: "low"
+    rarity: 0
+water:
+    name: water
+    type: consumable
+    amount: 1
+    description: "A refreshing drink. Restores 3 health."
+    effects: ["heal"]
+    heal_amount: 3
+    img: water
+    lvl: "low"
+    rarity: 0
+heal_potion:
+    name: heal potion
+    type: potion
+    amount: 1
+    description: "A healing potion. Restores 10 health."
+    effects: ["heal"]
+    heal_amount: 10
+    img: heal_potion
+    lvl: "mid"
+    rarity: 1
