@@ -34,8 +34,14 @@ def randomly_generate_weapons(core:"Core", count=1, level="low"):
   
     core.console.print(ui_text_panel(text="You find some weapons:"))
     menu = []
-    for weapon in weapons:
-        menu.append(Option(text=weapon.name, func=lambda w=weapon: core.player.inventory.add_item(w)))
+
+    def pick_weapon(index):
+        weapon = weapons[index]
+        core.player.inventory.add(weapon)
+        core.console.print(ui_text_panel(text=f"You have selected the {weapon.name}."))
+        weapons.pop(index)
+    for i, weapon in enumerate(weapons):
+        menu.append(Option(text=weapon.name, func=lambda i=i: pick_weapon(i)))
     core.console.print(menu)
 def randomly_generate_items(core:"Core", count=1, level="low"):
     """
@@ -50,7 +56,7 @@ def randomly_generate_items(core:"Core", count=1, level="low"):
     core.console.print(ui_text_panel(text="You find some items:"))
     menu = []
     for item in items:
-        menu.append(Option(text=item.name, func=lambda w=item: core.palyer.inventory.add_item(w)))
+        menu.append(Option(text=item.name, func=lambda w=item: core.player.inventory.add(w)))
     core.console.print(menu)
 
 

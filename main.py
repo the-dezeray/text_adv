@@ -5,15 +5,13 @@ from rich.live import Live
 from rich.layout import Layout
 
 from rich.traceback import install
-from readchar import readkey
+
 from util.logger import logger
 from core.core import Core
 
 from rich.progress import Progress
 import sys
-import select
-import threading
-import queue
+
 from typing import Optional, Dict, Any
 
 
