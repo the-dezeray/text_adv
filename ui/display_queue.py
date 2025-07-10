@@ -19,6 +19,7 @@ class DisplayQueue:
 
     def __delitem__(self, index):
         del self._data[index]
+        self.console.refresh()
 
     def __len__(self):
         return len(self._data)
@@ -41,6 +42,7 @@ class DisplayQueue:
 
     def remove(self, item):
         self._data.remove(item)
+        self.console.refresh()
 
     def pop(self, index=-1):
         return self._data.pop(index)

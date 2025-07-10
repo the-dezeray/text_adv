@@ -36,13 +36,16 @@ def randomly_generate_weapons(core:"Core", count=1, level="low"):
     menu = []
 
     def pick_weapon(index):
-        weapon = weapons[index]
-        core.player.inventory.add(weapon)
-        core.console.print(ui_text_panel(text=f"You have selected the {weapon.name}."))
-        weapons.pop(index)
+        # weapon = weapons[index]
+        #core.player.inventory.add(weapon)
+        #core.console.print(ui_text_panel(text=f"You have selected the {weapon.name}."))
+        del core.console.renderables[index]
+
     for i, weapon in enumerate(weapons):
-        menu.append(Option(text=weapon.name, func=lambda i=i: pick_weapon(i)))
-    core.console.print(menu)
+        index = len(core.console.renderables)
+        core.console.print(Option(text = index))
+        core.console.print(Option(text=weapon.name, func=lambda index=index: pick_weapon(index),disable_others=False))
+        
 def randomly_generate_items(core:"Core", count=1, level="low"):
     """
     Generate a list of random items based on the specified level.

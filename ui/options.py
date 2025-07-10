@@ -1,3 +1,4 @@
+from gc import disable
 from typing import Callable, Optional, Literal, TYPE_CHECKING
 from rich.padding import Padding
 from rich.panel import Panel
@@ -24,6 +25,7 @@ class CustomRenderable:
     def __init__(
         self,
         text: str = "",
+        disable_others: bool = True, # Whether to disable other options when this is selected
         func: Optional[Callable] = None,
         preview: Optional[Callable] = None, # Changed from str to Callable based on usage
         next_node: Optional[str] = None,
@@ -38,6 +40,7 @@ class CustomRenderable:
         self.style = ""
         self.core = core
         self.text = text
+        self.disable_others = disable_others # Whether to disable other options when this is selected
         self.func = func
         self.preview = preview # Function to call for preview
         self.next_node = next_node
