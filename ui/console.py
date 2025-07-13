@@ -123,8 +123,9 @@ class Console:
         else:
             self.renderables.append(item)
         
-        if self.table_count > 9:
-                self.renderables.pop(0)
+        if self.table_count >5:
+            self.renderables._data = self.renderables._data[-9:]
+
   
         self.refresh()
     @property

@@ -119,7 +119,7 @@
     - text: "Continue into the passage/crawlspace ahead."
       next_node: 14
       function: >
-        show_items(("sword",3))
+        show_items(core=core,items=("sword",3))
 
 10:
   location: "The Geothermal Vents"
@@ -179,7 +179,7 @@
       next_node: 17
       function: "challenge(quest='LabyrinthHeart', status='active', core=core)"
     - text: "Examine the Obsidian Idol in the corner."
-      next_node: 14
+      next_node: 15
       function: "apply_effect(effect='charm', duration='medium', core=core, str='you are charmed and cannot resist the idol')"
     - text: "[If Idol Examined & Quest Offered by Idol's text update]: 'I will seek the Echoing Crystals.' (Accept Sidequest)"
       next_node: 17

@@ -12,12 +12,11 @@ def display_text( core:"Core",  text = ""):
     
     logger.info("You rest for a while")
     core.console.clear_display()
-    core.console.print(Panel(text="You rest for a while"))
-  
-    core.console.print(
-  Option(
-                text="Proceed", func=lambda: core.goto_next()
+    core.console.print(Panel("You rest for a while"))
     
+    core.console.print(
+        Option(
+            text="Proceed", func=lambda: core.goto_next()
         )
     )
  

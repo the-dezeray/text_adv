@@ -1,0 +1,290 @@
+0:
+  location: "The Dark Descent"
+  text: "You awaken at the top of a winding stone staircase, your armor cold against your skin. In your hand, you grip your trusted [red1]Steel Sword[/], its familiar weight offering some comfort. Flickering torchlight reveals ancient stonework, and the musty air carries whispers of forgotten battles."
+  choices:
+    - text: "Descend the staircase carefully."
+      next_node: 1
+      function: "receive_item(item='steel_sword', core=core)"
+    - text: "Search the area before descending."
+      next_node: 2
+      function: "explore(area='entrance', core=core)"
+
+1:
+  location: "The Guardian's Hall"
+  text: "The staircase opens into a vast hall supported by weathered columns. Suits of armor stand sentinel along the walls, their empty visors seeming to track your movement. At the far end, a massive iron door bears the inscription: 'Only the worthy may pass.'"
+  choices:
+    - text: "Approach the iron door directly."
+      next_node: 3
+      function: "trigger_trap(core=core, type='guardian', lvl=1, text='The suits of armor suddenly animate!')"
+    - text: "Examine the suits of armor carefully."
+      next_node: 4
+      function: "investigate(core=core, target='armor')"
+
+2:
+  location: "The Forgotten Armory"
+  text: "Your search reveals a small side chamber - an old armory. Rusty weapons line the walls, but among them, you spot a [red1]Shield of the Ancient Order[/], its crest still visible beneath years of dust. The shield seems to hum with residual magic."
+  choices:
+    - text: "Take the shield and return to the stairs."
+      next_node: 1
+      function: "receive_item(item='ancient_shield', text='You obtain the Shield of the Ancient Order')"
+    - text: "Search deeper into the armory."
+      next_node: 5
+      function: "skill_check(skill='perception', limit=10, core=core)"
+
+3:
+  location: "The Battle Chamber"
+  text: "The animated guardians surround you, their ancient weapons raised. Their hollow armor rings with otherworldly energy, but they seem to be testing rather than trying to kill. Perhaps there's a way to prove your worth without bloodshed."
+  choices:
+    - text: "Stand your ground and show your knight's crest."
+      next_node: 6
+      function: "skill_check(skill='charisma', limit=15, core=core)"
+    - text: "Fight the guardian knights."
+      next_node: 6
+      function: "fight(entity=Entities.generate(type='guardian_knight', lvl=5), core=core)"
+
+4:
+  location: "The Secret of the Sentinels"
+  text: "Upon closer inspection, each suit of armor bears a different crest. One catches your eye - it matches ancient tales of the Knights of the Sacred Flame. Perhaps there's more to these guardians than meets the eye."
+  choices:
+    - text: "Attempt to commune with the spirits of the knights."
+      next_node: 7
+      function: "interact(entity='knight_spirits', core=core)"
+    - text: "Look for a hidden mechanism among the armors."
+      next_node: 8
+      function: "explore(area='guardian_hall', core=core)"
+
+5:
+  location: "The Weaponmaster's Cache"
+  text: "In a concealed alcove, you discover a weapon rack holding several distinguished arms. Among them, a [red1]Blessed Sword[/] gleams with holy light, and a [red1]Cursed Mace[/] pulses with dark energy."
+  choices:
+    - text: "Take the Blessed Sword."
+      next_node: 9
+      function: "receive_item(item='blessed_sword', core=core)"
+    - text: "Take the Cursed Mace."
+      next_node: 9
+      function: "receive_item(item='cursed_mace', core=core)"
+
+6:
+  location: "The Path of Valor"
+  text: "[NODE_TEXT_WILL_UPDATE_BASED_ON_PREVIOUS_CHOICE] Either the guardians bow and step aside, recognizing your worth, or you stand victorious after proving your strength in combat. The iron door slowly opens, revealing a long corridor ahead."
+  choices:
+    - text: "Enter the corridor confidently."
+      next_node: 10
+      function: null
+    - text: "Check for traps before proceeding."
+      next_node: 11
+      function: "skill_check(skill='perception', limit=12, core=core)"
+
+7:
+  location: "The Knights' Communion"
+  text: "The spirits of the ancient knights manifest before you, their ethereal forms flickering like pale flame. They speak of a great evil sealed within the dungeon's depths and offer to grant their blessing - if you swear to uphold their sacred duty."
+  choices:
+    - text: "Accept their blessing and the responsibility."
+      next_node: 12
+      function: "apply_effect(effect='knight_blessing', duration='permanent', core=core, str='You receive the blessing of the ancient knights')"
+    - text: "Decline - you must forge your own path."
+      next_node: 10
+      function: null
+
+8:
+  location: "The Hidden Passage"
+  text: "Behind one of the suits of armor, you discover a narrow passage. Fresh air flows from it, suggesting another way forward. However, the main iron door still beckons, testing your worth."
+  choices:
+    - text: "Take the secret passage."
+      next_node: 13
+      function: "sneak(core=core, place='hidden_passage')"
+    - text: "Face the main door's challenge."
+      next_node: 3
+      function: null
+
+9:
+  location: "The Moment of Choice"
+  text: "As you grasp your chosen weapon, you feel its power flow through you. The very air seems to respond to your choice, and you hear whispers of prophecy in the shadows. The path ahead will be shaped by this decision."
+  choices:
+    - text: "Return to the Guardian's Hall with your new weapon."
+      next_node: 1
+      function: null
+    - text: "Search for another way forward."
+      next_node: 8
+      function: "explore(area='weaponry', core=core)"
+
+10:
+  location: "The Trials Corridor"
+  text: "The corridor stretches before you, lined with alcoves containing statues of knights in various poses - some in combat, others in meditation. The air grows heavier with each step, laden with ancient magic."
+  choices:
+    - text: "Study the statues for guidance."
+      next_node: 14
+      function: "read(text_id='knight_statues', core=core)"
+    - text: "Press forward to the end of the corridor."
+      next_node: 15
+      function: null
+
+11:
+  location: "The Trapped Passage"
+  text: "Your caution pays off - you spot pressure plates and tripwires throughout the corridor. This will require careful navigation or perhaps finding another way around."
+  choices:
+    - text: "Carefully navigate through the traps."
+      next_node: 15
+      function: "skill_check(skill='agility', limit=14, core=core)"
+    - text: "Look for a way to disable the traps."
+      next_node: 14
+      function: "investigate(core=core, target='traps')"
+
+12:
+  location: "The Sacred Chamber"
+  text: "Blessed by the knights, you feel their power coursing through you. The chamber transforms, revealing ancient scriptures and holy artifacts. Among them, a [red1]Sacred Medallion[/] catches your eye."
+  choices:
+    - text: "Take the Sacred Medallion and continue your quest."
+      next_node: 15
+      function: "receive_item(item='sacred_medallion', core=core)"
+    - text: "Study the ancient scriptures first."
+      next_node: 14
+      function: "read(text_id='knight_scriptures', core=core)"
+
+13:
+  location: "The Winding Depths"
+  text: "The secret passage twists downward, eventually opening into a natural cave system. Phosphorescent fungi provide dim light, revealing multiple paths forward. You hear the distant sound of flowing water."
+  choices:
+    - text: "Follow the sound of water."
+      next_node: 16
+      function: "explore(area='underground_river', core=core)"
+    - text: "Take the darker path that seems to lead deeper."
+      next_node: 17
+      function: null
+
+14:
+  location: "The Chamber of Reflection"
+  text: "Ancient wisdom surrounds you, speaking of a seal in the dungeon's depths and a choice that awaits - to reinforce it or break it forever. The consequences of either choice weigh heavily on your mind."
+  choices:
+    - text: "Meditate on this knowledge."
+      next_node: 18
+      function: "rest(core=core, event='vision', probability=0.8)"
+    - text: "Continue your journey with this new understanding."
+      next_node: 15
+      function: null
+
+15:
+  location: "The Final Gate"
+  text: "You reach a massive door covered in glowing runes. The combined weight of your choices has led to this moment. The seal that the ancient knights spoke of lies just beyond."
+  choices:
+    - text: "Use your accumulated power to break the seal."
+      next_node: 19
+      function: "skill_check(skill='strength', limit=18, core=core)"
+    - text: "Reinforce the seal with your blessed energy."
+      next_node: 20
+      function: "skill_check(skill='wisdom', limit=18, core=core)"
+
+16:
+  location: "The Underground River"
+  text: "The cavern opens into a vast chamber split by a dark, swift-flowing river. Ancient boats are moored nearby, and on the far shore, you see the glint of treasure. However, something moves beneath the water's surface."
+  choices:
+    - text: "Attempt to cross by boat."
+      next_node: 21
+      function: "chance_event(core=core, probability=0.7, on_success='You cross safely', on_fail='fight(entity=Entities.generate(type=\"river_guardian\", lvl=8), core=core)')"
+    - text: "Search for another way across."
+      next_node: 17
+      function: "explore(area='river_cave', core=core)"
+
+17:
+  location: "The Dark Descent"
+  text: "The path plunges deeper into the earth, the air growing thick with ancient power. Shadows seem to move of their own accord, and you feel watched by unseen eyes."
+  choices:
+    - text: "Press forward with sword raised."
+      next_node: 15
+      function: "fight(entity=Entities.generate(type='shadow_knight', lvl=6), core=core)"
+    - text: "Try to sneak through the shadows."
+      next_node: 15
+      function: "sneak(core=core, place='shadow_path')"
+
+18:
+  location: "The Vision Quest"
+  text: "In your meditation, visions flood your mind - the knights who came before, the evil they sealed away, and the price they paid. You see two possible futures: one of continued imprisonment, another of confrontation and possible redemption."
+  choices:
+    - text: "Embrace the vision of confrontation."
+      next_node: 19
+      function: "apply_effect(effect='vision_strength', duration='medium', core=core, str='Your resolve is strengthened')"
+    - text: "Accept the path of containment."
+      next_node: 20
+      function: "apply_effect(effect='vision_wisdom', duration='medium', core=core, str='Your wisdom is enhanced')"
+
+19:
+  location: "The Awakening"
+  text: "The seal shatters, and ancient power surges forth. But instead of evil, you find a knight from an age long past, imprisoned for questioning the order's methods. They offer an alliance to reform the ancient order."
+  choices:
+    - text: "Accept the alliance and a new purpose."
+      next_node: 22
+      function: "receive_item(item='truth_sword', core=core)"
+    - text: "Reject their offer and end the threat."
+      next_node: 23
+      function: "fight(entity=Entities.generate(type='ancient_knight', lvl=10), core=core)"
+
+20:
+  location: "The Eternal Watch"
+  text: "You channel your power into the seal, strengthening it for another age. The ancient knights' spirits appear one final time, welcoming you to their eternal vigil as a guardian of the seal."
+  choices:
+    - text: "Accept your place among the guardians."
+      next_node: 24
+      function: "apply_effect(effect='guardian_transformation', duration='permanent', core=core, str='You become a Guardian of the Seal')"
+    - text: "Return to the surface with your duty fulfilled."
+      next_node: 25
+      function: null
+
+21:
+  location: "The River's Treasure"
+  text: "Whether by combat or stealth, you reach the far shore. Among the treasures, you find an ancient chronicle speaking of a schism within the knights' order and a terrible choice that led to the current seal."
+  choices:
+    - text: "Take this knowledge to the final gate."
+      next_node: 15
+      function: "receive_item(item='ancient_chronicle', core=core)"
+    - text: "Search for more clues among the treasures."
+      next_node: 21
+      function: "randomly_generate_items(core=core, count=2, level='high')"
+
+22:
+  location: "The New Order"
+  text: "Together with the freed knight, you establish a new order, one that balances duty with wisdom. The dungeon transforms into a place of learning and growth, rather than imprisonment."
+  choices:
+    - text: "Begin your work as a teacher of the new way."
+      next_node: 26
+      function: "exit_story(core=core, text='You have founded a new order of knights')"
+    - text: "Set out to spread the word of reform."
+      next_node: 26
+      function: "exit_story(core=core, text='You leave to spread the message of the new order')"
+
+23:
+  location: "The Final Battle"
+  text: "The clash of steel echoes through the chamber as you face the imprisoned knight. Only one philosophy can prevail - the old way of absolute containment, or the risk of understanding and redemption."
+  choices:
+    - text: "Deal the final blow for security."
+      next_node: 25
+      function: "exit_story(core=core, text='You maintain the old order through strength')"
+    - text: "Show mercy and seek understanding."
+      next_node: 22
+      function: null
+
+24:
+  location: "The Eternal Vigil"
+  text: "You take your place among the guardian spirits, your armor now gleaming with ethereal light. The dungeon will remain sealed, its secrets and powers contained, as you stand eternal watch."
+  choices:
+    - text: "Embrace your eternal duty."
+      next_node: 26
+      function: "exit_story(core=core, text='You become an eternal guardian of the seal')"
+
+25:
+  location: "The Surface Return"
+  text: "You emerge from the dungeon changed by your experiences. The weight of your choices rests heavily upon you, but you know you chose the path you believed was right."
+  choices:
+    - text: "Return to your order with new wisdom."
+      next_node: 26
+      function: "exit_story(core=core, text='You return to your order with new understanding')"
+    - text: "Set out on a new journey."
+      next_node: 26
+      function: "exit_story(core=core, text='You leave to seek new adventures')"
+
+26:
+  location: "Journey's End"
+  text: "Your quest in the ancient dungeon comes to an end, but its impact will echo through the ages. Whether through revolution or preservation, your choices have shaped the future of the knights' order."
+  choices:
+    - text: "Reflect on your journey."
+      next_node: -1
+      function: "display_text(text='Your tale becomes legend among the knights', core=core)"

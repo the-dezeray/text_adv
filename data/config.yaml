@@ -1,0 +1,39 @@
+USER_NAME: player1
+current_stories:
+  - id: 1
+    current_node: 1
+attempted_stories:
+  - id: 1
+stories-won:
+  - id: 2
+settings:
+  volume: 1
+  mute: false
+  menu: false
+  color: false
+
+keymaps:
+  menu: "esc"
+  move_up: "\x00\x48"
+  move_down: "\x00\x50"
+  move_left: "\x00\x4b"
+  move_right: "\x00\x4d"
+  enter: "enter"
+  go_back: "backspace"
+  backspace: "backspace"
+  quit: "q"
+
+
+
+
+vim: 
+  enabled: true
+  keymaps:
+    up: "k"
+    down: "j"
+    left: "h"
+    right: "l"
+    select: "enter"
+    back: "esc"
+    backspace: "handle_backspace"
+    quit: "q"

@@ -4,7 +4,12 @@ from rich.text import Text
 from rich.align import Align
 from rich.padding import Padding
 from rich.table import Table
-def apply_effect( effect=None, duration=None, core=None, str=None) -> None:
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from core.core import Core
+
+def apply_effect(core: "Core" , effect=None, duration=None , str=None) -> None:
 
     # Effect data
     effect_name = "Frost"
@@ -45,12 +50,12 @@ def apply_effect( effect=None, duration=None, core=None, str=None) -> None:
     pretty_output = Align(Padding(panel,pad=(2,0,0,0)),align="center")
 
     # Display
-
+    core.console.clear_display()
     core.console.print(pretty_output)
 
     
     core.goto_next()
 
-def remove_effect( effect=None, duration=None, core=None, str=None) -> None:
+def remove_effect(core: "Core", effect=None, duration=None, str: str="") -> None:
     core.console.print(ui_text_panel(text=str))
     core.goto_next()

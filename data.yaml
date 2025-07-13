@@ -1,5 +1,6 @@
 
-USER_NAME:
+USER_NAME: player1
+
 current_stories:
   - id: 1
     current_node: 1

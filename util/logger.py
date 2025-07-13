@@ -1,7 +1,7 @@
 """This module is used to log the messages in the log file."""
 
 import logging
-
+import functools
 logging.basicConfig(
     level=logging.DEBUG,
     filename="log.log",
@@ -13,7 +13,7 @@ logger = logging.getLogger("central")
 
 def event_logger(func) -> callable:
     """log the call of a cution"""
-
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         logger.info(
             f"Calling function: {func.__name__} with args: {args} and kwargs: {kwargs}"

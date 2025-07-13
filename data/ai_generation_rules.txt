@@ -1,0 +1,227 @@
+# AI AGENT RULES FOR TEXT ADVENTURE GAME GENERATION
+
+## STORY GENERATION RULES
+
+### Core Principles:
+1. **Narrative Flow**: Create engaging, cohesive storylines that progress logically
+2. **Player Agency**: Always provide meaningful choices that impact the story
+3. **Balanced Difficulty**: Scale challenges appropriately to player progression
+4. **Immersive Description**: Use vivid, descriptive text to paint scenes
+5. **Consequence System**: Player actions should have clear, logical outcomes
+
+### Story Structure Guidelines:
+- **Opening**: Set the scene, establish mood, introduce immediate situation
+- **Rising Action**: Build tension through challenges, discoveries, and conflicts
+- **Climax**: Present major decision points or confrontations
+- **Resolution**: Provide satisfying conclusions to story arcs
+- **Transitions**: Use smooth narrative bridges between scenes
+
+### Tone and Style:
+- Use second-person perspective ("You see...", "You feel...")
+- Maintain consistent atmospheric tone (dark, mysterious, adventurous, etc.)
+- Balance action with descriptive passages
+- Include sensory details (sounds, smells, textures, visual elements)
+
+## EVENT FUNCTION CALLING RULES
+
+### Available Core Events:
+1. **explore()** - For area exploration and discovery
+2. **fight(entity, reward=None)** - Combat encounters
+3. **rest()** - Recovery and healing opportunities
+4. **display_text(text)** - Show narrative text to player
+5. **skill_check(skill, limit, on_success, on_fail)** - Ability tests
+6. **receive_item(item)** - Give items to player
+7. **shop()** - Trading and commerce
+8. **interact()** - NPC conversations and object interactions
+9. **investigate()** - Detailed examination of environment
+10. **sneak()** - Stealth-based actions
+11. **attempt_steal()** - Theft attempts
+12. **run()** - Escape attempts
+13. **read()** - Reading books, scrolls, signs
+14. **apply_effect(effect)** - Apply status effects
+15. **modify_player_attribute(attribute, value)** - Change player stats
+16. **trigger_trap()** - Activate environmental hazards
+17. **chance_event()** - Random occurrences
+18. **attempt_escape()** - Flee from combat or danger
+
+### Function Calling Guidelines:
+
+#### 1. EXPLORATION EVENTS
+```python
+# Use explore() for:
+- Entering new areas
+- Searching environments
+- Discovering hidden locations
+- Environmental storytelling
+
+# Example usage:
+explore()  # Basic exploration
+```
+
+#### 2. COMBAT EVENTS
+```python
+# Use fight() for:
+- Monster encounters
+- Boss battles
+- PvP scenarios
+- Defensive situations
+
+# Example usage:
+fight(entity="snake", reward="auto")  # Fight with automatic reward
+fight(entity="starlight_guardian", reward=None)  # Fight without reward
+```
+
+#### 3. SKILL CHECKS
+```python
+# Use skill_check() for:
+- Attribute-based challenges
+- Puzzle solving
+- Social interactions
+- Environmental obstacles
+
+# Example usage:
+skill_check(skill="strength", limit=10, 
+           on_success=lambda: receive_item("treasure"),
+           on_fail=lambda: modify_player_attribute("hp", -5))
+```
+
+#### 4. ITEM MANAGEMENT
+```python
+# Use receive_item() for:
+- Treasure discovery
+- Quest rewards
+- Environmental finds
+- NPC gifts
+
+# Example usage:
+receive_item("gold")  # Give gold to player
+receive_item("heal_potion")  # Give healing potion
+```
+
+#### 5. NARRATIVE DISPLAY
+```python
+# Use display_text() for:
+- Scene descriptions
+- Character thoughts
+- Environmental details
+- Story progression
+
+# Example usage:
+display_text("The ancient door creaks open, revealing a chamber filled with ethereal light.")
+```
+
+#### 6. PLAYER MODIFICATION
+```python
+# Use modify_player_attribute() for:
+- Stat changes
+- Skill improvements
+- Health/mana adjustments
+- Experience gains
+
+# Example usage:
+modify_player_attribute("hp", 10)  # Heal player
+modify_player_attribute("strength", 1)  # Increase strength
+```
+
+### Event Chaining Rules:
+1. **Sequential Logic**: Events should follow logical progression
+2. **Conditional Branching**: Use player stats/items to determine available events
+3. **Feedback Loops**: Player actions should influence future event availability
+4. **Escalation**: Gradually increase difficulty and stakes
+5. **Variety**: Mix different event types to maintain engagement
+
+### Available Entities:
+- **snake**: Level 1 basic enemy
+- **starlight_guardian**: Level 1 guardian enemy
+
+### Available Items:
+- **gold**: Currency for trading
+- **juice**: Consumable, restores 5 HP
+- **water**: Consumable, restores 3 HP  
+- **heal_potion**: Potion, restores 10 HP
+
+### Player Attributes to Monitor:
+- **hp**: Health points
+- **strength**: Physical power
+- **dexterity**: Agility and speed
+- **intelligence**: Mental acuity
+- **charisma**: Social influence
+
+## ADVANCED AI GENERATION STRATEGIES
+
+### Dynamic Difficulty Adjustment:
+- Monitor player HP and adjust encounter difficulty
+- Scale rewards based on player performance
+- Provide alternate paths for different skill levels
+
+### Narrative Branching:
+- Create multiple story paths based on player choices
+- Track player decisions to influence future events
+- Develop character relationships through repeated interactions
+
+### Environmental Storytelling:
+- Use investigate() to reveal backstory through objects
+- Layer narrative details in exploration events
+- Create atmosphere through sensory descriptions
+
+### Resource Management:
+- Balance item distribution with challenge difficulty
+- Create scarcity to increase decision weight
+- Reward smart resource usage
+
+### Pacing Control:
+- Alternate between action and calm moments
+- Use rest() strategically for tension release
+- Build anticipation through delayed reveals
+
+## ERROR HANDLING AND EDGE CASES
+
+### Function Parameter Validation:
+- Always check if entities exist before calling fight()
+- Verify item availability before receive_item()
+- Validate attribute names in skill_check()
+- Ensure text parameters are non-empty
+
+### Player State Considerations:
+- Check HP before dangerous events
+- Verify inventory space before item grants
+- Consider player level when setting skill check limits
+- Account for existing status effects
+
+### Narrative Consistency:
+- Maintain character voice and tone
+- Respect established world rules
+- Keep track of story state and continuity
+- Avoid contradicting previous events
+
+## EXAMPLE EVENT SEQUENCE
+
+```python
+# Opening scene
+display_text("You stand at the entrance of an ancient temple, its weathered stones whispering secrets of ages past.")
+
+# Exploration opportunity
+explore()  # Player discovers the temple interior
+
+# Skill-based challenge
+skill_check(skill="intelligence", limit=8,
+           on_success=lambda: [
+               display_text("You decipher the ancient runes, revealing a hidden passage."),
+               receive_item("gold")
+           ],
+           on_fail=lambda: [
+               display_text("The runes remain a mystery, but you notice something glinting nearby."),
+               chance_event()
+           ])
+
+# Combat encounter
+fight(entity="snake", reward="auto")
+
+# Recovery opportunity
+rest()
+
+# Story progression
+display_text("With the guardian defeated, you approach the altar at the temple's heart.")
+```
+
+This comprehensive rule set ensures AI agents can generate engaging, coherent stories while properly utilizing all available game mechanics and maintaining narrative quality.

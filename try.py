@@ -1,35 +1,23 @@
-from rich.live import Live
-from rich.layout import Layout
-from rich.table import Table
-from time import sleep
-import random
+import inspect
 
-# Create a shared mutable table
-table = Table(title="📊 Temperature Logs")
-table.add_column("Time", style="bold cyan")
-table.add_column("Temperature (°C)", style="bold green")
+def example_function(a, b=2, *args, **kwargs):
+    """This is an example function."""
+    return a + b
 
-# Create a layout and assign table to a visible area
-layout = Layout()
-layout.split_column(
-    Layout(name="header", size=3),
-    Layout(name="body"),
-)
+# Get function name
+name = example_function.__name__
 
-layout["header"].update("[bold magenta]Live System Monitor")
-layout["body"].update(table)
-def a():
-    b = Table(title="📊 Temperature Logs")
-    b.add_column("Time", style="bold cyan")
-    b.add_column("Temperature (°C)", style="bold green")
-    for i in range(1):
-        temp = round(random.uniform(20.0, 30.0), 2)
-        b.add_row(f"{i+1}s", f"{temp}")
-        yield b
-# Start live auto-refresh
-with Live(layout, refresh_per_second=5, auto_refresh=True):
-    for i in range(10):
-        # Add a new row to the table (mutating in-place)
-        temp = round(random.uniform(20.0, 30.0), 2)
-        table.add_row(f"{i+1}s", f"{temp}")
-        sleep(1)
+# Get docstring
+docstring = inspect.getdoc(example_function)
+
+# Get signature (arguments and defaults)
+signature = str(inspect.signature(example_function))
+
+# Get source code (optional)
+source = inspect.getsource(example_function)
+
+# Print all
+print(f"Name: {name}")
+print(f"Signature: {signature}")
+print(f"Docstring: {docstring}")
+print(f"Source:\n{source}")

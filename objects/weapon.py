@@ -92,7 +92,7 @@ class WeaponFactory:
         logger.info(f"Loaded {len(cls.WEAPON_DICT)} weapons from {path}")
 
     @classmethod
-    def generate(cls, name: str) -> Optional[WeaponItem]:
+    def generate(cls, name: str,amount=1) -> Optional[WeaponItem]:
         args = cls.WEAPON_DICT.get(name)
         if args:
             logger.info(f"Generating weapon '{name}'")

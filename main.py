@@ -30,7 +30,7 @@ def main(**kwargs) -> None:
     try:
         # Initialize configuration
         config = {
-            "chapter_id": kwargs.get("chapter_id", 12),
+            "chapter_id": kwargs.get("chapter_id", 9),
             "story": kwargs.get("story", "data/gemini_story.yaml"),
             "mute": kwargs.get("mute", False),
             "tank": kwargs.get("tank", False),

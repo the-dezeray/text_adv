@@ -5,12 +5,13 @@ from rich.rule import Rule
 from rich.text import Text
 from rich.style import Style
 from typing import TYPE_CHECKING
+from util.logger import event_logger
 if TYPE_CHECKING:
     from core.core import Core
-
+@event_logger
 def shop(core:"Core", level="normal", items=[], prices=[],text=''):
     core.console.clear_display()
-    core.console.print(
+    core.console.print(                 
         Rule(title="shop",style="cyan1")
     )
     

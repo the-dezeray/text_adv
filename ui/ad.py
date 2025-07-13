@@ -24,7 +24,7 @@ def generate_new_game_menu_options(core):
   
     # Define menu options with ASCII text
     def transition_to_story_select(console:"Console"):
-        console.table.show_lines = True
+        console.table.show_lines = False
     
         stories = get_user_stories()
         menu = []

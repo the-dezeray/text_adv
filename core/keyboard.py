@@ -33,20 +33,30 @@ class KeyboardControl:
 
     def _setup_key_actions(self) -> None:
         """Setup the key action mappings."""
-        self.key_actions: Dict[str, Callable] = {
-            KEY.BACKSPACE: self.handle_backspace,
-            KEY.LEFT: lambda: self.scroll_options(1),
-            KEY.RIGHT: lambda: self.scroll_options(-1),
-            KEY.UP: lambda: self.scroll_options(1),
-            KEY.DOWN: lambda: self.scroll_options(-1),
-            KEY.ENTER: self.handle_enter,
-            "A": self._handle_stats,
-            "S": self._handle_settings,
-            "M": self.core.console.show_menu,
-            "I": self.core.console.show_inventory,
-            'q': self.handle_escape,
-            ":": self.handle_command_mode,
+        config = self.core.config["keymaps"]
+        if config is None:
+            logger.error("Configuration not found, using default key mappings")
+            config =None 
+            KEY.BACKSPACE
+        self.key_actions: Dict[str, Callable] = config
+        self.function_map: Dict[str, Callable] = {
+            "backspace": self.handle_backspace,
+            "move_left": lambda: self.scroll_options(1),
+            "move_right": lambda: self.scroll_options(-1),
+            "move_up": lambda: self.scroll_options(1),
+            "move_down": lambda: self.scroll_options(-1),
+            "enter": self.handle_enter,
+            "stats": self._handle_stats,
+            "show_settings": self._handle_settings,
+            "menu": self.core.console.show_menu,
+            "show_inventory": self.core.console.show_inventory,
+            'quit': self.handle_escape,
+            "command_mode": self.handle_command_mode,
         }
+
+
+        
+
 
     def execute_on_key(self, key: str) -> None:
         """Execute the appropriate action for the given key.
@@ -58,7 +68,13 @@ class KeyboardControl:
             if self.core.command_mode:
                 self._handle_command_mode_input(key)
             else:
-                action = self.key_actions.get(key)
+                def get_key_by_value(d: dict, value):
+                    for key, val in d.items():
+                        if val == value:
+                            return key
+                    return None  # or raise an error if not found
+                function_id = get_key_by_value(self.key_actions, key)
+                action: Callable|None = self.function_map.get(function_id,None)
                 if action:
                     action()
                 else:

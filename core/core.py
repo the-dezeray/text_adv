@@ -1,9 +1,10 @@
+from __future__ import annotations
 
 """Core game engine for the text adventure game."""
 
-from __future__ import annotations
 
-from util.file_handler import load_yaml_file
+
+from util.file_handler import load_yaml_file,write_yaml_file
 from ui.options import CustomRenderable, GridOfChoices
 from rich.layout import Layout
 from objects.entities import Entities
@@ -49,6 +50,7 @@ class Core:
         """Initialize the core game engine."""
         # UI Components
         self.rich_console = RichConsole(color_system="truecolor", style="bold black", quiet=True)
+      
         self.rich_console.stderr = True
         self.saved_game: bool = False
         self.rich_console.quiet = False
@@ -79,7 +81,8 @@ class Core:
         self.game_engine = GameEngine()
         self.next_node: Optional[str] = None
         self.current_entry_text: str = ""
-        self.keyboard_controller = KeyboardControl(core=self)
+        self.config = None
+        self.keyboard_controller =None
         
         # Player and Entities
         self.player = Player()
@@ -117,8 +120,24 @@ class Core:
             #self.sound_player.play_music("cin")
         current_time = datetime.datetime.now()
         logger.info(f"New game instance {current_time}")
+        self.load_config_file()
         self.game_engine.validate_story()
+        self.keyboard_controller = KeyboardControl(core=self)
+    def load_config_file(self)->None:
+        config = load_yaml_file("data/config.yaml")
+        if self.validate_config(config):
+             self.config =config
 
+             
+            #self.player = Player(config["player"])
+            
+
+        else:
+                logger.error("Invalid configuration file, using default settings")
+            
+    def validate_config(self,config)->bool:
+        """Validate the configuration file."""
+        return True
     @property
     def chapter_id(self) -> str:
         """Get the current chapter ID."""
@@ -182,6 +201,17 @@ class Core:
         if self.input_block:
             self.input_block.stop()
         sys.exit(0)
+    def save_game(self)->None:
+        game_state = {
+            "chapter_id": self.chapter_id,
+            "in_fight": self.in_fight,
+            "enemy": self.entity.to_dict() if self.entity else None,
+            "player": self.player.to_dict(),
+            "current_node": self.game_engine.current_node_id,
+            "next_node": self.next_node,
+            "story_name": self.game_engine.story_name,
+        }
+        write_yaml_file("data/save_game.yaml", game_state)
 
     def continue_game(self) -> None:
         """Continue the game from the current state."""
