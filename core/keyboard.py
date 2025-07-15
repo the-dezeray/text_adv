@@ -34,6 +34,20 @@ class KeyboardControl:
     def _setup_key_actions(self) -> None:
         """Setup the key action mappings."""
         config = self.core.config["keymaps"]
+        reach_key = {
+            "up": KEY.UP,
+            "down": KEY.DOWN,
+            "left": KEY.LEFT,
+            "right": KEY.RIGHT,
+            "enter": KEY.ENTER,
+            "backspace": KEY.BACKSPACE,
+            
+                    }
+        for key, value in config.items():
+            value =reach_key.get(value, None)
+            if value is not None:
+                config[key] = value
+            
         if config is None:
             logger.error("Configuration not found, using default key mappings")
             config =None 

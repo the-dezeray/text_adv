@@ -54,7 +54,21 @@ class WeaponItem(Item):
             total_damage += int(self.damage * (self.crit / 100))
         logger.info(f"{self.name} deals {total_damage} damage{' with effects: ' + ', '.join(e.value for e in self.effects) if self.effects else ''}.")
         # Actual logic to affect `player` would go here
+    def to_dict(self) -> dict:
 
+        effects =[e.value for e in self.effects]
+        return {
+            "type": self.type,
+            "name": self.name,
+            "effects": effects,
+            "defence": self.defence,
+            "damage": self.damage,
+            "condition": self.condition,
+            "crit": self.crit,
+            "cursed": self.cursed,
+            "description": self.description,
+            "rarity": self.rarity
+        }
     def __repr__(self):
         return f"<WeaponItem name={self.name}, damage={self.damage}, effects={[e.value for e in self.effects]}, rarity={self.rarity}>"
 
@@ -90,7 +104,18 @@ class WeaponFactory:
     def load_data(cls, path="data/weapons.yaml"):
         cls.WEAPON_DICT = load_yaml_file(path)
         logger.info(f"Loaded {len(cls.WEAPON_DICT)} weapons from {path}")
-
+    @classmethod
+    def create_weapon(cls, item: dict) -> Optional[WeaponItem]:
+        """
+        Create a WeaponItem from a dictionary.
+        """
+        if item.get("type") == "weapon":
+            weapon = WeaponItem(**item)
+            if weapon:
+                return weapon
+            else:
+                logger.warning(f"Weapon '{item['name']}' not found in weapon data.")
+        return None
     @classmethod
     def generate(cls, name: str,amount=1) -> Optional[WeaponItem]:
         args = cls.WEAPON_DICT.get(name)

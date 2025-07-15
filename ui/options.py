@@ -670,3 +670,36 @@ class StoryTextOption(CustomRenderable):
             style = "dim grey93" #
             return Padding(Align.center(f"[{style}]{ctext}[/{style}]"),pad=(0,0,0,0))
         
+
+
+
+class MinimalKeyboardOption(CustomRenderable):
+    def __init__(self, **kwargs,):
+        if 'h_allign' not in kwargs:
+            kwargs['h_allign'] = "left"
+        self.key = kwargs.pop("key", None)
+        super().__init__(**kwargs)
+        self.key = "[cyan1]"+str(self.key)+"[/cyan1]"
+        self.text = str(self.text) + (" "* 10) + str(self.key)
+
+        self.type = "menu" # Ensure type is set
+
+    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
+        try:
+            from art import text2art 
+            ctext = self.text # Example font
+        except ImportError:
+            ctext = self.text 
+        except Exception: 
+             ctext = f"[italic] {self.text} (art error) [/italic]"
+        style = "dim grey93"
+        if self.selected:
+            style = "bold green"
+            s = "> " + self.text 
+            
+            core.console.current_layout.layout["right"].update(Panel("new selection"))
+            ctext = s
+            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
+        else:
+            style = "dim grey93" #
+            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))

@@ -2,7 +2,8 @@
 USER_NAME: player1
 
 current_stories:
-  - id: 1
+  - id: gemini_story.yaml
+    last-accessed: 43
     current_node: 1
 attempted_stories:
   - id: 1

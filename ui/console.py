@@ -269,6 +269,8 @@ class Console:
         from ui.ad import generate_main_menu_options
         from ui.options import MinimalMenuOption
         menu: List[MinimalMenuOption] = generate_main_menu_options(self.core)
+        self.core.console._transtion_layout("MENU")
+        
         self.core.console.print(menu)
         self.layout = "MENU"
 

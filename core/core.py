@@ -15,7 +15,7 @@ from rich.padding import Padding
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
 from rich.console import Console as RichConsole
-from typing import TYPE_CHECKING, Dict, Any, Optional, List,Callable
+from typing import TYPE_CHECKING, Dict, Any, Optional, List,Callable,TypedDict
 import datetime
 import sys
 import time
@@ -31,6 +31,15 @@ from core.non_blocking_input import NonBlockingInput
 from core.events import *
 from rich.live import Live
 import traceback
+from core.atypes import Story
+class Config(TypedDict):
+    chapter_id: str
+    story: str
+    mute: bool
+    tank: bool
+    subchapter: str
+    menu: bool
+    current_stories: List[Story]
 
 def exit_story(core, text:str = "") -> None:
     """Exit the story and show the player's statistics."""
@@ -81,11 +90,11 @@ class Core:
         self.game_engine = GameEngine()
         self.next_node: Optional[str] = None
         self.current_entry_text: str = ""
-        self.config = None
-        self.keyboard_controller =None
+        self.config : Config
+        self.keyboard_controller :KeyboardControl
         
         # Player and Entities
-        self.player = Player()
+        self.player :Player 
         self.entity: Optional[Entities] = None
         self.others: List[Any] = []
         
@@ -124,13 +133,13 @@ class Core:
         self.game_engine.validate_story()
         self.keyboard_controller = KeyboardControl(core=self)
     def load_config_file(self)->None:
-        config = load_yaml_file("data/config.yaml")
+        config: dict= load_yaml_file("data/config.yaml")
         if self.validate_config(config):
-             self.config =config
+            from typing import cast
+            self.config = cast(Config, config)
+            user_config = load_yaml_file("data/save_game.yaml")
+            self.player = Player(user_config["player"])
 
-             
-            #self.player = Player(config["player"])
-            
 
         else:
                 logger.error("Invalid configuration file, using default settings")
@@ -196,23 +205,42 @@ class Core:
         """Terminate the game and clean up resources."""
         logger.info("Terminating game")
         self.running = False
+        try:
+            self.save_game()
+        except Exception as e:
+            logger.error(f"Fatal error saving game: {e}")
         if self.rich_live_instance:
             self.rich_live_instance.stop()
         if self.input_block:
             self.input_block.stop()
         sys.exit(0)
     def save_game(self)->None:
+        current_game = self.config["current_stories"]
+        def save_last_accessed():
+            for i in current_game:
+                if i["id"] == self.game_engine.story_name:
+                    i["last_accessed"] = int(time.time())
+                    return
+            current_game.append({
+                "id": self.game_engine.story_name,
+                "last_accessed": int(time.time()),
+                "current_node": self.game_engine.current_node_id
+            })
+        save_last_accessed()
+        self.config["current_stories"] = current_game
+        write_yaml_file("data/config.yaml", self.config)
         game_state = {
             "chapter_id": self.chapter_id,
             "in_fight": self.in_fight,
-            "enemy": self.entity.to_dict() if self.entity else None,
+            "enemy": self.entity.__dict__ if self.entity else None,
             "player": self.player.to_dict(),
             "current_node": self.game_engine.current_node_id,
             "next_node": self.next_node,
             "story_name": self.game_engine.story_name,
         }
         write_yaml_file("data/save_game.yaml", game_state)
-
+    def load_story(story:Story):
+        ...
     def continue_game(self) -> None:
         """Continue the game from the current state."""
         if self.chapter_id == "-1":
@@ -339,7 +367,7 @@ class Core:
                 screen=True,
                 console=self.rich_console,
             ) as self.rich_live_instance:
-                            #core.console.show_menu()
+                #core.console.show_menu()
                 
                 self.console._transtion_layout("INGAME")
                 self.console.refresh()

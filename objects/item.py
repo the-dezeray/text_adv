@@ -8,7 +8,12 @@ class Item:
         self.amount = 0
         self.name = kwargs.pop("name", None)
 
-
+    def to_dict(self) -> dict:
+        return {
+            "type": self.type,
+            "amount": self.amount,
+            "name": self.name
+        }   
 
 class ItemFactory:
     ITEM_DICT = load_yaml_file("data/items.yaml")
@@ -35,7 +40,17 @@ class ItemFactory:
         from random import sample
         selected_names = sample(item_names, min(count, len(item_names)))
         return [item for name in selected_names if (item := cls.generate(name)) is not None]
-
+    @classmethod
+    def create_item(cls, item: dict) -> Optional[Item]:
+        """
+        Create an Item from a dictionary.
+        """
+        if item.get("type") == "item":
+            item_instance = Item(**item)
+            if item_instance:
+                return item_instance
+            else:
+                logger.warning(f"Item '{item['name']}' not found in item data.")
     @classmethod
     def generate(cls, name: str,amount:int=1) -> Optional[Item]:
         args = cls.ITEM_DICT.get(name)

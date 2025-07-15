@@ -4,7 +4,7 @@ from typing import Dict, Any, Optional, List, Union
 from util.logger import logger
 from util.file_handler import load_yaml_file
 from pathlib import Path
-
+from core.atypes import Story
 
 class StoryNode:
     """Represents a single node in the game story."""
@@ -31,8 +31,9 @@ class StoryGraph:
     """Manages the entire story structure as a graph of nodes."""
     def __init__(self, story_data: Dict[str, Any]):
         self.nodes: Dict[str, StoryNode] = {}
-        
+
         # Create StoryNode objects for each node in the story data
+
         for node_id, node_data in story_data.items():
             self.nodes[str(node_id)] = StoryNode(node_id, node_data)
             
@@ -80,11 +81,13 @@ class GameEngine:
     """Manages the game's story and state."""
     def __init__(self, story_path: str = "data/gemini_story.yaml"):
         self.story_data = self.load_story(story_path)
+        self.metadata = self.story_data.pop("metadata", {})
+        self.story_name = "the path"
         self.story = StoryGraph(self.story_data)
         self.current_node_id = "0"  # Default starting point
         self.temp_story: Optional[StoryGraph] = None
         
-    def load_story(self, story_path: str) -> Dict[str, Any]:
+    def load_story(self, story_path: Union[str,Story]) -> Dict[str, Any]:
         """Load the story from YAML file.
         
         Args:
@@ -94,7 +97,9 @@ class GameEngine:
             Dict[str, Any]: The loaded story data
         """
         try:
-            path = Path(story_path)
+            if isinstance(story_path, dict) and "file_path" in story_path:
+                story_path =  "data/"+story_path["file_path"]
+            path = Path(str(story_path))
             if not path.exists():
                 raise FileNotFoundError(f"Story file not found: {story_path}")
             data = load_yaml_file(str(path))

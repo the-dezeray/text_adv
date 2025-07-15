@@ -1,0 +1,126 @@
+chapter_id: '18'
+current_node: '18'
+enemy: null
+in_fight: false
+next_node: 20
+player:
+  agility: 0
+  armor: 0
+  attack: 10
+  cash: 0
+  charm: 0
+  crit: 0
+  defense: 10
+  description: ''
+  dmg: 0
+  exp: 70
+  faith: 0
+  hp: 100
+  inventory:
+  - condition: null
+    crit: 0
+    cursed: false
+    damage: 0
+    defence: 10
+    description: a simple shield
+    effects: []
+    name: shield
+    rarity: null
+    type: weapon
+  - condition: null
+    crit: 23
+    cursed: false
+    damage: 30
+    defence: 0
+    description: simple sword
+    effects: []
+    name: sword
+    rarity: null
+    type: weapon
+  - condition: null
+    crit: 10
+    cursed: false
+    damage: 12
+    defence: 0
+    description: Sharpened bed spring. Sticky with old infections.
+    effects:
+    - bleed
+    name: Prison Shiv
+    rarity: 1
+    type: weapon
+  - condition: null
+    crit: 5
+    cursed: false
+    damage: 15
+    defence: 0
+    description: Femur wrapped in chain. Still bears teeth marks.
+    effects: []
+    name: Thighbone Crusher
+    rarity: 0
+    type: weapon
+  - condition: null
+    crit: 0
+    cursed: false
+    damage: 8
+    defence: 12
+    description: Ripped dungeon hinges. Makes movement ponderous.
+    effects:
+    - slow
+    name: Cell Door
+    rarity: 2
+    type: weapon
+  - condition: null
+    crit: 25
+    cursed: false
+    damage: 10
+    defence: 0
+    description: Braided leather strips. Cracks like gunshots.
+    effects: []
+    name: Flayer's Tongue
+    rarity: 1
+    type: weapon
+  - condition: null
+    crit: 15
+    cursed: false
+    damage: 28
+    defence: 0
+    description: Spiked ball drips anticoagulant. Whimpers when still.
+    effects:
+    - bleed
+    - slow
+    name: Chain of Tears
+    rarity: 4
+    type: weapon
+  - condition: null
+    crit: 20
+    cursed: false
+    damage: 22
+    defence: 0
+    description: Glowing tip leaves smoldering wounds. Smells of barbecue.
+    effects:
+    - burn
+    name: Incinerator's Rod
+    rarity: 5
+    type: weapon
+  - condition: null
+    crit: 23
+    cursed: false
+    damage: 30
+    defence: 0
+    description: simple sword
+    effects: []
+    name: sword
+    rarity: null
+    type: weapon
+  level: 0
+  luck: 10
+  max_exp: 100
+  max_hp: 43
+  max_mp: 100
+  mp: 50
+  name: default-name
+  resistance: {}
+  skills: {}
+  speed: 10
+  turn: false
+story_name: the path

@@ -4,35 +4,42 @@ from util.logger import logger
 
 
 class Player:
-    def __init__(self):
-        self.hp = 100
-        self.max_hp = 43
-        self.exp = 70
-        self.level = 0
-        self.max_exp =100
-        self.attack = 10
-        self.defense = 10
-        self.speed = 10
-        self.name = "default-name"
-        self.cash = 0
-        self.charm = 0
-        self.dmg = 0
-        self.luck = 10
-        self.crit = 0
-        self.max_mp = 100
-        self.mp = 50
-        self.faith = 0
-        self.turn = False
-        self.agility = 0  
-        self.armor = 0
-        self.description = ""
-        self.skills = {}
-        self.resistance = {}
-        self.inventory = Inventory()
-        self.add_basic_weapons()
-        self.add_basic_skills()
-        self.add_basic_resistance()
+    def __init__(self,dict = {}):
+        self.hp = dict.get("hp", 100)
+        self.max_hp = dict.get("max_hp", 43)
+        self.exp = dict.get("exp", 70)
+        self.level = dict.get("level", 0)
+        self.max_exp = dict.get("max_exp", 100)
+        self.attack = dict.get("attack", 10)
+        self.defense = dict.get("defense", 10)
+        self.speed = dict.get("speed", 10)
+        self.name = dict.get("name", "default-name")
+        self.cash = dict.get("cash", 0)
+        self.charm = dict.get("charm", 0)
+        self.dmg = dict.get("dmg", 0)
+        self.luck = dict.get("luck", 10)
+        self.crit = dict.get("crit", 0)
+        self.max_mp = dict.get("max_mp", 100)
+        self.mp = dict.get("mp", 50)
+        self.faith = dict.get("faith", 0)
+        self.turn = dict.get("turn", False)
+        self.agility = dict.get("agility", 0)
+        self.armor = dict.get("armor", 0)
+        self.description = dict.get("description", "")
+        self.skills = dict.get("skills", {})
+        self.resistance = dict.get("resistance", {})
+
+        self.inventory = Inventory(dict.get("inventory", []))
+
+        #self.add_basic_weapons()
+        #self.add_basic_skills()
+        #self.add_basic_resistance()
         logger.info("Player created")
+  
+    def to_dict(self)->dict:
+        dict = self.__dict__.copy()
+        dict["inventory"] = [item.to_dict() for item in self.inventory.items]
+        return dict
     def trap_interaction(self, trap: dict):
         # attempt escape
         if trap != None:
