@@ -1,0 +1,308 @@
+metdata:
+  author: "moth"
+  title : " demo story"
+  description: "A story about a labyrinth"
+  dtag: 8493493
+  generated_by: "Ai"
+  tags:
+    - "labyrinth"
+    - "mystery"
+    - "adventure"
+    - "fantasy"
+  version: 1
+  created: "23-01-2024"
+0:
+  location: "The Brink of Awareness"
+  text: "A jolt, and you're tumbling into consciousness. Your hand closes around something small and cool on the uneven ground – a [red1]Dimly Glowing Stone[/]. It offers little light, but a faint warmth. Before you can ponder its origin, the world solidifies..."
+  choices:
+    - text: "Open your eyes fully."
+      next_node: 1
+      function: "receive_item(item='sword', core=core)"
+
+1:
+  location: "The Obsidian Labyrinth - Genesis Point"
+  text: "You awaken with a gasp, cold stone beneath you. Jagged obsidian walls pulse with faint, internal light, like veins of molten ore. Strange, sibilant whispers echo, too faint to discern, yet chillingly close. Where are you? How did you get here?"
+  choices:
+    - text: "Trace the glowing veins deeper into the rock."
+      next_node: 2
+      function: "apply_effect(effect='cold', duration='medium', core=core, str='you are charmed and cannot resist the cold')"
+    - text: "Focus, try to understand the whispers."
+      next_node: 3
+      function: "skill_check(skill='hp',limit=2, core=core)"
+
+2:
+  location: "The Pulsing Vein Tunnels"
+  text: "The passage narrows, the air growing warm and metallic. The glowing veins in the obsidian cast dancing shadows. Ahead, you see ancient murals etched into the walls, depicting beings of shadow and light locked in an eternal struggle."
+  choices:
+    - text: "Examine the murals closely."
+      next_node: 4
+      function: "explore(area='creek', core=core)"
+    - text: "Press on, the murals are just distractions."
+      next_node: 5
+      function: null
+
+3:
+  location: "The Resonant Chamber"
+  text: "You concentrate, and the whispers coalesce. 'Lost one,' a voice sighs directly into your mind, 'this Labyrinth feeds on choices. I can guide you... for a price. A cherished memory, perhaps?' The voice feels ancient and weary."
+  choices:
+    - text: "Concentrate on the whispers."
+      next_node: 6
+      function: "interact(entity='whisper', core=core)"
+    - text: "Refuse. 'I make my own path!'"
+      next_node: 7
+      function: modify_player_attribute(core=core,property='luck',amount= -1,text='you lost something u dont know')
+
+4:
+  location: "Chamber of Echoed Histories"
+  text: "One mural depicts a figure holding a crystalline key, said to unlock the Labyrinth's secrets. As you touch it, a faint hum resonates. Two paths diverge from here: one where the mural depicts the key opening a shimmering, magical way; another, rougher path seems to lead to a grander, guarded hall."
+  choices:
+    - text: "Take the newly revealed path of magic >."
+      next_node: 8
+      function: null
+    - text: "Investigate the rougher path to the guarded hall <."
+      next_node: 22
+      function: null
+    - text: "The key is a myth. Continue down the main vein tunnel from before."
+      next_node: 5
+      function: null
+
+5:
+  location: "The Crumbling Overlook"
+  text: "The main tunnel widens into a vast cavern. A chasm splits the floor, its depths lost in shadow. A single, ancient rope bridge, swaying precariously, is the only visible way across. The air is heavy with the scent of decay."
+  choices:
+    - text: "Risk the rope bridge."
+      next_node: 9
+
+      function: "skill_check(skill='agility', difficulty=12, core=core)"
+    - text: "Search for another way around the chasm."
+      next_node: 10
+      function: null
+
+6:
+  location: "The Toll Booth of Minds"
+  text: "A wave of dizziness washes over you as the memory is drawn out. The voice hums contentedly. 'A fair trade. Seek the chamber where shadows dance in reverse. There, your path may become clearer.' The presence then fades, leaving you feeling oddly hollow but with a cryptic clue."
+  choices:
+    - text: "Heed the clue and search for 'shadows dancing in reverse'."
+      next_node: 11
+      function: "explore(core=core, area='swamp', text='you have decided to persevere')"
+    - text: "The price was too high. Try to reclaim your memory."
+      next_node: 7
+      function: >
+          chance_event(
+            on_success="fight(entity=Entities.generate(type='snake', lvl=7))",
+            on_fail="you fail",
+            probability=0.5,
+            core=core
+          )
+
+7:
+  location: "The Shifting Maze"
+  text: "The Labyrinth groans and shifts around you. Walls slide, passages twist, and you're forced down a new, dark corridor filled with disorienting echoes and flickering lights. You spot a barely noticeable side passage that smells faintly of strange incense and old parchment."
+  choices:
+    - text: "Push through the disorienting main passage."
+      next_node: 12
+      function: null
+    - text: "Investigate the incense-scented side passage."
+      next_node: 21
+      function: null
+    - text: "Try to find a small alcove to gather your bearings and rest briefly."
+      next_node: 12
+      function: "rest(event='dream', probability=0.2, core=core)"
+
+8:
+  location: "The Astrologer's Sanctum"
+  text: "This hidden path leads to a circular chamber. Constellations unknown to you slowly drift across the domed ceiling. In the center, a pedestal holds a 'Star Shard', pulsing with gentle light. As you approach, a [red1]Spectral Guardian[/], formed of starlight and crackling energy, materializes, its many eyes fixed on you. It raises ethereal blades, clearly hostile."
+  choices:
+    - text: "Attempt to parley with the Celestial Guardian."
+      next_node: 13
+      function: "attempt_escape(difficulty=18, core=core)"
+    - text: "Prepare for battle! Attack the Spectral Guardian."
+      next_node: 13
+      function: "fight(entity=Entities.generate(type='starlight_guardian', lvl=7), core=core)"
+
+9:
+  location: "Chasm's Other Side / The Pitfall Ledge"
+  text: "[NODE_TEXT_WILL_UPDATE_BASED_ON_FUNCTION_RESULT_FROM_NODE_5_CHOICE_1] You find yourself either safely across the chasm where an old explorer's pack lies abandoned, or you've fallen to a precarious ledge below, bruised but spotting a narrow crawlspace."
+  choices:
+    - text: "(If successful crossing) Search the explorer's pack."
+      next_node: 14
+      function: > 
+        randomly_generate_weapons(core =core,count =2,level="low");
+        randomly_generate_items(core =core,count =2,level="mid");
+    - text: "Continue into the passage/crawlspace ahead."
+      next_node: 14
+      function: >
+        show_items(core=core,items=("sword",3))
+
+10:
+  location: "The Geothermal Vents"
+  text: "Your search reveals a narrow path leading downwards, alongside bubbling geothermal vents. The air is thick with sulfur. The path is treacherous and hot, but it seems to bypass the main chasm. You spot a loose rock that might hide something."
+  choices:
+    - text: "Brave the heated, sulfurous path."
+      next_node: 9
+      function: "skill_check(skill='endurance', limit=11, core=core)"
+    - text: "Check under the loose rock before deciding."
+      next_node: 10
+      function: "explore(area='loose_rock', core=core); random_loot(tier='minor', core=core)"
+    - text: "This is too dangerous. Reconsider the rope bridge."
+      next_node: 5
+      function: null
+
+11:
+  location: "The Chamber of Inverted Light"
+  text: "You find a room where torchlight casts shadows that seem to flee from the flames rather than extend. In the center are three ornate levers, each carved with a different, unsettling symbol: a Coiled Serpent, a Weeping Eye, a Silent Moon."
+  choices:
+    - text: "Pull the Serpent Lever."
+      next_node: 15
+      function: "trigger_trap(core=core, type='flames', lvl=2, str='poison comes upon you and you nearly die')"
+    - text: "Pull the Weeping Eye Lever."
+      next_node: 15
+      function: "apply_effect(effect='blindness', duration='medium', core=core, str='you are blinded and cannot see')"
+    - text: "Pull the Silent Moon Lever."
+      next_node: 15
+      function: "display_text(text='nothing happens')"
+
+12:
+  location: "The Maddening Echoes"
+  text: "This passage twists reality. Illusory walls shimmer, whispers dart from every direction, and your own footsteps echo seconds late. Ahead, a faint, steady glow offers a point of focus. [If rested in Node 7: You found a 'smooth stone' that feels oddly calming in your palm.]"
+  choices:
+    - text: "Focus on the distant glow and move towards it."
+      next_node: 16
+      function: null
+    - text: "Try to map the passage, relying on willpower to ignore the illusions. (Risky)"
+      next_node: 16
+      function: "skill_check(core=core,skill='hp', limit=13, on_success=None, on_fail=None)"
+
+13:
+  location: "Sanctum Aftermath"
+  text: "[NODE_TEXT_WILL_UPDATE_BASED_ON_FUNCTION_RESULT_FROM_NODE_8] The Star Shard is yours, the guardian pacified or defeated. Or, you were repelled, weakened by celestial energy, the Shard remaining elusive."
+  choices:
+    - text: "(If Shard obtained) Take the Star Shard and seek an exit."
+      next_node: 17
+      function: "receive_item(item='Star_Shard', core=core)"
+    - text: "(If failed/repelled) Retreat from the Sanctum, looking for another way."
+      next_node: 4
+      function: "apply_effect(effect='star_curse', duration='medium', core=core)"
+
+14:
+  location: "The Forgotten Camp / Dark Crawlspace"
+  text: "[Contextual: If pack looted: Inside the explorer's pack, you find a tattered journal, some dried rations, and a flint & steel.] The passage/crawlspace opens into a small, dry cave. The journal (if found) speaks of the Labyrinth as a sentient entity, with a 'Heart'. In a shadowed corner, a small, intricately carved [red1]Obsidian Idol[/] hums faintly."
+  choices:
+    - text: "(If journal found) Attempt to find the 'Heart of the Labyrinth'."
+      next_node: 17
+      function: "challenge(quest='LabyrinthHeart', status='active', core=core)"
+    - text: "Examine the Obsidian Idol in the corner."
+      next_node: 15
+      function: "apply_effect(effect='charm', duration='medium', core=core, str='you are charmed and cannot resist the idol')"
+    - text: "[If Idol Examined & Quest Offered by Idol's text update]: 'I will seek the Echoing Crystals.' (Accept Sidequest)"
+      next_node: 17
+      function: "load_sidequest(quest_id='EchoingCrystals', objective='Find 3 Echoing Crystals', reward_location_node='-2', core=core)"
+    - text: "[If Idol Examined & Quest Offered]: 'This Labyrinth has enough voices. I ignore the idol.'"
+      next_node: 17
+      function: null
+    - text: "Ignore the journal's ramblings and the idol. Press onward."
+      next_node: 17
+      function: null
+
+15:
+  location: "The Consequence Chamber"
+  text: "[NODE_TEXT_WILL_UPDATE_BASED_ON_FUNCTION_RESULT_FROM_NODE_11] Serpent Lever: The floor beneath you groans... Eye Lever: A piercing shriek echoes... Moon Lever: A hidden door carved with lunar symbols grinds open..."
+  choices:
+    - text: "(If Moon Lever) Enter the silver passage."
+      next_node: 18
+      function: null
+    - text: "(If Serpent/Eye Lever outcome not fatal) Endure and try another lever."
+      next_node: 11
+      function: "trigger_trap(core=core, type='flames', lvl=2, str='ads')"
+    - text: "(If Serpent/Eye Lever outcome not fatal) This is too dangerous, find another route."
+      next_node: 6
+      function: null
+
+16:
+  location: "The Impossible Oasis"
+  text: "The glow leads to an astonishing sight: a serene subterranean garden, impossibly thriving in the darkness, illuminated by giant, bioluminescent flora. A silent, cloaked figure tends to the plants, their face hidden by shadows. [If mapping in Node 12 failed: You feel disoriented.]"
+  choices:
+    - text: "Approach the silent keeper of the garden."
+      next_node: 18
+      function: "interact(entity='silent_keeper', core=core)"
+    - text: "Cautiously harvest one of the smaller glowing plants."
+      next_node: 18
+      function: "attempt_steal(item='lunarbloom', core=core, stealth_check=True,on_fail= 'fight(entity=Entities.generate(type=\"silent_keeper\", lvl=7), core=core)')"
+
+17:
+  location: "The Heart of the Labyrinth"
+  text: "You stand at the center of the Labyrinth, where all paths converge. The air hums with ancient power, and the walls pulse with a rhythmic light. Before you lies a grand chamber with three distinct paths, each representing a different fate. [Contextual updates based on quests/items]"
+  choices:
+    - text: "Approach the Shimmering Portal of Escape"
+      next_node: 20
+      function: null
+    - text: "Seek the Well of Understanding"
+      next_node: 18
+      function: "read(text_id='well', core=core)"
+    - text: "Accept the Fruit of Clarity"
+      next_node: 19
+      function: "receive_item(item='Fruit_of_Clarity', core=core)"
+
+18:
+  location: "The Well of Understanding"
+  text: "As you gaze into the Well, visions of the Labyrinth's history flood your mind. You see its creation, its purpose, and the countless souls who have walked its paths. The knowledge is overwhelming, but it offers a choice: to become one with the Labyrinth's wisdom or to seek your own path forward."
+  choices:
+    - text: "Embrace the Labyrinth's wisdom and become its guardian"
+      next_node: 20
+      function: "shop( core=core, text='you find youself in a shop', items=['sword','shield'], prices=[100,200])"
+    - text: "Take what you've learned and seek the Shimmering Portal"
+      next_node: 20
+      function: null
+    - text: "Return to the Heart of the Labyrinth"
+      next_node: 17
+      function: null
+
+19:
+  location: "The Chamber of Inverted Light"
+  text: "You find a room where torchlight casts shadows that seem to flee from the flames rather than extend. In the center are three ornate levers, each carved with a different, unsettling symbol: a Coiled Serpent, a Weeping Eye, a Silent Moon."
+  choices:
+    - text: "Pull the Serpent Lever."
+      next_node: 15
+      function: "trigger_trap(core=core, type='flames', lvl=2, text='flames comes upon you and you nearly die')"
+    - text: "Pull the Weeping Eye Lever."
+      next_node: 15
+      function: "apply_effect(effect='blindness', duration='medium', core=core, str='you are blinded and cannot see')"
+    - text: "Pull the Silent Moon Lever."
+      next_node: 15
+      function: "display_text(text='nothing happens',core=core)"
+
+20:
+  location: "The Shimmering Portal"
+  text: "You stand before a shimmering portal, its surface rippling with a kaleidoscope of colors. The air hums with ancient power, and the portal seems to beckon you forward. [Contextual updates based on quests/items]"
+  choices:
+    - text: "Step through the Shimmering Portal."
+      next_node: 21
+      function: "exit_story( core=core, text='you escape the labyrinth')"
+    - text: "Turn back and seek the Well of Understanding."
+      next_node: 18
+      function: "read(text_id='well', core=core)"
+    - text: "Accept the Fruit of Clarity."
+      next_node: 19
+      function: "receive_item(item='Fruit_of_Clarity', core=core)"
+
+21:
+  location: "The Resonant Chamber"
+  text: "You concentrate, and the whispers coalesce. 'Lost one,' a voice sighs directly into your mind, 'this Labyrinth feeds on choices. I can guide you... for a price. A cherished memory, perhaps?' The voice feels ancient and weary."
+  choices:
+    - text: "Offer a memory of a past triumph."
+      next_node: 6
+      function: null
+    - text: "Refuse. 'I make my own path!'"
+      next_node: 7
+      function: null
+
+22:
+  location: "The Astrologer's Sanctum"
+  text: "This hidden path leads to a circular chamber. Constellations unknown to you slowly drift across the domed ceiling. In the center, a pedestal holds a 'Star Shard', pulsing with gentle light. As you approach, a [red1]Spectral Guardian[/], formed of starlight and crackling energy, materializes, its many eyes fixed on you. It raises ethereal blades, clearly hostile."
+  choices:
+    - text: "Attempt to parley with the Celestial Guardian."
+      next_node: 13
+      function: "attempt_escape(difficulty=18, core=core)"
+    - text: "Prepare for battle! Attack the Spectral Guardian."
+      next_node: 13
+      function: "fight(entity=Entities.generate(type='starlight_guardian', lvl=7), core=core)"

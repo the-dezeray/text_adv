@@ -53,8 +53,14 @@ class LayoutAIStudio(CustomLayout):
      
     def update(self) -> Layout:
         from  ui.components import input_mode_layout
-        return Layout(Align(input_mode_layout(self.core),align="center",vertical="middle"))
-
+        layout = Layout()
+        layout.split_row(
+            Layout(name="left", ratio=1, visible=True),
+            Layout(name="middle", ratio=3),
+            Layout(name="right", ratio=1, visible=True),
+        )
+        layout["middle"].update(Align(input_mode_layout(self.core),align="center",vertical="middle"))
+        return layout
 class Lsd(CustomLayout):
     def setup(self):
         self.core.console.renderables[0].ary[0].selected = True

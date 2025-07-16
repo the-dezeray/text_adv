@@ -40,10 +40,11 @@ def generate_new_game_menu_options(core):
         menu[0].selected = True
         core.console.print(menu)
     def ds():   
-        console._transtion_layout("AI_STUDIO")
+        if core.initialize_ai():
+            console._transtion_layout("AI_STUDIO")
     
-        console.refresh()
-        core.ai.fake_prompt('d')
+            console.refresh()
+            core.ai.fake_prompt('d')
 
     list_of_options = {
         "enter the library of stories": lambda: transition_to_story_select(console),

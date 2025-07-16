@@ -25,7 +25,7 @@ from core.story import GameEngine
 from core.keyboard import KeyboardControl
 from ui.console import Console as MainConsole
 from core.non_blocking_input import NonBlockingInput
-
+from core.ai import AI as OFFLINE_AI
 
 # Import event handlers
 from core.events import *
@@ -68,7 +68,7 @@ class Core:
         self.sound_enabled= False
         self._layout = Layout()
         self.auto_generate_text: bool = False
-        ##self.ai = AI(core=self)
+        
         # Initialize console first
         self.console = MainConsole(core=self)
         self.is_typing: bool = False
@@ -85,7 +85,7 @@ class Core:
         self._state: str = "INGAME"
         self._command_mode: bool = False
         self._disable_command_mode: bool = False
-        
+        self.ai : AI
         # Story and Progress
         self.game_engine = GameEngine()
         self.next_node: Optional[str] = None
@@ -97,7 +97,7 @@ class Core:
         self.player :Player 
         self.entity: Optional[Entities] = None
         self.others: List[Any] = []
-        
+        self.use_own_api_keys = True
         # Input and Control
         self.input_block = NonBlockingInput()
         self.key_listener = None
@@ -118,9 +118,17 @@ class Core:
         self._post_initialize()
         
         logger.info("Core game engine initialized")
-
+    def initialize_ai(self)->bool:
+        """Initialize the AI component."""
+        if self.use_own_api_keys:
+            self.ai = OFFLINE_AI(core=self)
+            return True
+        return False
     def _post_initialize(self) -> None:
         """Perform post-initialization tasks."""
+        
+        
+        
         if self.sound_enabled:
             a = 0
             from core.sound_player import SoundPlayer
@@ -134,6 +142,7 @@ class Core:
         self.keyboard_controller = KeyboardControl(core=self)
     def load_config_file(self)->None:
         config: dict= load_yaml_file("data/config.yaml")
+        
         if self.validate_config(config):
             from typing import cast
             self.config = cast(Config, config)

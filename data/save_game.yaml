@@ -2,7 +2,7 @@ chapter_id: '18'
 current_node: '18'
 enemy: null
 in_fight: false
-next_node: 20
+next_node: null
 player:
   agility: 0
   armor: 0

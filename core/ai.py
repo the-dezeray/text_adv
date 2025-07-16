@@ -32,22 +32,33 @@ class AI:
     def __init__(self, core: "Core"):
         logger.info("Initializing AI class")
         self.core = core
-        self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-        logger.debug("Created Gemini client")
-        tool_config = types.ToolConfig(
-            function_calling_config=types.FunctionCallingConfig(
-                mode="AUTO"
-            )
-        )
-           
-        self.config = types.GenerateContentConfig(
-            system_instruction="You will first call the generate_story tool with the user's idea. After that, call validate_story with the result. ! do not call any more functions or return anything else.",
-            tools=[self.generate_story, self.validate_story],
-            tool_config=tool_config
-        )
+        self.client : genai.Client
+        self.config: types.GenerateContentConfig
+        self.initialized = False
+        self.post_init()
+    def post_init(self):
+        try:
 
-        self.chat = self.client.chats.create(model="gemini-2.0-flash",config=self.config)
-        logger.info("AI initialization complete")
+            self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+            logger.debug("Created Gemini client")
+            tool_config = types.ToolConfig(
+                    function_calling_config=types.FunctionCallingConfig(
+                        mode="AUTO"
+                    )
+                )
+                
+            self.config = types.GenerateContentConfig(
+                    system_instruction="You will first call the generate_story tool with the user's idea. After that, call validate_story with the result. ! do not call any more functions or return anything else.",
+                    tools=[self.generate_story, self.validate_story],
+                    tool_config=tool_config
+                )
+
+            self.chat = self.client.chats.create(model="gemini-2.0-flash",config=self.config)         
+            self.initialized = True
+            logger.info("AI initialization complete")
+        except Exception as e:
+            logger.error(f"Error initializing AI: {e}")
+            self.initialized = False
     @event_logger
     def generate_note(self, id: str) -> str:
         return "note is not implemented yet"

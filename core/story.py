@@ -1,3 +1,4 @@
+from pycparser.c_ast import Enum
 """Story management system for the text adventure game."""
 
 from typing import Dict, Any, Optional, List, Union
@@ -5,7 +6,14 @@ from util.logger import logger
 from util.file_handler import load_yaml_file
 from pathlib import Path
 from core.atypes import Story
-
+class FilePath(Enum):
+    """Enum for file paths used in the game."""
+    STORIES = "data/stories/"
+    DEFAULT_STORY = "data/story.yaml"
+    CONFIG = "data/config.yaml"
+    gemini_story = "data/gemini_story.yaml"
+    gemini_story_temp = "data/gemini_story_temp.yaml"
+    gemini_story_temp2 = "data/gemini_story_temp2.yaml"
 class StoryNode:
     """Represents a single node in the game story."""
     def __init__(self, node_id: Union[str, int], data: Dict[str, Any]):
@@ -98,7 +106,7 @@ class GameEngine:
         """
         try:
             if isinstance(story_path, dict) and "file_path" in story_path:
-                story_path =  "data/"+story_path["file_path"]
+                story_path =  FilePath.STORIES +story_path["file_path"]
             path = Path(str(story_path))
             if not path.exists():
                 raise FileNotFoundError(f"Story file not found: {story_path}")
