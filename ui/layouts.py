@@ -50,16 +50,26 @@ class LayoutAIStudio(CustomLayout):
     def setup(self)  :
         self.core.command_mode = True
         self.core.console.clear_display()
+        self.core.ai.setup()
      
     def update(self) -> Layout:
         from  ui.components import input_mode_layout
         layout = Layout()
+        
         layout.split_row(
             Layout(name="left", ratio=1, visible=True),
             Layout(name="middle", ratio=3),
             Layout(name="right", ratio=1, visible=True),
         )
-        layout["middle"].update(Align(input_mode_layout(self.core),align="center",vertical="middle"))
+
+        layout["middle"].split_column(
+            Layout(name="top", ratio=4),
+            Layout(name="bottom", ratio=1),
+        )
+        layout["left"].update("")
+        layout["right"].update("")
+        layout["top"].update(self.core.console.fill_ui_table())
+        layout["bottom"].update(Align(input_mode_layout(self.core),align="center",vertical="middle"))
         return layout
 class Lsd(CustomLayout):
     def setup(self):

@@ -183,7 +183,7 @@ def command_mode_layout(core):
 
     hgrid = Table.grid(expand=True)
     hgrid.add_column()
-    instructions = "goto \[chapter\] \nreload \nkill \nheal \nrestart"
+    instructions = "just running "
     grid.add_row(
         Panel(
             instructions,
@@ -217,23 +217,11 @@ def input_mode_layout(core:"Core"):
             title_align="right",
             border_style="green",
             expand=True,
+           
         )
     )
 
-    hgrid = Table.grid(expand=True)
-    hgrid.add_column()
-    instructions = "goto \[chapter\] \nreload \nkill \nheal \nrestart"
-    grid.add_row(
-       Padding("[dim green]enter  the description of your story  and press enter to generate story [dim green]\nhint: the morre specific and detailed the summary, the better the result", 1)
-    )
-   
-    @group()
-    def layout():
-        yield grid
-      
-        yield core.console.fill_ui_table()
-
-    return layout()
+    return grid
 
 
 import random

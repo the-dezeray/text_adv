@@ -40,7 +40,7 @@ def generate_new_game_menu_options(core):
         menu[0].selected = True
         core.console.print(menu)
     def ds():   
-        if core.initialize_ai():
+        if core.ai.setup():
             console._transtion_layout("AI_STUDIO")
     
             console.refresh()

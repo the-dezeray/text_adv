@@ -40,6 +40,7 @@ class Config(TypedDict):
     subchapter: str
     menu: bool
     current_stories: List[Story]
+    use_own_api_keys: bool
 
 def exit_story(core, text:str = "") -> None:
     """Exit the story and show the player's statistics."""
@@ -118,12 +119,7 @@ class Core:
         self._post_initialize()
         
         logger.info("Core game engine initialized")
-    def initialize_ai(self)->bool:
-        """Initialize the AI component."""
-        if self.use_own_api_keys:
-            self.ai = OFFLINE_AI(core=self)
-            return True
-        return False
+
     def _post_initialize(self) -> None:
         """Perform post-initialization tasks."""
         
@@ -138,6 +134,7 @@ class Core:
         current_time = datetime.datetime.now()
         logger.info(f"New game instance {current_time}")
         self.load_config_file()
+        self.ai = OFFLINE_AI(core=self)
         self.game_engine.validate_story()
         self.keyboard_controller = KeyboardControl(core=self)
     def load_config_file(self)->None:
@@ -146,8 +143,8 @@ class Core:
         if self.validate_config(config):
             from typing import cast
             self.config = cast(Config, config)
-            user_config = load_yaml_file("data/save_game.yaml")
-            self.player = Player(user_config["player"])
+            saved_game = load_yaml_file("data/save_game.yaml")
+            self.player = Player(saved_game["player"])
 
 
         else:
@@ -236,6 +233,7 @@ class Core:
                 "current_node": self.game_engine.current_node_id
             })
         save_last_accessed()
+
         self.config["current_stories"] = current_game
         write_yaml_file("data/config.yaml", self.config)
         game_state = {

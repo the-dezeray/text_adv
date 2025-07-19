@@ -1,11 +1,11 @@
 from ui.options import ui_text_panel
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING,Callable
 import os
 from google import genai
 from google.genai import types
 from util.logger import logger, event_logger
-
 from dotenv import load_dotenv
+
 load_dotenv()
 
 
@@ -35,8 +35,45 @@ class AI:
         self.client : genai.Client
         self.config: types.GenerateContentConfig
         self.initialized = False
-        self.post_init()
-    def post_init(self):
+        self.prompt  : Callable
+        self.url = ""
+
+
+    def setup(self):
+        if not self.initialized:
+            if self.core.config["settings"]["use_own_api_keys"]:
+                self.post_init_local()
+                return True
+            else:
+            
+                self.post_init_ai()
+                return True
+    def post_init_ai(self):
+        logger.info("Setting up AI with remote API")
+        
+        self.initialized = True
+        self.url = "http://127.0.0.1:8001/generate-story"
+        self.prompt = self.remote_prompt
+        logger.info("AI setup complete, using remote API")
+    def remote_prompt(self, message: str) -> None:
+        import requests
+
+        url = "http://localhost:8001/generate-story"  # or your deployed URL
+        data = {
+            f"idea": f"{message}"
+        }
+
+        response = requests.post(self.url, json=data)
+
+        if response.status_code == 200:
+            result = response.json()
+            self.core.console.print(f"Story Validation: {result['validation_result']}")
+            self.core.console.print(f"First Node Text: {result['story']}")
+        else:
+            self.core.console.print(f"Error: {response.status_code}, {response.text}")
+    def post_init_local(self):
+        
+        
         try:
 
             self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -55,6 +92,7 @@ class AI:
 
             self.chat = self.client.chats.create(model="gemini-2.0-flash",config=self.config)         
             self.initialized = True
+            self.prompt = self.local_prompt
             logger.info("AI initialization complete")
         except Exception as e:
             logger.error(f"Error initializing AI: {e}")
@@ -67,7 +105,7 @@ class AI:
         self.core.console.clear_display()
         self.core.console.print(ui_text_panel(text=""))
     @event_logger
-    def prompt(self, message: str) -> None:
+    def local_prompt(self, message: str) -> None:
         logger.info(f"Processing prompt: {message[:50]}...")
         if "enter dugeon" in message:
             self.core.console.print(ui_text_panel(text="entering story"))
