@@ -110,10 +110,11 @@ class LayoutInGame(CustomLayout):
             return ui
 
         layout["up"].update(top_bar())
+        console = self.core.console
         layout["down"].split_row(
-            Layout(name="left", ratio=1, visible=True),
+            Layout(name="left", ratio=console.left_ratio, visible=True),
             Layout(name="middle", ratio=3),
-            Layout(name="right", ratio=1, visible=True),
+            Layout(name="right", ratio=console.right_ratio, visible=True),
         )
         from typing import List
         class Enemy:
@@ -154,15 +155,18 @@ class LayoutInGame(CustomLayout):
         xp_value=500,
         level=10
         )
-        t = command_mode_layout(self.core) if self.core.command_mode else enemy_tab(reaper_enemy)
+
         if self.core.in_fight:
             layout["left"].update(player_tab(core=self.core))
-            layout["right"].update(t)
+            layout["right"].update(enemy_tab(reaper_enemy))
         else:
             layout["left"].update("")
-
-            layout["right"].update(self.core.console.right )
-        
+            renderable = ""
+            if self.core.command_mode:
+                layout["left"].visible = False
+                layout["right"].ratio = 2
+                renderable = command_mode_layout(self.core)
+            layout["right"].update(renderable)
 
         #layout["right"].update(self.core.console.right)
         table = None
@@ -190,7 +194,29 @@ class LayoutInGame(CustomLayout):
 
 
 class LayoutInventory(CustomLayout):
-    ...
+    def setup(self)->None:
+  
+        self.layout = Layout()
+        self.layout.split_row(Layout(name="left"), Layout(visible=False,name="right"))
+    def update(self):
+        table: Table = self.core.console.fill_ui_table()
+        content = table
+        
+
+
+        def top_bar():
+            ui = "Home Inventory Settings "
+            return ui
+
+        self.layout["left"].split_row(
+            Layout(name="menus"),
+        )
+
+
+        ui = Panel( self.core.console.fill_ui_table(),width =50,title="terminal adventure",title_align="center",subtitle ="v3",subtitle_align="right")
+        self.layout["menus"].update(Align(ui,align="center",vertical = "middle"))
+
+        return self.layout
 
 class LayoutSettings(CustomLayout):
     ...
@@ -295,17 +321,3 @@ class LayoutLoading(CustomLayout):
         )
         ui = Layout(renderable=panel_group)
         return Layout(Padding(renderable=ui,pad = (10,)))
-class LayoutInventory(CustomLayout):
-
-    def update(self):
-        
-
-        layout = Layout()
-
-        #ui = self.core.console.fill_ui_table()
-        #weapons = Choices()
-        renderable = self.core.console.fill_inventory_table()
-        layout.update(Align(Panel(renderable=renderable,height=32,width=100),align="center"))
-
-        return layout
-

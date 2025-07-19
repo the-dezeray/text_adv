@@ -60,6 +60,11 @@ class KeyboardControl:
             "move_up": lambda: self.scroll_options(1),
             "move_down": lambda: self.scroll_options(-1),
             "enter": self.handle_enter,
+            "help": self.core.console.show_help,
+            "log": self.core.console.show_log,
+            "restart_app": self.core.restart_app,
+            "reload_files": self.core.reload_files,
+
             "stats": self._handle_stats,
             "show_settings": self._handle_settings,
             "menu": self.core.console.show_menu,
@@ -78,6 +83,7 @@ class KeyboardControl:
         Args:
             key: The key that was pressed
         """
+        logger.debug(f"Key pressed: {key}")
         try:
             if self.core.command_mode:
                 self._handle_command_mode_input(key)
@@ -88,8 +94,10 @@ class KeyboardControl:
                             return key
                     return None  # or raise an error if not found
                 function_id = get_key_by_value(self.key_actions, key)
+                logger.debug(f"Function ID for key '{key}': {function_id}")
                 action: Callable|None = self.function_map.get(function_id,None)
                 if action:
+                    logger.debug(f"Executing action for key '{key}': {action}")
                     action()
                 else:
                     logger.debug(f"Unhandled key: {key}")
@@ -105,7 +113,7 @@ class KeyboardControl:
         Args:
             key: The key that was pressed
         """
-        if key == "Q":
+        if key == "q":
             self.handle_escape()
         elif key == ":":
             self.handle_command_mode()

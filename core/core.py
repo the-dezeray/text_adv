@@ -119,7 +119,28 @@ class Core:
         self._post_initialize()
         
         logger.info("Core game engine initialized")
+    def get_community_stories(self) -> List[str]:
+        """Fetch community stories from the backend API."""
+        import requests
 
+        url = "http://localhost:8001/community-stories"
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                result = response.json()
+                return result.get("stories", [])
+            else:
+                self.console.print(f"Error: {response.status_code}, {response.text}")
+                return []
+        except Exception as e:
+            self.console.print(f"Failed to fetch community stories: {e}")
+            return []
+    def restart_app(self):
+        
+        logger.info("Restarting game")
+    def reload_files(self):
+        """Reload game files."""
+        logger.info("Reloading game files")
     def _post_initialize(self) -> None:
         """Perform post-initialization tasks."""
         

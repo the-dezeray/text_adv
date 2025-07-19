@@ -7,24 +7,28 @@ current_stories:
 - current_node: '9'
   file_path: gemini_story.yaml
   id: the path
-  last_accessed: 1752889033
+  last_accessed: 1752965834
 keymaps:
   backspace: "\x7F"
+  command_mode: ':'
   enter: '
 
     '
   go_back: "\x7F"
+  help: H
+  log: L
   menu: m
   move_down: "\e[B"
   move_left: "\e[D"
   move_right: "\e[C"
   move_up: "\e[A"
   quit: q
+  show_inventory: i
 settings:
   color: false
   menu: false
   mute: false
-  use_own_api_keys: false
+  use_own_api_keys: true
   volume: 1
 stories-won:
 - id: 2

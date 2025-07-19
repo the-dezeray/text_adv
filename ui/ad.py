@@ -1,3 +1,4 @@
+from numpy._core.defchararray import title
 from rich.padding import Padding
 from PIL.ImageMath import lambda_eval
 from typing import TYPE_CHECKING , List
@@ -18,7 +19,37 @@ def  generate_load_personal_story_pane(core:"Core"):
         core.console.print(
             StoryTextOption(text= "back",func = lambda:generate_previous_menu_options(core) )
             )
-        
+def transition_to_community_stories(core: "Core"):
+ 
+    console:"Console" = core.console
+    from art import text2art
+  
+
+    console.table.show_lines = False
+    try:
+        stories = core.get_community_stories()
+    except Exception as e:
+        console.clear_display()
+        console.print(Panel(renderable=f"Error fetching community stories: {e}", style="red",title="Error"))  
+        console.print(Padding("back"))
+        return
+    if len(stories) == 0:
+        console.clear_display()
+        console.print(Panel(renderable="No community stories available", style="yellow", title="Community Stories"))
+        console.print(Padding("back"))
+        return
+
+    menu = []
+    for story in stories:
+        menu.append(StoryTextOption(
+            text=story,
+            func=lambda: console._transtion_layout("INGAME"),
+            next_node=None,
+            type="menu"
+        ))
+    console.clear_display()
+    menu[0].selected = True
+    core.console.print(menu)
 def generate_new_game_menu_options(core):   
     console:"Console" = core.console
     from art import text2art
@@ -48,6 +79,7 @@ def generate_new_game_menu_options(core):
 
     list_of_options = {
         "enter the library of stories": lambda: transition_to_story_select(console),
+        "community stories": lambda: transition_to_community_stories(core),
         "generate your own story with with ai": lambda: ds(),
         "load a personal story ": lambda: generate_load_personal_story_pane(core),
            "back": lambda: generate_previous_menu_options(core),
@@ -234,6 +266,10 @@ def genereate_continue_game_menu_options(core: "Core"):
         ))
         console.clear_display()
         console.print(menu)
+def generate_inventory_menu(core):
+    player = core.player
+    console = core.console
+    
 def generate_main_menu_options(core: "Core"):
     console = core.console
     from art import text2art

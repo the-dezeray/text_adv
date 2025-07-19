@@ -83,7 +83,9 @@ class Console:
         self.temp_right_tab: Optional[ConsoleRenderable] =None
         self.current_layout : CustomLayout = LayoutDefault(core=self.core)
         self.renderables = DisplayQueue(console=self)
-        self.selected_option = 0;
+        self.selected_option = 0
+        self.left_ratio =1
+        self.right_ratio = 1
     def show_weapon(self):
         from rich_pixels import Pixels
 
@@ -257,13 +259,51 @@ class Console:
     def _transtion_layout(self, layout:layout_list):
         self.core.console.clear_display()
         self.layout = layout
+    def show_help(self):
+        self.core.console.clear_display()
+        
+        # TODO: Implement proper back navigation must be implemented
+        self.core.current_pane = lambda: self.core.console.show_menu()
+
+        from ui.ad import generate_main_menu_options
+        from ui.options import MinimalMenuOption
+        menu: List[MinimalMenuOption] = generate_main_menu_options(self.core)
+        self.core.console._transtion_layout("INVENTORY")
+        
+        self.core.console.print(menu)
+        self.layout = "INVENTORY"
+    def show_log(self):
+        self.core.console.clear_display()
+        
+        # TODO: Implement proper back navigation must be implemented
+        self.core.current_pane = lambda: self.core.console.show_menu()
+
+        from ui.ad import generate_main_menu_options
+        from ui.options import MinimalMenuOption
+        menu: List[MinimalMenuOption] = generate_main_menu_options(self.core)
+        self.core.console._transtion_layout("INVENTORY")
+        
+        self.core.console.print(menu)
+        self.layout = "INVENTORY"
 
     def show_inventory(self):
+        self.core.console.clear_display()
+        
+        # TODO: Implement proper back navigation must be implemented
+        self.core.current_pane = lambda: self.core.console.show_menu()
+
+        from ui.ad import generate_main_menu_options
+        from ui.options import MinimalMenuOption
+        menu: List[MinimalMenuOption] = generate_main_menu_options(self.core)
+        self.core.console._transtion_layout("INVENTORY")
+        
+        self.core.console.print(menu)
         self.layout = "INVENTORY"
-        self.state = "INVENTORY"
 
     def show_menu(self):
         self.core.console.clear_display()
+
+        # TODO: Implement proper back navigation must be implemented
         self.core.current_pane = lambda: self.core.console.show_menu()
 
         from ui.ad import generate_main_menu_options

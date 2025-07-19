@@ -5,7 +5,7 @@ from google import genai
 from google.genai import types
 from util.logger import logger, event_logger
 from dotenv import load_dotenv
-
+from util.file_handler import load_yaml_file
 load_dotenv()
 
 
@@ -75,8 +75,12 @@ class AI:
         
         
         try:
-
-            self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+            api_keys = load_yaml_file("data/api_keys.yaml")
+            if not api_keys or not api_keys.get("GEMINI_API_KEY"):
+                logger.error("GEMINI_API_KEY not found in api_keys.yaml")
+                raise ValueError("GEMINI_API_KEY not found in api_keys.yaml")
+            gemini_api_key = api_keys["GEMINI_API_KEY"]
+            self.client = genai.Client(api_key=gemini_api_key)
             logger.debug("Created Gemini client")
             tool_config = types.ToolConfig(
                     function_calling_config=types.FunctionCallingConfig(

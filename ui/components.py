@@ -1,3 +1,4 @@
+from rich.padding import Padding
 from rich.table import Table
 from rich.panel import Panel
 from rich.padding import Padding
@@ -185,11 +186,9 @@ def command_mode_layout(core):
     hgrid.add_column()
     instructions = "just running "
     grid.add_row(
-        Panel(
+        Padding(
             instructions,
-            title="input",
-            title_align="right",
-            border_style="yellow",
+ 
             expand=True,
         )
     )
@@ -199,7 +198,7 @@ def command_mode_layout(core):
         yield grid
         yield hgrid
 
-    return layout()
+    return Panel(layout(),border_style="dim cyan1")
 def input_mode_layout(core:"Core"):
     from rich.table import Table
 
