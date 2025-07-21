@@ -26,7 +26,8 @@ from core.keyboard import KeyboardControl
 from ui.console import Console as MainConsole
 from core.non_blocking_input import NonBlockingInput
 from core.ai import AI as OFFLINE_AI
-
+from collections import deque
+from ui.ad import  generate_main_menu_options
 # Import event handlers
 from core.events import *
 from rich.live import Live
@@ -65,7 +66,8 @@ class Core:
         self.saved_game: bool = False
         self.rich_console.quiet = False
         self.rich_live_instance: "Live"
-        self.current_pane : Callable = lambda: print("d") 
+        self.current_pane = []
+
         self.sound_enabled= False
         self._layout = Layout()
         self.auto_generate_text: bool = False
@@ -352,7 +354,8 @@ class Core:
                 self.console.refresh()
                 if self.menu:
                     self.console._transtion_layout("MENU")
-                    self.console.show_menu()
+                    generate_main_menu_options(self)
+
                 self.keyboard_controller.execute_on_key( "\x00\x4d") # this will be fixed as of now dont touch this no time
                 while self.running:
                     time.sleep(0.01)

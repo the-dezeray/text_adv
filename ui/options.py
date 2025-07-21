@@ -703,3 +703,14 @@ class MinimalKeyboardOption(CustomRenderable):
         else:
             style = "dim grey93" #
             return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
+
+
+
+class KeyboardStr:
+    """Creates a delay/pause for a specified duration when rendered."""
+    def __init__(self,str):
+        self.str = str
+
+    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None):
+        """Render an empty string during delay."""
+        return self.str

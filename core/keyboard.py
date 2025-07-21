@@ -1,14 +1,15 @@
-"""Handles keyboard input and control for the game."""
+
 
 from __future__ import annotations
 
+"""Handles keyboard input and control for the game."""
 
 from util.logger import logger
 from ui.options import get_selectable_options, CustomRenderable
 from typing import TYPE_CHECKING, Dict, Callable, Optional, Any
 from readchar import readkey
 from readchar import key as KEY
-
+from ui.ad import  generate_main_menu_options
 if TYPE_CHECKING:
     from core.core import Core
 
@@ -29,8 +30,10 @@ class KeyboardControl:
         self.core = core
         self.current_entry_text = ""
         self._setup_key_actions()
+        self.nkey = ""
+        self.refresh_on_key = False
         logger.info("Keyboard controller initialized")
-
+        self.setting_key_type: Optional[str] = None  # Type of key being set, if any
     def _setup_key_actions(self) -> None:
         """Setup the key action mappings."""
         config = self.core.config["keymaps"]
@@ -64,17 +67,21 @@ class KeyboardControl:
             "log": self.core.console.show_log,
             "restart_app": self.core.restart_app,
             "reload_files": self.core.reload_files,
-
+            "keybindings": self.show_keybindings,
             "stats": self._handle_stats,
             "show_settings": self._handle_settings,
-            "menu": self.core.console.show_menu,
+            "menu": lambda:  generate_main_menu_options(self.core),
             "show_inventory": self.core.console.show_inventory,
             'quit': self.handle_escape,
             "command_mode": self.handle_command_mode,
+            "go_back": self.core.console.back
         }
 
-
-        
+    def show_keybindings(self):
+        from ui.ad import generate_keybindings_menu_options
+        console = self.core.console
+        console._transtion_layout("MENU")
+        generate_keybindings_menu_options(self.core)
 
 
     def execute_on_key(self, key: str) -> None:
@@ -84,25 +91,39 @@ class KeyboardControl:
             key: The key that was pressed
         """
         logger.debug(f"Key pressed: {key}")
-        try:
-            if self.core.command_mode:
-                self._handle_command_mode_input(key)
-            else:
-                def get_key_by_value(d: dict, value):
-                    for key, val in d.items():
-                        if val == value:
-                            return key
-                    return None  # or raise an error if not found
-                function_id = get_key_by_value(self.key_actions, key)
-                logger.debug(f"Function ID for key '{key}': {function_id}")
-                action: Callable|None = self.function_map.get(function_id,None)
-                if action:
-                    logger.debug(f"Executing action for key '{key}': {action}")
-                    action()
-                else:
-                    logger.debug(f"Unhandled key: {key}")
+        try: 
+            if key != KEY.ESC and key != KEY.ENTER:
+                self.nkey = key
+            if self.refresh_on_key:
+                if key == KEY.ESC:
+                    self.refresh_on_key = False 
+                    self.core.console.back()
+                if  key==KEY.ENTER :
+                    self.refresh_on_key = False
+                    self.core.config["keymaps"][self.setting_key_type] = self.nkey
 
-            self.core.console.refresh()
+                    self.core.console.refresh()
+                    self.core.console.back()
+                self.core.console.refresh()
+            else:
+                if self.core.command_mode:
+                    self._handle_command_mode_input(key)
+                else:
+                    def get_key_by_value(d: dict, value):
+                        for key, val in d.items():
+                            if val == value:
+                                return key
+                        return None  # or raise an error if not found
+                    function_id = get_key_by_value(self.key_actions, key)
+                    logger.debug(f"Function ID for key '{key}': {function_id}")
+                    action: Callable|None = self.function_map.get(function_id,None)
+                    if action:
+                        logger.debug(f"Executing action for key '{key}': {action}")
+                        action()
+                    else:
+                        logger.debug(f"Unhandled key: {key}")
+
+                self.core.console.refresh()
         except Exception as e:
             logger.error(f"Error executing key action: {e}")
 

@@ -14,7 +14,8 @@ from ui.options import (
     GridOfWeapons,
     GridOfWeaponsShop,
     TyperWritter,
-    Delay,
+    KeyboardStr,
+    Delay
 )
 from ui.layouts import (
     LayoutInGame,
@@ -27,6 +28,8 @@ from ui.layouts import (
     LayoutAIStudio,
     LayoutAboutUs
 )
+
+from ui.window import window
 from ui.components import player_tab
 from rich.console import ConsoleRenderable, group, RichCast
 from ui.display_queue import DisplayQueue
@@ -40,6 +43,8 @@ if TYPE_CHECKING:
     from core.core import Core
     from objects.weapon import Weapon
 from ui.layouts import CustomLayout
+from util.logger import logger
+from collections import deque
 
 LAYOUTS: dict [str, type[CustomLayout]] = {
     
@@ -86,6 +91,11 @@ class Console:
         self.selected_option = 0
         self.left_ratio =1
         self.right_ratio = 1
+
+
+    def show_keybindings(self):
+        """Display the keybindings for the game."""
+
     def show_weapon(self):
         from rich_pixels import Pixels
 
@@ -216,7 +226,9 @@ class Console:
                 else:
                     # Delay is complete, don't add anything
                     pass
+            elif isinstance(option, KeyboardStr):
 
+                table.add_row(Align(Panel(width=40, renderable=str(self.core.keyboard_controller.nkey), style="cyan1", subtitle=f"set key binding for ")))
             elif isinstance(option, (Padding, Panel)):
                 table.add_row(Align(option))
             else:
@@ -241,6 +253,12 @@ class Console:
             _core.is_typing = False
             
         return table
+    @staticmethod
+    def window(window_generator):
+        def wrapper(self, *args, **kwargs):
+            logger.info(f"Creating window with generator function {window_generator.__name__}")
+            return self.core.current_pane.append(window_generator(self))
+        return wrapper
 
     def get_last_selectable(self) -> Optional[Tuple[int, List[CustomRenderable] | List[Option] | list[WeaponOption]]]:
         """Get the last group of selectable options.
@@ -259,11 +277,10 @@ class Console:
     def _transtion_layout(self, layout:layout_list):
         self.core.console.clear_display()
         self.layout = layout
+    @window
     def show_help(self):
         self.core.console.clear_display()
         
-        # TODO: Implement proper back navigation must be implemented
-        self.core.current_pane = lambda: self.core.console.show_menu()
 
         from ui.ad import generate_main_menu_options
         from ui.options import MinimalMenuOption
@@ -272,11 +289,9 @@ class Console:
         
         self.core.console.print(menu)
         self.layout = "INVENTORY"
+    @window
     def show_log(self):
         self.core.console.clear_display()
-        
-        # TODO: Implement proper back navigation must be implemented
-        self.core.current_pane = lambda: self.core.console.show_menu()
 
         from ui.ad import generate_main_menu_options
         from ui.options import MinimalMenuOption
@@ -285,12 +300,10 @@ class Console:
         
         self.core.console.print(menu)
         self.layout = "INVENTORY"
-
+    @window
     def show_inventory(self):
         self.core.console.clear_display()
         
-        # TODO: Implement proper back navigation must be implemented
-        self.core.current_pane = lambda: self.core.console.show_menu()
 
         from ui.ad import generate_main_menu_options
         from ui.options import MinimalMenuOption
@@ -300,19 +313,18 @@ class Console:
         self.core.console.print(menu)
         self.layout = "INVENTORY"
 
-    def show_menu(self):
-        self.core.console.clear_display()
+    def back(self):
+        logger.info("Returning to previous window")
+        if len(self.core.current_pane) > 1:
+            a = self.core.current_pane.pop()
+            generator = self.core.current_pane[-1]
+        else:
+            generator = None
 
-        # TODO: Implement proper back navigation must be implemented
-        self.core.current_pane = lambda: self.core.console.show_menu()
+        if generator is not None:
+            logger.info(f"running genertator: ")
+            generator(self.core)
 
-        from ui.ad import generate_main_menu_options
-        from ui.options import MinimalMenuOption
-        menu: List[MinimalMenuOption] = generate_main_menu_options(self.core)
-        self.core.console._transtion_layout("MENU")
-        
-        self.core.console.print(menu)
-        self.layout = "MENU"
 
     def get_selectable_options(self) -> list[CustomRenderable]:
   
