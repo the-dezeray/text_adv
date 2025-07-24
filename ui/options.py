@@ -1,3 +1,4 @@
+from PIL.PngImagePlugin import logger
 from gc import disable
 from typing import Callable, Optional, Literal, TYPE_CHECKING
 from rich.padding import Padding
@@ -714,3 +715,47 @@ class KeyboardStr:
     def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None):
         """Render an empty string during delay."""
         return self.str
+
+
+class VolumeOption(CustomRenderable):
+    def __init__(self, **kwargs):
+        if 'h_allign' not in kwargs:
+            kwargs['h_allign'] = "left"
+        super().__init__(**kwargs)
+        self.type = "menu" # Ensure type is set
+    def volume(self,value:int):
+        logger.info(f"Volume changed by {value}. Current volume: {self.core.volume}")
+        # Ensure volume stays within bounds (0 to 10)
+        self.core.volume = max(0, min(10, self.core.volume + value))
+    def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
+        try:
+            from art import text2art 
+            ctext = self.text # Example font
+        except ImportError:
+            ctext = self.text 
+        except Exception: 
+             ctext = f"[italic] {self.text} (art error) [/italic]"
+        style = "dim grey93"
+
+
+
+         # Add space before indicator for alignment?
+        if self.selected:
+            style = "bold green"
+            bar = "|" * self.core.volume
+            bar = f"        [bold green]{bar}[/bold green]"
+            mbar = f"[grey]{'|' * (10 - self.core.volume)}[/grey]"
+            s = "> " +" "+ self.text + bar+mbar
+            
+            core.console.current_layout.layout["right"].update(Panel("new selection"))
+            ctext = s
+            return Padding(Align.center(f"{ctext}"))
+        else:
+
+            bar = "|" * self.core.volume
+            bar = f"        [bold green]{bar}[/bold green]"
+            mbar = f"[grey]{'|' * (10 - self.core.volume)}[/grey]"
+            s = "> " +" "+ self.text + bar+mbar
+            ctext = s
+            style = "dim grey93" #
+            return Padding(Align.center(f"{ctext}"))

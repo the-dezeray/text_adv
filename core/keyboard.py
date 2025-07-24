@@ -1,6 +1,7 @@
+from __future__ import annotations  
 
+from ui.options import VolumeOption
 
-from __future__ import annotations
 
 """Handles keyboard input and control for the game."""
 
@@ -49,7 +50,7 @@ class KeyboardControl:
         for key, value in config.items():
             value =reach_key.get(value, None)
             if value is not None:
-                config[key] = value
+                self.core.config["keymaps"][key] = value
             
         if config is None:
             logger.error("Configuration not found, using default key mappings")
@@ -58,9 +59,9 @@ class KeyboardControl:
         self.key_actions: Dict[str, Callable] = config
         self.function_map: Dict[str, Callable] = {
             "backspace": self.handle_backspace,
-            "move_left": lambda: self.scroll_options(1),
-            "move_right": lambda: self.scroll_options(-1),
-            "move_up": lambda: self.scroll_options(1),
+            "move_left": lambda: self.scroll_options(1,"left"),
+            "aright": lambda: self.scroll_options(1,"left"),
+            "move_up": lambda: self.scroll_options(1,"right"),
             "move_down": lambda: self.scroll_options(-1),
             "enter": self.handle_enter,
             "help": self.core.console.show_help,
@@ -176,13 +177,15 @@ class KeyboardControl:
         self.core.selected_option = 1
         self.execute_selected_option()
 
-    def scroll_options(self, value: int) -> None:
+    def scroll_options(self, value: int, direction: str = "") -> None:
         """Scroll through available options.
         
         Args:
             value: Direction to scroll (1 for up/left, -1 for down/right)
+            direction: The direction of the scroll ("up", "down", "left", "right")
         """
         try:
+
             selectable_options: list[CustomRenderable] = self.core.console.get_selectable_options()
             options_len: int = len(selectable_options)
 
@@ -191,17 +194,20 @@ class KeyboardControl:
 
             # Find the currently selected option's index
             current_index = next((i for i, opt in enumerate(selectable_options) if opt.selected), 0)
-            
-            # Calculate new index with modulo arithmetic for circular behavior
-            new_index = (current_index - value) % options_len
-            
-            # Update selected status for all options
-            for i, option in enumerate(selectable_options):
-                option.selected = (i == new_index)
-            
-            # Update the core's selected_option to match
-            self.core.selected_option = new_index
-            
+            instance = selectable_options[current_index]
+            if isinstance(instance, VolumeOption) and direction in ["left", "right"]:
+                instance.volume(value)
+            else:
+                # Calculate new index with modulo arithmetic for circular behavior
+                new_index = (current_index - value) % options_len
+                
+                # Update selected status for all options
+                for i, option in enumerate(selectable_options):
+                    option.selected = (i == new_index)
+                
+                # Update the core's selected_option to match
+                self.core.selected_option = new_index
+                
         except Exception as e:
             logger.error(f"Error scrolling options: {e}")
 

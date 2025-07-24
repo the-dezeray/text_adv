@@ -95,7 +95,7 @@ class Core:
         self.current_entry_text: str = ""
         self.config : Config
         self.keyboard_controller :KeyboardControl
-        
+        self.volume =  9
         # Player and Entities
         self.player :Player 
         self.entity: Optional[Entities] = None

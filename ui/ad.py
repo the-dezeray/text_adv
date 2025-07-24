@@ -1,3 +1,4 @@
+from ui.options import VolumeOption
 from numpy._core.defchararray import title
 from rich.padding import Padding
 from PIL.ImageMath import lambda_eval
@@ -124,7 +125,8 @@ def generate_settings_menu_options(core):
             next_node=None,
             type="menu"
         ))
-    menu.append(MinimalMenuOption(
+    menu.append(VolumeOption(
+        core=core,
         text="sound volume",
         func=lambda: console._transtion_layout("MUSIC"),
         next_node=None,
