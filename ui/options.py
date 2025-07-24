@@ -31,7 +31,8 @@ class CustomRenderable:
         preview: Optional[Callable] = None, # Changed from str to Callable based on usage
         next_node: Optional[str] = None,
         selectable: bool = True,
-        type:str = "", # Added "weapon"
+        sound: str = "",
+        type: str = "", # Added "weapon"
         h_allign: AlignMethod = "center",
         v_allign: str = "middle",
         on_select: Optional[Callable] = None,
@@ -41,6 +42,7 @@ class CustomRenderable:
         self.style = ""
         self.core = core
         self.text = text
+        self.sound = sound # Sound effect to play when selected 
         self.disable_others = disable_others # Whether to disable other options when this is selected
         self.func = func
         self.preview = preview # Function to call for preview
@@ -182,6 +184,7 @@ class GridOfChoices:
                     func=choice_data.get("function"), # Function can be None
                     next_node=choice_data.get("next_node"), # next_node can be None
                     selectable=True, # Assume choices are selectable
+                    sound=choice_data.get("sound", ""), # Sound can be empty
                 )
             )
         return options_list

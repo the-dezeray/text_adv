@@ -12,10 +12,12 @@ metdata:
   created: "23-01-2024"
 0:
   location: "The Brink of Awareness"
+  
   text: "A jolt, and you're tumbling into consciousness. Your hand closes around something small and cool on the uneven ground – a [red1]Dimly Glowing Stone[/]. It offers little light, but a faint warmth. Before you can ponder its origin, the world solidifies..."
   choices:
     - text: "Open your eyes fully."
       next_node: 1
+      sound: "awekening"
       function: "receive_item(item='sword', core=core)"
 
 1:

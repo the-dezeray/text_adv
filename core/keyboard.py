@@ -231,6 +231,8 @@ class KeyboardControl:
                 
                 # Execute the appropriate function based on type
                 if isinstance(selected_option.func, str):
+                    if selected_option.sound:
+                        self.core.sound_player.play_sound_effect(selected_option.sound)
                     self._execute_yaml_function(selected_option)
                 elif callable(selected_option.func):
                     self._execute_callable_function(selected_option)

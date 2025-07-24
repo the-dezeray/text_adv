@@ -1,8 +1,8 @@
-chapter_id: '9'
-current_node: '9'
+chapter_id: '1'
+current_node: '1'
 enemy: null
 in_fight: false
-next_node: null
+next_node: 1
 player:
   agility: 0
   armor: 0
@@ -101,6 +101,36 @@ player:
     - burn
     name: Incinerator's Rod
     rarity: 5
+    type: weapon
+  - condition: null
+    crit: 23
+    cursed: false
+    damage: 30
+    defence: 0
+    description: simple sword
+    effects: []
+    name: sword
+    rarity: null
+    type: weapon
+  - condition: null
+    crit: 23
+    cursed: false
+    damage: 30
+    defence: 0
+    description: simple sword
+    effects: []
+    name: sword
+    rarity: null
+    type: weapon
+  - condition: null
+    crit: 23
+    cursed: false
+    damage: 30
+    defence: 0
+    description: simple sword
+    effects: []
+    name: sword
+    rarity: null
     type: weapon
   - condition: null
     crit: 23

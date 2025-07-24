@@ -57,7 +57,7 @@ def exit_story(core, text:str = "") -> None:
 class Core:
     """Core game engine that manages the game state and coordinates between components."""
 
-    def __init__(self) -> None:
+    def __init__(self,sound_enabled:bool=False) -> None:
         """Initialize the core game engine."""
         # UI Components
         self.rich_console = RichConsole(color_system="truecolor", style="bold black", quiet=True)
@@ -69,7 +69,7 @@ class Core:
         self.current_pane = []
         self.volume:int =  9
         self.music_volume:int = 9
-        self.sound_enabled= False
+        self.sound_enabled= sound_enabled
         self._layout = Layout()
         self.auto_generate_text: bool = False
         
@@ -157,8 +157,9 @@ class Core:
         if self.sound_enabled:
             a = 0
             from core.sound_player import SoundPlayer
-            #self.sound_player = SoundPlayer()
-            #self.sound_player.load_music_track("cin","data/cin1.mp3")
+            self.sound_player = SoundPlayer()
+            self.sound_player.load_music_track("cin","data/cin1.mp3")
+            self.sound_player.load_sound_effect("awekening","assets/sound/awekening.mp3")
             #self.sound_player.play_music("cin")
         current_time = datetime.datetime.now()
         logger.info(f"New game instance {current_time}")

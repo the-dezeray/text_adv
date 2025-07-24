@@ -39,11 +39,12 @@ def main(**kwargs) -> None:
             "mute": kwargs.get("mute",False),
         }
         
+        sound_enabled = not config["mute"]
         logger.info(f"Starting game with config: {config}")
         # Initialize core components
-        core = Core()
+        core = Core(sound_enabled=True)
         core.menu = config["menu"]
-        core.sound_enabled = config["mute"]
+       
         
         install(show_locals=True, console=core.rich_console)
         core.chapter_id = config["chapter_id"]

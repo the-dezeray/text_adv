@@ -7,7 +7,7 @@ current_stories:
 - current_node: '9'
   file_path: gemini_story.yaml
   id: the path
-  last_accessed: 1753380340
+  last_accessed: 1753392522
 keymaps:
   backspace: "\x7F"
   command_mode: ':'
