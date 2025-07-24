@@ -20,7 +20,7 @@ def  generate_load_personal_story_pane(core:"Core"):
 
         core.console.print(Panel(renderable=instructions))
         core.console.print(
-            StoryTextOption(text= "back",func = lambda:generate_previous_menu_options(core) )
+            StoryTextOption(text= "back",func = lambda:core.console.back() )
             )
 @window
 def transition_to_community_stories(core: "Core"):
@@ -76,7 +76,7 @@ def generate_new_game_menu_options(core):
     console:"Console" = core.console
     from art import text2art
   
-    # Define menu options with ASCII text
+    # Define menu options with ASCII text1
     
     def ds():   
         if core.ai.setup():
@@ -86,11 +86,11 @@ def generate_new_game_menu_options(core):
             core.ai.fake_prompt('d')
 
     list_of_options = {
-        "enter the library of stories": lambda: transition_to_story_select(console),
+        "enter the library of stories": lambda: transition_to_story_select(core),
         "community stories": lambda: transition_to_community_stories(core),
         "generate your own story with with ai": lambda: ds(),
         "load a personal story ": lambda: generate_load_personal_story_pane(core),
-           "back": lambda: generate_previous_menu_options(core),
+           "back": lambda: core.console.back(),
     }
     menu: List[MinimalMenuOption] = []
     for key,value in list_of_options.items():
@@ -106,16 +106,48 @@ def generate_new_game_menu_options(core):
     menu[0].selected = True
     core.console.print(menu)
 @window
+def generate_langnage_menu_options(core):
+    console = core.console
+    from ui.options import MinimalMenuOption
+    def set_language(lang:str):
+        if core.set_language(lang)  :
+            console.back()
+        else:
+            
+            console.print(Padding("[red]Failed to set language. Please try again later."))
+            console.print(MinimalMenuOption(
+            text="back  ",
+            func=lambda: console.back(),
+            next_node=None,
+            type="menu"
+        ))
+    list_of_options = {
+        "english": lambda: set_language("english"),
+        "french": lambda: set_language("french"),
+        "spanish": lambda: set_language("spanish"),
+        "back": lambda:console.back(),
+    }
+    menu: List[MinimalMenuOption] = []
+    for key,value in list_of_options.items():
+        menu.append(MinimalMenuOption(
+            text=key,
+            func=value,
+            next_node=None,
+            type="menu"
+        ))
+    console.clear_display()
+    core.console.print(menu)
+@window
 def generate_settings_menu_options(core):
     console = core.console
     from ui.options import MinimalMenuOption
     list_of_options = {
         "keybindings and shorcuts": lambda: generate_keybindings_menu_options(core),
-        "language preference": lambda: console._transtion_layout("LANGUAGE"),
+        "language preference": lambda: generate_langnage_menu_options(core),
         "set api keys": lambda: generate_api_keys_menu_options(core),
         "visuals": lambda: generate_visuals_menu_options(core),
         "clear data": lambda: generate_clear_data_menu_options(core),
-        "back": lambda: generate_previous_menu_options(core),
+        "back": lambda: core.console.back(),
     }
     menu: List[MinimalMenuOption] = []
     for key,value in list_of_options.items():
@@ -127,16 +159,19 @@ def generate_settings_menu_options(core):
         ))
     menu.append(VolumeOption(
         core=core,
-        text="sound volume",
+        text="music volume",
         func=lambda: console._transtion_layout("MUSIC"),
         next_node=None,
-        type="menu"
+        type="menu",
+        volume_type="music"
     ))
-    menu.append(MinimalMenuOption(
+    menu.append(VolumeOption(
+        core=core,
         text="efffect volume",
         func=lambda: console._transtion_layout("SOUND"),
         next_node=None,
-        type="menu"
+        type="menu",
+        volume_type="sound"
     ))
     console.clear_display()
     core.console.print(menu)
@@ -179,7 +214,7 @@ def generate_keybindings_menu_options(core):
             key=value,
             type="menu"
         ))
-    #list_of_options["back"] = lambda: generate_previous_menu_options(core)
+    #list_of_options["back"] = lambda: core.console.back()
 
     console.clear_display()
     console.print(menu)
@@ -189,7 +224,7 @@ def generate_api_keys_menu_options(core):
     from ui.options import MinimalMenuOption
     list_of_options = {
         "api keys": lambda: print("d"),
-           "back": lambda: generate_previous_menu_options(core),
+           "back": lambda: core.console.back(),
     }
     menu: List[MinimalMenuOption] = []
     for key,value in list_of_options.items():
@@ -206,8 +241,8 @@ def generate_visuals_menu_options(core):
     console = core.console
     from ui.options import MinimalMenuOption
     list_of_options = {
-        "visuals": lambda: console._transtion_layout("MENU"),
-           "back": lambda: generate_previous_menu_options(core),
+        
+           "back": lambda: core.console.back(),
     }
     menu: List[MinimalMenuOption] = []
     for key,value in list_of_options.items():
@@ -217,6 +252,9 @@ def generate_visuals_menu_options(core):
             next_node=None,
             type="menu"
         ))
+    console.clear_display()
+    console.print(Padding("[cyan1]Visuals settings will be here soon![/cyan1]"))
+    core.console.print(menu)
 @window
 def generate_about_us_menu_options(core: "Core"):
 
@@ -224,7 +262,7 @@ def generate_about_us_menu_options(core: "Core"):
     list_of_options = {
         "sponsor project": lambda: generate_about_us_menu_options(core),
         "more about me ": lambda: generate_about_us_menu_options(core),
-        "back": lambda: generate_previous_menu_options(core),
+        "back": lambda: core.console.back() ,
     }
     menu: List[MinimalMenuOption] = []
     for key,value in list_of_options.items():
@@ -245,8 +283,29 @@ def generate_about_us_menu_options(core: "Core"):
 def generate_clear_data_menu_options(core):
     console = core.console
     from ui.options import MinimalMenuOption
+    def attempt_delete():
+        core.console.clear_display()
+        console.print(Padding("Clearing all data..."))
+        if core.clear_data():
+            console.print(Padding("[green]All data cleared successfully!"))
+            console.print(MinimalMenuOption(
+            text="back  ",
+            func=lambda: console.back(),
+            next_node=None,
+            type="menu"
+        ))
+        else:
+            console.print(Padding("[red]Failed to clear data. Please try again later."))    
+            console.print(MinimalMenuOption(
+            text="back  ",
+            func=lambda: console.back(),
+            next_node=None,
+            type="menu"
+        ))
+        
     list_of_options = {
-        "clear data": lambda: console._transtion_layout("MENU"),
+        "yes": lambda: attempt_delete(),
+        "no": lambda:console.back(),
     }
     menu: List[MinimalMenuOption] = []
     for key,value in list_of_options.items():
@@ -256,6 +315,13 @@ def generate_clear_data_menu_options(core):
             next_node=None,
             type="menu"
         ))
+    console.clear_display()
+    from rich.style import Style
+    from rich.panel import Panel
+    style = Style( color="white")
+    console.print(Panel("Are you sure you want to clear all data?",border_style = "red1", style=style))
+    core.console.print(menu)
+
 @window
 def genereate_continue_game_menu_options(core: "Core"):
 

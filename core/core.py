@@ -67,7 +67,8 @@ class Core:
         self.rich_console.quiet = False
         self.rich_live_instance: "Live"
         self.current_pane = []
-
+        self.volume:int =  9
+        self.music_volume:int = 9
         self.sound_enabled= False
         self._layout = Layout()
         self.auto_generate_text: bool = False
@@ -91,11 +92,12 @@ class Core:
         self.ai : AI
         # Story and Progress
         self.game_engine = GameEngine()
+
         self.next_node: Optional[str] = None
         self.current_entry_text: str = ""
         self.config : Config
         self.keyboard_controller :KeyboardControl
-        self.volume =  9
+    
         # Player and Entities
         self.player :Player 
         self.entity: Optional[Entities] = None
@@ -121,6 +123,10 @@ class Core:
         self._post_initialize()
         
         logger.info("Core game engine initialized")
+    def clear_data(self)->bool:
+        return False
+    def set_language(self,lang)->bool:
+        return False
     def get_community_stories(self) -> List[str]:
         """Fetch community stories from the backend API."""
         import requests

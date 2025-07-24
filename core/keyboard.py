@@ -58,10 +58,11 @@ class KeyboardControl:
             KEY.BACKSPACE
         self.key_actions: Dict[str, Callable] = config
         self.function_map: Dict[str, Callable] = {
+              "move_right": lambda: self.scroll_options(-1,"right"),
             "backspace": self.handle_backspace,
             "move_left": lambda: self.scroll_options(1,"left"),
-            "aright": lambda: self.scroll_options(1,"left"),
-            "move_up": lambda: self.scroll_options(1,"right"),
+          
+            "move_up": lambda: self.scroll_options(1),
             "move_down": lambda: self.scroll_options(-1),
             "enter": self.handle_enter,
             "help": self.core.console.show_help,

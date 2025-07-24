@@ -721,12 +721,17 @@ class VolumeOption(CustomRenderable):
     def __init__(self, **kwargs):
         if 'h_allign' not in kwargs:
             kwargs['h_allign'] = "left"
+        self.volume_type = kwargs.pop("volume_type", "sound")
         super().__init__(**kwargs)
+
         self.type = "menu" # Ensure type is set
     def volume(self,value:int):
+        if self.volume_type == "sound":
+            self.core.volume = max(0, min(10, self.core.volume + value))
+        elif self.volume_type == "music":
+            self.core.music_volume = max(0, min(10, self.core.music_volume + value))
         logger.info(f"Volume changed by {value}. Current volume: {self.core.volume}")
-        # Ensure volume stays within bounds (0 to 10)
-        self.core.volume = max(0, min(10, self.core.volume + value))
+
     def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
         try:
             from art import text2art 
@@ -735,27 +740,34 @@ class VolumeOption(CustomRenderable):
             ctext = self.text 
         except Exception: 
              ctext = f"[italic] {self.text} (art error) [/italic]"
+        
+        if self.volume_type == "sound":
+            volume_count = int(self.core.volume)
+        elif self.volume_type == "music":
+            volume_count = self.core.music_volume
         style = "dim grey93"
 
 
-
+        filled_bar_char = "■"
+        empty_bar_char = "□"
          # Add space before indicator for alignment?
         if self.selected:
             style = "bold green"
-            bar = "|" * self.core.volume
+            bar = filled_bar_char * volume_count
             bar = f"        [bold green]{bar}[/bold green]"
-            mbar = f"[grey]{'|' * (10 - self.core.volume)}[/grey]"
-            s = "> " +" "+ self.text + bar+mbar
+
+            mbar = f"[grey]{empty_bar_char * (10 - volume_count)}[/grey]"
+            s = "[bold green]> " + self.text +"[/bold green] "+ bar+mbar
             
             core.console.current_layout.layout["right"].update(Panel("new selection"))
             ctext = s
             return Padding(Align.center(f"{ctext}"))
         else:
 
-            bar = "|" * self.core.volume
+            bar = filled_bar_char * volume_count
             bar = f"        [bold green]{bar}[/bold green]"
-            mbar = f"[grey]{'|' * (10 - self.core.volume)}[/grey]"
-            s = "> " +" "+ self.text + bar+mbar
+            mbar = f"[grey]{empty_bar_char * (10 - volume_count)}[/grey]"
+            s =  "[dim]"+self.text +"[/dim]" + bar+mbar
             ctext = s
             style = "dim grey93" #
             return Padding(Align.center(f"{ctext}"))
