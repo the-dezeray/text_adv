@@ -1,3 +1,4 @@
+
 from PIL.PngImagePlugin import logger
 from gc import disable
 from typing import Callable, Optional, Literal, TYPE_CHECKING
@@ -8,8 +9,11 @@ from rich.align import Align
 from rich.layout import Layout
 from rich.text import Text
 import time
-from typing import Generator
+from typing import Generator,Union
 from rich.console import ConsoleRenderable
+from dataclasses import dataclass, field
+from typing import Callable, Optional, Literal, Any
+
 
 if TYPE_CHECKING:
     from core.core import Core
@@ -20,40 +24,45 @@ def yy():
     """Placeholder function"""
     pass
 
+@dataclass
+class RenderConfig:
+    """Configuration for rendering UI components."""
+    style: str = ""
+    left_padding: int = 0
+    top_padding: int = 0
+    right_padding: int = 0
+    bottom_padding: int = 0
+    width: Optional[int] = None
+    height: Optional[int] = None
+
+
+
+def default_on_select():
+    pass  # Your fallback action
+
 
 AlignMethod = Literal["left", "center", "right"]
+VerticalAlign = Literal["top", "middle", "bottom"]
+
+@dataclass
 class CustomRenderable:
-    def __init__(
-        self,
-        text: str = "",
-        disable_others: bool = True, # Whether to disable other options when this is selected
-        func: Optional[Callable] = None,
-        preview: Optional[Callable] = None, # Changed from str to Callable based on usage
-        next_node: Optional[str] = None,
-        selectable: bool = True,
-        sound: str = "",
-        type: str = "", # Added "weapon"
-        h_allign: AlignMethod = "center",
-        v_allign: str = "middle",
-        on_select: Optional[Callable] = None,
-        core: Optional["Core"] = None, # Added type hint
-    ) -> None:
-        self.left_padding = 0
-        self.style = ""
-        self.core = core
-        self.text = text
-        self.sound = sound # Sound effect to play when selected 
-        self.disable_others = disable_others # Whether to disable other options when this is selected
-        self.func = func
-        self.preview = preview # Function to call for preview
-        self.next_node = next_node
-        self.selectable = selectable
-        self._selected = False
-        self.type = type
-        self.v_allign = v_allign
-        self.h_allign = h_allign
-        # Ensure on_select is always callable
-        self.on_select = on_select if on_select is not None else yy
+    text: str = ""
+    disable_others: bool = True
+    func: Optional[Callable[[], Any]] = None
+    preview: Optional[Callable[[], Any]] = None
+    next_node: Optional[str] = None
+    selectable: bool = True
+    sound: str = ""
+    type: str = ""
+    h_allign: AlignMethod = "center"
+    v_allign: VerticalAlign = "middle"
+    on_select: Callable[[], Any] = field(default_factory=lambda: default_on_select)
+    core: Optional["Core"] = None
+
+    # These are excluded from __init__, set internally
+    left_padding: int = field(default=0, init=False)
+    style: str = field(default="", init=False)
+    _selected: bool = field(default=False, init=False)
 
     @property
     def selected(self) -> bool:
@@ -68,124 +77,69 @@ class CustomRenderable:
             self.preview()
             self.core.console.refresh() # Refresh console to show preview
 
-    def render(
-        self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None
-    ) -> ConsoleRenderable:
-        # Subclasses should implement how they render based on their state
+    def render(self, config: RenderConfig) -> ConsoleRenderable:
         raise NotImplementedError("Subclasses must implement the render method.")
 
 
-class GridOfWeapons:
-    """Creates a buffer specifically for displaying weapon options."""
-    def __init__(
-        self,
-        ary: list["Weapon"] = [], # Specify list contains Weapon objects
-        core: Optional["Core"] = None,
-        extra: bool = False
-    ):
-        if core is None:
-            raise ValueError("Core must be provided for GridOfWeapons.")
-        self.extra = extra
-        # Initialize with an empty list if ary is None
-        self.weapons = ary or []
-        self.h_allign = "left"
-        self.core = core
-        self.selectable = True # This buffer itself isn't selectable, but its contents are
-        self.ary = self._build_weapon_options() # Store the generated CustomRenderable objects
-
-    def _build_weapon_options(self) -> list["WeaponOption"]:
-        """Builds a list of WeaponOption options from the weapon data."""
-        from core.events.fight import deal_damage # Local import to prevent circular dependency
-
-        options_list = []
-        # Determine the preview function based on the 'extra' flag
-        preview_func = self.core.console.show_weapon if self.extra and hasattr(self.core, 'console') and hasattr(self.core.console, 'show_weapon') else None
-
-        for weapon in self.weapons:
-            # Create a create_weapon_option for each weapon
-            # Use a lambda with a default argument to capture the current weapon
-            options_list.append(
-                create_weapon_option(
+def CHOICE(core,data):
+                   return Option(     text=data.get("text", "Missing text"),
+                    func=data.get("function"),
+                    next_node=data.get("next_node"),
+                    selectable=True,
+                    sound=data.get("sound", ""))
+def WEAPON(core,data):
+    """Creates a weapon option from provided data."""
+    from core.events.fight import deal_damage # Local import to prevent circular dependency
+    weapon = data
+    return create_weapon_option(
+                    name=weapon.name,
+                    # Pass the specific weapon to deal_damage
+                    func=lambda w=weapon: deal_damage(core, w),
+                    preview=core.console.show_weapon ,
+                    core=core
+    )
+def WEAPON2(core,data):
+    """Creates a weapon option from provided data."""
+    from core.events.fight import deal_damage # Local import to prevent circular dependency
+    weapon = data
+    return create_mini_weapon_option(
                     weapon=weapon,
                     # Pass the specific weapon to deal_damage
-                    func=lambda w=weapon: deal_damage(self.core, w),
-                    preview=preview_func,
-                    core=self.core
-                )
-            )
-        return options_list
-
-    def render(self, core: Optional["Core"] = None) -> ConsoleRenderable:
-        renderables = [option.render() for option in self.ary] # Render each weapon option
-
-        grid = create_grid(colomuns=1)
-        for r in renderables:
-            grid.add_row(r)
-
-        # Different layout based on the 'extra' flag
-        if not self.extra:
-            from rich_pixels import Pixels # Local import for optional dependency
-            layout = Layout()
-            layout.split_row(Layout(name="options"), Layout(name="preview"))
-            try:
-                # Attempt to load and display an icon
-                cc =[]
-                for i in range(0,49):
-                    cc.append(f"a/{i}.png")
-                cc =["1.png","2.png","3.png"]
-                import random
-                icon = random.choice(cc)
-                from rich_pixels import FullcellRenderer
-                pixels = Pixels.from_image_path(icon,resize=(16,16))
-                a = Table.grid(expand=False)
-                a.add_column()
-                a.add_row(Panel(pixels,border_style="cyan",subtitle="reaper",subtitle_align="right",expand=False,width=23))
-
-                a.add_row("󰦝 dmg [ [bold red1]43[/bold red1] ]")
-                a.add_row("󰄽 spd 23")
-                a.add_row("[white]EFFECTS[/white]\n [red]bleed 1[/red][cyan]frost[/cyan]\n slow and blinding")
-                layout["preview"].update(Padding(a, expand=False))
-            except Exception: # Catch potential file not found or loading errors
-                 layout["preview"].update(Panel("[dim]No preview[/dim]", height=28)) # Fallback text
-
-            layout["options"].update(grid)
-            return Padding(layout, expand=False,)
-        else:
-            # If 'extra' is true, just return the grid
-            return grid
-
-
-class GridOfChoices:
+                    func=lambda w=weapon: core.player.inventory.add( w),
+                    preview=core.console.show_weapon ,
+                    core=core
+    )    
+            
+class GRID():
     """Creates a buffer for displaying generic choice options."""
     def __init__(
         self,
+        core =None,
+        renderItem: Callable= CHOICE,
         ary: list[dict] = [], # Expects a list of dictionaries
         title: str = "",
+        extra: bool = False,
         icon: str = "" # Icon parameter seems unused in render
     ):
 
         self.raw_choices = ary 
         from typing import Literal
-
-       
         self.h_allign :AlignMethod = 'left'
         self.title = title
+        self.weapons = ary or []
+        self.extra=extra
+        self.renderItem = renderItem
         self.selectable = True # Buffer contains selectable items
+        self.core = core
         self.ary = self._build_choice_options() # Store generated CustomRenderable objects
 
     def _build_choice_options(self) -> list["Option"]:
         """Builds a list of Option options from the choice data."""
         options_list = []
-        for choice_data in self.raw_choices:
+        for data in self.raw_choices:
             # Create a Option option for each dictionary in the list
             options_list.append(
-                Option(
-                    text=choice_data.get("text", "Missing text"), # Provide default
-                    func=choice_data.get("function"), # Function can be None
-                    next_node=choice_data.get("next_node"), # next_node can be None
-                    selectable=True, # Assume choices are selectable
-                    sound=choice_data.get("sound", ""), # Sound can be empty
-                )
+                self.renderItem(core=self.core ,data=data)
             )
         return options_list
 
@@ -263,20 +217,17 @@ class MiniWeaponOption(CustomRenderable):
         self.type  : str = "weapon" # Ensure type is set
 
     def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
-        # Use a Unicode arrow or similar indicator
-        indicator = "\uf0da" # Example: Right-pointing arrow
+
+        indicator = "\uf0da" 
         display_text = f"{indicator} {self.text} "
         from rich.style import Style
         style = "dim green"
         if self.selected:
             style = "bold green" # Internal style tracking
             style = Style(bgcolor="green",color="black")
-            # Preview is handled by the setter
-            return Padding(display_text, style=style, expand=True) # Wrap selected in Panel
         else:
             style = "dim green" # Internal style tracking
-            # Non-selected items are padded Text
-            return Padding(display_text, style=style, pad=(0, 0, 0, 0),expand=True) # No extra padding here
+        return Padding(display_text, style=style,expand=True) # No extra padding here
 
 
 
@@ -284,13 +235,13 @@ class MiniWeaponOption(CustomRenderable):
 
 
 def create_weapon_option(
-    weapon: "Weapon",
+    name: "Weapon",
     func: Callable,
     preview: Optional[Callable] = None,
     core: Optional["Core"] = None
 ) -> "WeaponOption":
     return WeaponOption(
-        text=weapon.name,
+        text=name,
         func=func,
         selectable=True,
         type="weapon", # Set type explicitly
@@ -384,20 +335,6 @@ class Option(CustomRenderable):
              # Add space before indicator for alignment?
             return Padding(Text(f" {display_text}", style=style), (0, 0, 0, 0))
 
-def get_selectable_options(options: list) -> list[CustomRenderable]:  
-    selectable_list: list[CustomRenderable] = []
-    # Iterate in reverse to maintain visual order when selecting (usually bottom-up)
-    for item in reversed(options):
-        # Check if the item is a buffer containing a list of options (ary)
-        if isinstance(item, (GridOfChoices, GridOfWeapons,GridOfWeaponsShop )):
-             # Add all options from the buffer's list
-            selectable_list.extend(item.ary)
-        # Check if the item itself is a selectable CustomRenderable subclass
-        elif isinstance(item, CustomRenderable) and item.selectable:
-            selectable_list.append(item)
-    return selectable_list
-
-
 # --- Placeholder Functions (Likely for future implementation) ---
 
 def shop():
@@ -445,24 +382,17 @@ class MenuOption(CustomRenderable):
         self.type = "menu" # Ensure type is set
 
     def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
-        try:
-            from art import text2art 
-            ctext = self.text # Example font
-        except ImportError:
-            ctext = self.text 
-        except Exception: 
-             ctext = f"[italic] {self.text} (art error) [/italic]"
+
+        ctext = self.text # Example font
+
         style = "dim grey93"
         if self.selected:
             style = "bold green"
-            s = "> " + self.text
-
             core.console.current_layout.layout["right"].update(Panel("new selection"))
-            ctext = s
-            return Panel(Align.center(f"[{style}]{ctext}[/{style}]"),width=20)
+            ctext = "> " + self.text
         else:
             style = "dim grey93" #
-            return Panel(Align.center(f"[{style}]{ctext}[/{style}]"), width=20)
+        return Panel(Align.center(f"[{style}]{ctext}[/{style}]"), width=20)
 
 class MinimalMenuOption(CustomRenderable):
     def __init__(self, **kwargs):
@@ -472,24 +402,19 @@ class MinimalMenuOption(CustomRenderable):
         self.type = "menu" # Ensure type is set
 
     def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
-        try:
-            from art import text2art 
-            ctext = self.text # Example font
-        except ImportError:
-            ctext = self.text 
-        except Exception: 
-             ctext = f"[italic] {self.text} (art error) [/italic]"
+
+        ctext = self.text # Example font
+
         style = "dim grey93"
         if self.selected:
             style = "bold green"
-            s = "> " + self.text 
-            
+        
             core.console.current_layout.layout["right"].update(Panel("new selection"))
-            ctext = s
-            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
+            ctext ="> " + self.text 
+
         else:
             style = "dim grey93" #
-            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
+        return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
 
 class MinimalTextOption(CustomRenderable):
     def __init__(self, **kwargs):
@@ -499,24 +424,17 @@ class MinimalTextOption(CustomRenderable):
         self.type = "menu" # Ensure type is set
 
     def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
-        try:
-            from art import text2art 
-            ctext = self.text # Example font
-        except ImportError:
-            ctext = self.text 
-        except Exception: 
-             ctext = f"[italic] {self.text} (art error) [/italic]"
+
+        ctext = self.text # Example font
+
         style = "dim grey93"
         if self.selected:
             style = "bold green"
-            s = "> " + self.text 
-            
-   
-            ctext = s
-            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
+            ctext = "> " + self.text
+
         else:
             style = "dim grey93" #
-            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
+        return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
         
 
 class TyperWritter():
@@ -567,85 +485,6 @@ class Delay:
         return ""
 
 
-
-class   GridOfWeaponsShop:
-    """Creates a buffer specifically for displaying weapon options."""
-    def __init__(
-        self,
-        ary: list["Weapon"] = [], # Specify list contains Weapon objects
-        core: Optional["Core"] = None,
-        extra: bool = False
-    ):
-        if core is None:
-            raise ValueError("Core must be provided for GridOfWeapons.")
-        self.extra = extra
-        # Initialize with an empty list if ary is None
-        self.weapons = ary or []
-        self.h_allign = "left"
-        self.core = core
-        self.selectable = True # This buffer itself isn't selectable, but its contents are
-        self.ary = self._build_weapon_options() # Store the generated CustomRenderable objects
-
-    def _build_weapon_options(self) -> list["WeaponOption"]:
-        """Builds a list of WeaponOption options from the weapon data."""
-        from core.events.fight import deal_damage # Local import to prevent circular dependency
-
-        options_list = []
-        # Determine the preview function based on the 'extra' flag
-        preview_func = self.core.console.show_weapon if self.extra and hasattr(self.core, 'console') and hasattr(self.core.console, 'show_weapon') else None
-
-        for weapon in self.weapons:
-            # Create a create_weapon_option for each weapon
-            # Use a lambda with a default argument to capture the current weapon
-            options_list.append(
-                create_mini_weapon_option(
-                    weapon=weapon,
-                    # Pass the specific weapon to deal_damage
-                    func=lambda w=weapon: self.core.player.inventory.add( w),
-                    preview=preview_func,
-                    core=self.core
-                )
-            )
-        return options_list
-
-    def render(self, core: Optional["Core"] = None) -> ConsoleRenderable:
-        renderables = [option.render() for option in self.ary] # Render each weapon option
-
-        grid = create_grid(colomuns=1)
-        for r in renderables:
-            grid.add_row(r)
-
-        # Different layout based on the 'extra' flag
-        if not self.extra:
-            from rich_pixels import Pixels # Local import for optional dependency
-            layout = Layout()
-            layout.split_row(Layout(name="options"), Layout(name="preview"))
-            try:
-                # Attempt to load and display an icon
-                cc =[]
-                for i in range(0,49):
-                    cc.append(f"a/{i}.png")
-                cc =["1.png","2.png","3.png"]
-                import random
-                icon = random.choice(cc)
-                from rich_pixels import FullcellRenderer
-                pixels = Pixels.from_image_path(icon,resize=(16,16))
-                a = Table.grid(expand=False)
-                a.add_column()
-                a.add_row(Panel(pixels,border_style="cyan",subtitle="reaper",subtitle_align="right",expand=False,width=23))
-
-                a.add_row("󰦝 dmg [ [bold red1]43[/bold red1] ]")
-                a.add_row("󰄽 spd 23")
-                a.add_row("[white]EFFECTS[/white]\n [red]bleed 1[/red][cyan]frost[/cyan]\n slow and blinding")
-                core.console.right = (Padding(a, expand=False))
-            except Exception: # Catch potential file not found or loading errors
-                 core.console.right = (Panel("[dim]No preview[/dim]", height=2)) # Fallback text
-
-           
-            return Panel(grid,title="weapons",title_align="left",border_style="cyan1")
-        else:
-            # If 'extra' is true, just return the grid
-            return grid
 class StoryTextOption(CustomRenderable):
     def __init__(self, **kwargs):
         if 'h_allign' not in kwargs:
@@ -654,25 +493,17 @@ class StoryTextOption(CustomRenderable):
         self.type = "menu" # Ensure type is set
 
     def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
-        try:
-            from art import text2art 
-            ctext = self.text # Example font
-        except ImportError:
-            ctext = self.text 
-        except Exception: 
-             ctext = f"[italic] {self.text} (art error) [/italic]"
+
+        ctext = self.text # Example font
         style = "dim grey93"
         if self.selected:
             from rich.style import Style
             style = Style(bold=True,bgcolor="green",color="black")
-            s = "> " + self.text 
-            
-   
-            ctext = s
-            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"),pad=(0,0,0,0))
+            ctext ="> " + self.text
         else:
             style = "dim grey93" #
-            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"),pad=(0,0,0,0))
+        
+        return Padding(Align.center(f"[{style}]{ctext}[/{style}]"),pad=(0,0,0,0))
         
 
 
@@ -685,28 +516,20 @@ class MinimalKeyboardOption(CustomRenderable):
         super().__init__(**kwargs)
         self.key = "[cyan1]"+str(self.key)+"[/cyan1]"
         self.text = str(self.text) + (" "* 10) + str(self.key)
-
         self.type = "menu" # Ensure type is set
 
     def render(self, style: str = "", left_padding: int = 0, core: Optional["Core"] = None) -> ConsoleRenderable:
-        try:
-            from art import text2art 
-            ctext = self.text # Example font
-        except ImportError:
-            ctext = self.text 
-        except Exception: 
-             ctext = f"[italic] {self.text} (art error) [/italic]"
+
+        ctext = self.text # Example font
         style = "dim grey93"
         if self.selected:
             style = "bold green"
             s = "> " + self.text 
-            
             core.console.current_layout.layout["right"].update(Panel("new selection"))
             ctext = s
-            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
         else:
             style = "dim grey93" #
-            return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
+        return Padding(Align.center(f"[{style}]{ctext}[/{style}]"))
 
 
 

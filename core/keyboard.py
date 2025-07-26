@@ -6,11 +6,15 @@ from ui.options import VolumeOption
 """Handles keyboard input and control for the game."""
 
 from util.logger import logger
-from ui.options import get_selectable_options, CustomRenderable
-from typing import TYPE_CHECKING, Dict, Callable, Optional, Any
+from ui.options import  CustomRenderable
+from typing import TYPE_CHECKING, Dict, Callable, Optional, Any,List
 from readchar import readkey
 from readchar import key as KEY
-from ui.ad import  generate_main_menu_options
+from ui.menus.main_menu import show_main_menu
+from ui.menus.help import show_help
+from ui.menus.inventory import show_inventory
+from ui.menus.log import show_log
+from ui.menus.keybindings_menu import show_keybindings_menu_options
 if TYPE_CHECKING:
     from core.core import Core
 
@@ -65,25 +69,25 @@ class KeyboardControl:
             "move_up": lambda: self.scroll_options(1),
             "move_down": lambda: self.scroll_options(-1),
             "enter": self.handle_enter,
-            "help": self.core.console.show_help,
-            "log": self.core.console.show_log,
+            "help": lambda: show_help(self.core),
+            "log":  lambda: show_log(self.core),
             "restart_app": self.core.restart_app,
             "reload_files": self.core.reload_files,
             "keybindings": self.show_keybindings,
             "stats": self._handle_stats,
-            "show_settings": self._handle_settings,
-            "menu": lambda:  generate_main_menu_options(self.core),
-            "show_inventory": self.core.console.show_inventory,
+            "show_settings": self._handle_settings, 
+            "menu": lambda:  show_main_menu(self.core),
+            "show_inventory": lambda: show_inventory(self.core),
             'quit': self.handle_escape,
             "command_mode": self.handle_command_mode,
             "go_back": self.core.console.back
         }
 
     def show_keybindings(self):
-        from ui.ad import generate_keybindings_menu_options
+
         console = self.core.console
-        console._transtion_layout("MENU")
-        generate_keybindings_menu_options(self.core)
+        console._transition_layout("MENU")
+        show_keybindings_menu_options(self.core)
 
 
     def execute_on_key(self, key: str) -> None:

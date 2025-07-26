@@ -173,8 +173,7 @@ class LayoutInGame(CustomLayout):
         if self.core.console.state == "MAIN":
             table: Table = self.core.console.fill_ui_table()
             
-        elif self.core.console.state == "INVENTORY":
-            table = self.core.console.fill_inventory_table()
+
         content: Table = table
         layout["middle"].update(
             Padding(content)

@@ -1,11 +1,7 @@
-from __future__ import annotations
-
 """Core game engine for the text adventure game."""
-
-
-
+from __future__ import annotations
 from util.file_handler import load_yaml_file,write_yaml_file
-from ui.options import CustomRenderable, GridOfChoices
+from ui.options import CustomRenderable, GRID
 from rich.layout import Layout
 from objects.entities import Entities
 from objects.item import ItemFactory
@@ -27,7 +23,8 @@ from ui.console import Console as MainConsole
 from core.non_blocking_input import NonBlockingInput
 from core.ai import AI as OFFLINE_AI
 from collections import deque
-from ui.ad import  generate_main_menu_options
+
+from ui.menus.main_menu import show_main_menu
 # Import event handlers
 from core.events import *
 from rich.live import Live
@@ -305,7 +302,9 @@ class Core:
         self.console.print(Padding(ui_text))
         
         # Display choices
-        self.console.print(GridOfChoices(current_node.choices))
+        from ui.options import Option,CHOICE
+
+        self.console.print(GRID(ary=current_node.choices,renderItem=CHOICE))
         
         self.console.refresh()
 
@@ -340,6 +339,9 @@ class Core:
         self._state = "SETTINGS"
         self.console.layout = "SETTINGS"
         self.console.refresh()
+    def get_user_stories():
+        #TODO implement get user stories from path 
+        return ["the story of the lost city"," A Lost city","Dying Angel","The dungeaon of death","Solace"," Missing the rage"]
 
     def show_stats(self) -> None:
         """Show the player's statistics."""
@@ -361,7 +363,7 @@ class Core:
                 self.console.refresh()
                 if self.menu:
                     self.console._transtion_layout("MENU")
-                    generate_main_menu_options(self)
+                    show_main_menu(self)
 
                 self.keyboard_controller.execute_on_key( "\x00\x4d") # this will be fixed as of now dont touch this no time
                 while self.running:

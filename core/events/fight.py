@@ -1,6 +1,6 @@
 from ui.options import CustomRenderable, create_weapon_option
 from objects.player import Player
-from ui.options import Reward,GridOfWeapons
+from ui.options import Reward,GRID,WEAPON
 from util.logger import logger, event_logger
 from typing import TYPE_CHECKING, Literal
 from ui.options import ui_text_panel,Option
@@ -217,7 +217,9 @@ def _fight(core: "Core") -> None:
         # Player's turn
         core.console.print(ui_text_panel(text="Choose your weapon:"))
         ary = player.inventory.weapons(type="attack")
-        core.console.print(GridOfWeapons(ary, core))
+        from ui.options import GRID,WEAPON
+
+        core.console.print(GRID(ary=ary, core=core,renderItem=WEAPON))
         
         # End player's turn
         player.turn = False
@@ -227,8 +229,8 @@ def _fight(core: "Core") -> None:
         # Enemy's turn
         core.console.print(ui_text_panel(text="You prepare to defend"))
         ary = player.inventory.weapons(type="defence")
-        core.console.print(GridOfWeapons(ary, core))
-        
+        core.console.print(GRID(ary=ary, core=core, renderItem=WEAPON))
+
         # Enemy attacks
         entity.deal_damage(player)
         entity.turn = False

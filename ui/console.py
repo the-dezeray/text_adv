@@ -9,10 +9,9 @@ from rich.rule import Rule
 from rich.layout import Layout
 from ui.options import (
     CustomRenderable,
-    get_selectable_options,
-    GridOfChoices,
-    GridOfWeapons,
-    GridOfWeaponsShop,
+ 
+    GRID,
+
     TyperWritter,
     KeyboardStr,
     Delay
@@ -56,7 +55,6 @@ LAYOUTS: dict [str, type[CustomLayout]] = {
     "SCROLL_READING": LayoutDefault,
     "FIGHT": LayoutDefault,
     "SETTINGS": LayoutDefault,
- 
     "ABOUT_US": LayoutAboutUs,
     "CHARACTER_SELECTION": Lsd,
     "DEFAULT": LayoutDefault,
@@ -160,11 +158,6 @@ class Console:
         _layout: Layout = self.current_layout.update()
         self.core.rich_live_instance.update(_layout)
 
-    def fill_inventory_table(self) -> Table:
-        self.clear_display()
-        self.print(Panel("weapons"))
-        
-        return self.fill_ui_table()
 
     def fill_ui_table(self,expand:bool = True,title:str = "",caption:str = " - ",border_style:str = "",show_edge:bool = False,show_lines:bool = False,show_header:bool = False,style:str = "",box:box.Box = box.ROUNDED) -> Table:
         """returns rich table after filling it with options"""
@@ -210,7 +203,7 @@ class Console:
         # First pass: render all options
         for option in self.renderables:
 
-            if isinstance(option, (CustomRenderable, GridOfChoices, GridOfWeapons,GridOfWeaponsShop)):
+            if isinstance(option, (CustomRenderable, GRID,)):
                 renderable = option.render(core=_core)
 
                 table.add_row(Align(renderable, align=option.h_allign))
@@ -268,7 +261,7 @@ class Console:
             or None if no selectable options are found.
         """
         for i, item in enumerate(reversed(self.renderables)):
-            if isinstance(item, (GridOfChoices, GridOfWeapons,GridOfWeaponsShop)):
+            if isinstance(item, (GRID, )):
                 return (i, item.ary)
             elif isinstance(item, CustomRenderable) and item.selectable:
                 return (i, [item])
@@ -277,41 +270,8 @@ class Console:
     def _transtion_layout(self, layout:layout_list):
         self.core.console.clear_display()
         self.layout = layout
-    @window
-    def show_help(self):
-        self.core.console.clear_display()
-        
 
-        from ui.ad import generate_main_menu_options
-        from ui.options import MinimalMenuOption
-        menu: List[MinimalMenuOption] = generate_main_menu_options(self.core)
-        self.core.console._transtion_layout("INVENTORY")
-        
-        self.core.console.print(menu)
-        self.layout = "INVENTORY"
-    @window
-    def show_log(self):
-        self.core.console.clear_display()
 
-        from ui.ad import generate_main_menu_options
-        from ui.options import MinimalMenuOption
-        menu: List[MinimalMenuOption] = generate_main_menu_options(self.core)
-        self.core.console._transtion_layout("INVENTORY")
-        
-        self.core.console.print(menu)
-        self.layout = "INVENTORY"
-    @window
-    def show_inventory(self):
-        self.core.console.clear_display()
-        
-
-        from ui.ad import generate_main_menu_options
-        from ui.options import MinimalMenuOption
-        menu: List[MinimalMenuOption] = generate_main_menu_options(self.core)
-        self.core.console._transtion_layout("INVENTORY")
-        
-        self.core.console.print(menu)
-        self.layout = "INVENTORY"
 
     def back(self):
         logger.info("Returning to previous window")
@@ -332,7 +292,7 @@ class Console:
         # Iterate in reverse to maintain visual order when selecting (usually bottom-up)
         for item in self.renderables:
             # Check if the item is a buffer containing a list of options (ary)
-            if isinstance(item, (GridOfChoices, GridOfWeapons,GridOfWeaponsShop)):
+            if isinstance(item, (GRID)):
                 # Add all options from the buffer's list
                 for i in item.ary:
                     if i.selectable:

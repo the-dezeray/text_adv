@@ -1,0 +1,26 @@
+from rich_pixels import Pixels # Local import for optional dependency
+            layout = Layout()
+            layout.split_row(Layout(name="options"), Layout(name="preview"))
+            try:
+                # Attempt to load and display an icon
+                cc =[]
+                for i in range(0,49):
+                    cc.append(f"a/{i}.png")
+                cc =["1.png","2.png","3.png"]
+                import random
+                icon = random.choice(cc)
+                from rich_pixels import FullcellRenderer
+                pixels = Pixels.from_image_path(icon,resize=(16,16))
+                a = Table.grid(expand=False)
+                a.add_column()
+                a.add_row(Panel(pixels,border_style="cyan",subtitle="reaper",subtitle_align="right",expand=False,width=23))
+
+                a.add_row("󰦝 dmg [ [bold red1]43[/bold red1] ]")
+                a.add_row("󰄽 spd 23")
+                a.add_row("[white]EFFECTS[/white]\n [red]bleed 1[/red][cyan]frost[/cyan]\n slow and blinding")
+                layout["preview"].update(Padding(a, expand=False))
+            except Exception: # Catch potential file not found or loading errors
+                 layout["preview"].update(Panel("[dim]No preview[/dim]", height=28)) # Fallback text
+
+            layout["options"].update(grid)
+            return Padding(layout, expand=False,)
