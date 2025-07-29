@@ -16,17 +16,7 @@ from ui.options import (
     KeyboardStr,
     Delay
 )
-from ui.layouts import (
-    LayoutInGame,
-    LayoutDefault,
-    Lsd,
-    LayoutStartMenu,
-    LayoutLoading,
-    LayoutInventory,
-    LayoutSelectStory,
-    LayoutAIStudio,
-    LayoutAboutUs
-)
+
 
 from ui.window import window
 from ui.components import player_tab
@@ -41,27 +31,11 @@ import time
 if TYPE_CHECKING:
     from core.core import Core
     from objects.weapon import Weapon
-from ui.layouts import CustomLayout
+
 from util.logger import logger
 from collections import deque
-
-LAYOUTS: dict [str, type[CustomLayout]] = {
-    
-    "INGAME": LayoutInGame,
-    "SHOP": LayoutDefault,
-    "STATS": LayoutDefault,
-    "MENU": LayoutStartMenu,
-    "INVENTORY": LayoutInventory,
-    "SCROLL_READING": LayoutDefault,
-    "FIGHT": LayoutDefault,
-    "SETTINGS": LayoutDefault,
-    "ABOUT_US": LayoutAboutUs,
-    "CHARACTER_SELECTION": Lsd,
-    "DEFAULT": LayoutDefault,
-    "LOADING": LayoutLoading,
-    "SELECTSTORY": LayoutSelectStory,
-    "AI_STUDIO": LayoutAIStudio,
-}
+from ui.layouts.custom_layout import CustomLayout
+from ui.layouts.default import LayoutDefault
 class DummyTable(Table):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -76,6 +50,7 @@ class DummyTable(Table):
 
 class Console:
     def __init__(self, core: "Core"):
+        from ui.layouts.default import LayoutDefault
         self.core = core
         self.table_count = 0
         self.table: DummyTable = DummyTable()
@@ -144,8 +119,8 @@ class Console:
 
     @layout.setter
     def layout(self, value: str)->None:
-        _layout:type[CustomLayout]  = LAYOUTS.get(value, LayoutDefault)
-     
+       # _layout:type[CustomLayout]  = LAYOUTS.get(value, LayoutDefault)
+        _layout = None
         if _layout is None:
             raise ValueError("Expected a value, but got None")
         else:
@@ -267,9 +242,10 @@ class Console:
                 return (i, [item])
         return None
     layout_list =Literal["MENU","ABOUT_US","AI_STUDIO","INGAME","SHOP","STATS","INVENTORY","SCROLL_READING","FIGHT","SETTINGS","AI_STUDY","ABOUT","CHARACTER_SELECTION","DEFAULT","LOADING","SELECTSTORY"]
-    def _transtion_layout(self, layout:layout_list):
+    def _transtion_layout(self, layout):
         self.core.console.clear_display()
-        self.layout = layout
+        from ui.layouts.factory import LayoutType,LayoutFactory
+        self.current_layout = LayoutFactory.create_layout(layout_type=layout,core=self.core)
 
 
 

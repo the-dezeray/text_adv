@@ -23,7 +23,8 @@ def show_main_menu(core: "Core"):
     
     from ui.options import MenuOption,Option,MinimalMenuOption
     # Define menu options with ASCII text
-    core.console._transtion_layout("MENU")
+    from ui.layouts.factory import LayoutType
+    core.console._transtion_layout(LayoutType.MENU)
     List_of_options = {
         "continue": lambda: show_continue_menu(core),
         "new game": lambda: show_new_game_menu(core),

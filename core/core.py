@@ -358,11 +358,11 @@ class Core:
                 screen=True,
                 console=self.rich_console,
             ) as self.rich_live_instance:
-                
-                self.console._transtion_layout("INGAME")
+                from ui.layouts.factory import LayoutType
+                self.console._transtion_layout(LayoutType.IN_GAME)
                 self.console.refresh()
                 if self.menu:
-                    self.console._transtion_layout("MENU")
+                    self.console._transtion_layout(LayoutType.START_MENU)
                     show_main_menu(self)
 
                 self.keyboard_controller.execute_on_key( "\x00\x4d") # this will be fixed as of now dont touch this no time
