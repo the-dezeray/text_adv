@@ -1,3 +1,4 @@
+from rich.layout import Layout
 from terma.ui.options import VolumeOption
 from numpy._core.defchararray import title
 from rich.padding import Padding
@@ -8,6 +9,7 @@ from rich.panel import Panel
 from terma.ui.options import MenuOption,Option,MinimalMenuOption,MinimalTextOption, StoryTextOption,MinimalKeyboardOption
 from terma.ui.window import window
 from terma.core.atypes import Story
+from terma.ui.layouts.factory import LayoutType
 if TYPE_CHECKING:
     from terma.ui.console import Console
     from terma.core.core import Core
@@ -26,7 +28,7 @@ def show_continue_menu(core: "Core"):
     def load_and_play_story(save:Story)->None:
         core.game_engine.load_save(save)
         core.menu = False
-        core.console._transtion_layout("INGAME")
+        core.console._transtion_layout(LayoutType.IN_GAME)
     for story in stories:
         import datetime
         last_accessed = story.get("last_accessed", 0)

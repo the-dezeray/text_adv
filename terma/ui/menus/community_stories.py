@@ -1,3 +1,4 @@
+from rich.layout import Layout
 from terma.ui.options import VolumeOption
 from numpy._core.defchararray import title
 from rich.padding import Padding
@@ -5,6 +6,7 @@ from PIL.ImageMath import lambda_eval
 from typing import TYPE_CHECKING , List
 from terma.ui.options import Option
 from rich.panel import Panel
+from terma.ui.layouts.factory import LayoutType
 from terma.ui.options import MenuOption,Option,MinimalMenuOption,MinimalTextOption, StoryTextOption,MinimalKeyboardOption
 from terma.ui.window import window
 if TYPE_CHECKING:
@@ -37,7 +39,7 @@ def show_community_stories(core: "Core"):
     for story in stories:
         menu.append(StoryTextOption(
             text=story,
-            func=lambda: console._transtion_layout("INGAME"),
+            func=lambda: console._transtion_layout(LayoutType.MENU),
             next_node=None,
             type="menu"
         ))

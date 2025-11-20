@@ -22,6 +22,7 @@ from pathlib import Path
 from terma.core.story import GameEngine
 from terma.core.keyboard import KeyboardControl
 from terma.ui.console import Console as MainConsole
+from terma.ui.layouts.factory import LayoutType
 from terma.core.non_blocking_input import NonBlockingInput
 from terma.core.ai import AI as OFFLINE_AI
 from collections import deque
@@ -411,7 +412,7 @@ class Core:
             ) as self.rich_live_instance:
                 #core.console.show_menu()
                 
-                self.console._transtion_layout("INGAME")
+                self.console._transtion_layout(LayoutType.IN_GAME)
                 self.console.refresh()
                 self.keyboard_controller.execute_on_key( "\x00\x4d") # 
                 # Test each event string
