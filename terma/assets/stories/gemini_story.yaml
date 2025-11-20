@@ -3,7 +3,6 @@ metdata:
   title : " demo story"
   description: "A story about a labyrinth"
   dtag: 8493493
-  generated_by: "Ai"
   tags:
     - "labyrinth"
     - "mystery"
@@ -13,12 +12,12 @@ metdata:
   created: "23-01-2024"
 0:
   location: "The Brink of Awareness"
-  sound: "jolt"
+  
   text: "A jolt, and you're tumbling into consciousness. Your hand closes around something small and cool on the uneven ground – a [red1]Dimly Glowing Stone[/]. It offers little light, but a faint warmth. Before you can ponder its origin, the world solidifies..."
   choices:
     - text: "Open your eyes fully."
       next_node: 1
-      sound: reveal_item
+      sound: "awekening"
       function: "receive_item(item='sword', core=core)"
 
 1:

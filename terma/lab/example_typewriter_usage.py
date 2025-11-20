@@ -3,9 +3,9 @@
 Example of how to use the typewriter effect in your text adventure game.
 """
 
-from ui.options import TyperWritter, create_typewriter
-from ui.console import Console
-from core.core import Core
+from terma.ui.options import TyperWritter, create_typewriter
+from terma.ui.console import Console
+from terma.core.core import Core
 import time
 
 def example_story_intro():

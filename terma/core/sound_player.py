@@ -3,7 +3,7 @@ import threading
 import time
 from typing import Dict, Optional
 from terma.util.logger import logger
-
+from pathlib import Path
 class SoundPlayer:
     def __init__(self, music_volume: float = 0.5, effects_volume: float = 0.7):
         """
@@ -31,7 +31,7 @@ class SoundPlayer:
         # Music playback management
         self._current_music: Optional[str] = None
         
-    def load_music_track(self, track_name: str, file_path: str):
+    def load_music_track(self, track_name: str, file_path: str| Path):
         """
         Load a music track into the player's collection.
         
@@ -40,6 +40,8 @@ class SoundPlayer:
         """
         try:
             # Verify file can be opened by pygame
+            if isinstance(file_path, Path):
+                file_path = str(file_path)
             pygame.mixer.music.load(file_path)
             self._music_tracks[track_name] = file_path
             logger.info(f"Music track loaded: {track_name} -> {file_path}")
@@ -47,7 +49,7 @@ class SoundPlayer:
             logger.critical(f"Music file error: {file_path} - {e}")
             raise FileNotFoundError(f"Music file error: {file_path} - {e}")
 
-    def load_sound_effect(self, effect_name: str, file_path: str):
+    def load_sound_effect(self, effect_name: str, file_path: str| Path):
         """
         Load a sound effect into the player's collection.
         
@@ -56,6 +58,8 @@ class SoundPlayer:
         """
         try:
             # Load sound effect with pygame
+            if isinstance(file_path, Path):
+                file_path = str(file_path)
             sound = pygame.mixer.Sound(file_path)
             self._sound_effects[effect_name] = sound
             logger.info(f"Sound effect loaded: {effect_name} -> {file_path}")

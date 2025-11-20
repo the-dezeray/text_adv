@@ -1,18 +1,18 @@
-from ui.options import VolumeOption
+from terma.ui.options import VolumeOption
 from numpy._core.defchararray import title
 from rich.padding import Padding
 from PIL.ImageMath import lambda_eval
 from typing import TYPE_CHECKING , List
-from ui.options import Option
+from terma.ui.options import Option
 from rich.panel import Panel
-from ui.options import MenuOption,Option,MinimalMenuOption,MinimalTextOption, StoryTextOption,MinimalKeyboardOption
-from ui.window import window
-from ui.menus.select_stories import  show_story_selection_menu
-from ui.menus.community_stories import show_community_stories
-from ui.menus.personal_story import  show_personal_story_instructions
+from terma.ui.options import MenuOption,Option,MinimalMenuOption,MinimalTextOption, StoryTextOption,MinimalKeyboardOption
+from terma.ui.window import window
+from terma.ui.menus.select_stories import  show_story_selection_menu
+from terma.ui.menus.community_stories import show_community_stories
+from terma.ui.menus.personal_story import  show_personal_story_instructions
 if TYPE_CHECKING:
-    from ui.console import Console
-    from core.core import Core
+    from terma.ui.console import Console
+    from terma.core.core import Core
 
 
 @window

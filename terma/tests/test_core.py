@@ -1,10 +1,10 @@
 import pytest
 from unittest.mock import Mock, patch
-from core.core import Core
-from core.story import GameEngine
+from terma.core.core import Core
+from terma.core.story import GameEngine
 from terma.objects.player import Player
 from terma.objects.entities import Entities
-from ui.console import Console
+from terma.ui.console import Console
 from pathlib import Path
 
 @pytest.fixture

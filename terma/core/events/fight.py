@@ -1,12 +1,12 @@
-from ui.options import CustomRenderable, create_weapon_option
+from terma.ui.options import CustomRenderable, create_weapon_option
 from terma.objects.player import Player
-from ui.options import Reward,GRID,WEAPON
+from terma.ui.options import Reward,GRID,WEAPON
 from terma.util.logger import logger, event_logger
 from typing import TYPE_CHECKING, Literal
-from ui.options import ui_text_panel,Option
+from terma.ui.options import ui_text_panel,Option
 if TYPE_CHECKING:
     from terma.objects.item import Item
-    from core.core import Core
+    from terma.core.core import Core
     from terma.objects.entities import entity
     from terma.objects.weapon import Weapon
 
@@ -217,7 +217,7 @@ def _fight(core: "Core") -> None:
         # Player's turn
         core.console.print(ui_text_panel(text="Choose your weapon:"))
         ary = player.inventory.weapons(type="attack")
-        from ui.options import GRID,WEAPON
+        from terma.ui.options import GRID,WEAPON
 
         core.console.print(GRID(ary=ary, core=core,renderItem=WEAPON))
         

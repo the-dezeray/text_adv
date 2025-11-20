@@ -16,7 +16,7 @@ from typing import Callable, Optional, Literal, Any
 
 
 if TYPE_CHECKING:
-    from core.core import Core
+    from terma.core.core import Core
     from terma.objects.weapon import Weapon
 
 
@@ -89,7 +89,7 @@ def CHOICE(core,data):
                     sound=data.get("sound", ""))
 def WEAPON(core,data):
     """Creates a weapon option from provided data."""
-    from core.events.fight import deal_damage # Local import to prevent circular dependency
+    from terma.core.events.fight import deal_damage # Local import to prevent circular dependency
     weapon = data
     return create_weapon_option(
                     name=weapon.name,
@@ -100,7 +100,7 @@ def WEAPON(core,data):
     )
 def WEAPON2(core,data):
     """Creates a weapon option from provided data."""
-    from core.events.fight import deal_damage # Local import to prevent circular dependency
+    from terma.core.events.fight import deal_damage # Local import to prevent circular dependency
     weapon = data
     return create_mini_weapon_option(
                     weapon=weapon,

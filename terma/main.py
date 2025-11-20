@@ -31,7 +31,7 @@ def main(**kwargs) -> None:
         # Initialize configuration
         config = {
             "chapter_id": kwargs.get("chapter_id", 9),
-            "story": kwargs.get("story", "data/gemini_story.yaml"),
+            "story": kwargs.get("story", ""),
             "mute": kwargs.get("mute", False),
             "tank": kwargs.get("tank", False),
             "subchapter": kwargs.get("subchapter", "areas_to_explore.yaml"),

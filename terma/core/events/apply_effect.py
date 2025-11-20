@@ -1,4 +1,4 @@
-from ui.options import ui_text_panel
+from terma.ui.options import ui_text_panel
 from rich.panel import Panel
 from rich.text import Text
 from rich.align import Align
@@ -7,7 +7,7 @@ from rich.table import Table
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from core.core import Core
+    from terma.core.core import Core
 
 def apply_effect(core: "Core" , effect=None, duration=None , str=None) -> None:
 

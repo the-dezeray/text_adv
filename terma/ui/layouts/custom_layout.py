@@ -6,13 +6,13 @@ from rich.panel import Panel
 from rich.align import Align
 from rich.rule import Rule
 from rich import box
-from ui.components import player_tab,command_mode_layout
-from ui.options import CustomRenderable
+from terma.ui.components import player_tab,command_mode_layout
+from terma.ui.options import CustomRenderable
 from rich.layout import Layout
 from typing import TYPE_CHECKING, Tuple
 from abc import ABC , abstractmethod 
 if TYPE_CHECKING:
-    from core.core import Core
+    from terma.core.core import Core
 
 
 

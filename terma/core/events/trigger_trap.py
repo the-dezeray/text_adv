@@ -2,14 +2,14 @@ from rich.align import Align
 from rich.panel import Panel
 from rich.text import Text
 from rich.padding import Padding
-from ui.options import CustomRenderable, Option
+from terma.ui.options import CustomRenderable, Option
 from terma.util.logger import logger, event_logger
-from ui.options import Delay
+from terma.ui.options import Delay
 from typing import TYPE_CHECKING
-from ui.options import TyperWritter
+from terma.ui.options import TyperWritter
 if TYPE_CHECKING:
-    from core.core import Core
-from ui.options import ui_text_panel
+    from terma.core.core import Core
+from terma.ui.options import ui_text_panel
 def get_random():
     return 1
 

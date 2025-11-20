@@ -3,7 +3,7 @@ Example AI Agent Usage for Text Adventure Game
 Demonstrates how an AI agent can use the generation rules and helper functions.
 """
 
-from core.ai_agent_helpers import EventFunctionInspector, AIStoryValidator, AIStoryGenerator
+from terma.core.ai_agent_helpers import EventFunctionInspector, AIStoryValidator, AIStoryGenerator
 from terma.util.logger import logger
 from typing import List, Dict, Any
 

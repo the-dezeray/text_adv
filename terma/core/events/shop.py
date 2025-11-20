@@ -1,13 +1,13 @@
-from ui.options import CustomRenderable,Option
+from terma.ui.options import CustomRenderable,Option
 from rich.panel import Panel
-from ui.options import GRID,WEAPON2
+from terma.ui.options import GRID,WEAPON2
 from rich.rule import Rule
 from rich.text import Text
 from rich.style import Style
 from typing import TYPE_CHECKING
 from terma.util.logger import event_logger
 if TYPE_CHECKING:
-    from core.core import Core
+    from terma.core.core import Core
 @event_logger
 def shop(core:"Core", level="normal", items=[], prices=[],text=''):
     core.console.clear_display()

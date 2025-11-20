@@ -7,15 +7,15 @@ from rich.panel import Panel
 from rich.align import Align
 from rich.rule import Rule
 from rich import box
-from ui.components import player_tab,command_mode_layout
-from ui.options import CustomRenderable
+from terma.ui.components import player_tab,command_mode_layout
+from terma.ui.options import CustomRenderable
 from rich.layout import Layout
 from typing import TYPE_CHECKING, Tuple
 from abc import ABC , abstractmethod 
 if TYPE_CHECKING:
-    from core.core import Core
+    from terma.core.core import Core
 
-from ui.layouts.custom_layout import CustomLayout
+from terma.ui.layouts.custom_layout import CustomLayout
 
 
 class LayoutType(Enum):
@@ -53,18 +53,18 @@ class LayoutConfig:
 
 class LayoutFactory:
     """Factory class for creating layout instances"""
-    from ui.layouts.default import LayoutDefault
-    from ui.layouts.character_selection import LayoutCharacterSelection
-    from ui.layouts.ai_studio import LayoutAIStudio
-    from ui.layouts.lsd import Lsd
-    from ui.layouts.ingame import LayoutInGame
-    from ui.layouts.inventory import LayoutInventory
-    from ui.layouts.settings import LayoutSettings
-    from ui.layouts.pre_game import LayoutPreGame
-    from ui.layouts.start_menu import LayoutStartMenu
-    from ui.layouts.about_us import LayoutAboutUs
-    from ui.layouts.select_story import LayoutSelectStory
-    from ui.layouts.loading import LayoutLoading
+    from terma.ui.layouts.default import LayoutDefault
+    from terma.ui.layouts.character_selection import LayoutCharacterSelection
+    from terma.ui.layouts.ai_studio import LayoutAIStudio
+    from terma.ui.layouts.lsd import Lsd
+    from terma.ui.layouts.ingame import LayoutInGame
+    from terma.ui.layouts.inventory import LayoutInventory
+    from terma.ui.layouts.settings import LayoutSettings
+    from terma.ui.layouts.pre_game import LayoutPreGame
+    from terma.ui.layouts.start_menu import LayoutStartMenu
+    from terma.ui.layouts.about_us import LayoutAboutUs
+    from terma.ui.layouts.select_story import LayoutSelectStory
+    from terma.ui.layouts.loading import LayoutLoading
 
     _layout_classes = {
         LayoutType.CHARACTER_SELECTION: LayoutCharacterSelection,

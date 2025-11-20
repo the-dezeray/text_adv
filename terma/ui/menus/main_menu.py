@@ -1,19 +1,19 @@
-from ui.options import VolumeOption
+from terma.ui.options import VolumeOption
 from numpy._core.defchararray import title
 from rich.padding import Padding
 from PIL.ImageMath import lambda_eval
 from typing import TYPE_CHECKING , List
-from ui.options import Option
+from terma.ui.options import Option
 from rich.panel import Panel
-from ui.options import MenuOption,Option,MinimalMenuOption,MinimalTextOption, StoryTextOption,MinimalKeyboardOption
-from ui.window import window
-from ui.menus.continue_menu import show_continue_menu
-from ui.menus.new_game import show_new_game_menu
-from ui.menus.settings import show_settings_menu
-from ui.menus.about_us import show_about_us_menu
+from terma.ui.options import MenuOption,Option,MinimalMenuOption,MinimalTextOption, StoryTextOption,MinimalKeyboardOption
+from terma.ui.window import window
+from terma.ui.menus.continue_menu import show_continue_menu
+from terma.ui.menus.new_game import show_new_game_menu
+from terma.ui.menus.settings import show_settings_menu
+from terma.ui.menus.about_us import show_about_us_menu
 if TYPE_CHECKING:
-    from ui.console import Console
-    from core.core import Core
+    from terma.ui.console import Console
+    from terma.core.core import Core
 
 
 @window
@@ -21,9 +21,9 @@ def show_main_menu(core: "Core"):
     console = core.console
     from art import text2art
     
-    from ui.options import MenuOption,Option,MinimalMenuOption
+    from terma.ui.options import MenuOption,Option,MinimalMenuOption
     # Define menu options with ASCII text
-    from ui.layouts.factory import LayoutType
+    from terma.ui.layouts.factory import LayoutType
     core.console._transtion_layout(LayoutType.MENU)
     List_of_options = {
         "continue": lambda: show_continue_menu(core),

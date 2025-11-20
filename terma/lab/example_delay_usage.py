@@ -3,7 +3,7 @@
 Example showing how to use the Delay class in the game context.
 """
 
-from ui.options import Delay, TyperWritter
+from terma.ui.options import Delay, TyperWritter
 
 def example_story_sequence():
     """Example of using Delay in a story sequence."""

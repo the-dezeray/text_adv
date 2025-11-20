@@ -1,13 +1,13 @@
 """This module contains the run event."""
 
-from ui.options import CustomRenderable, Loader
+from terma.ui.options import CustomRenderable, Loader
 from terma.util.logger import logger, event_logger
 from random import randint
 from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     # Import only for type checking (not at runtime)
-    from core.core import Core
+    from terma.core.core import Core
 
 
 @event_logger

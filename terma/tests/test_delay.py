@@ -4,7 +4,7 @@ Test script to demonstrate the Delay functionality.
 """
 
 import time
-from ui.options import Delay, TyperWritter
+from terma.ui.options import Delay, TyperWritter
 
 def test_delay():
     """Test the Delay class functionality."""

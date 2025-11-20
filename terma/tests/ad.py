@@ -1,5 +1,5 @@
-from core.core import Core
-from core.events import *
+from terma.core.core import Core
+from terma.core.events import *
 from terma.util.logger import logger
 import traceback
 from rich.live import Live

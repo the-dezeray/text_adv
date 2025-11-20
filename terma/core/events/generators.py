@@ -2,11 +2,11 @@ from logging import disable
 from terma.util.logger import logger, event_logger
 from terma.objects.weapon import WeaponFactory
 from terma.objects.item import ItemFactory
-from ui.options import CustomRenderable,ui_text_panel,Option,MinimalMenuOption
+from terma.ui.options import CustomRenderable,ui_text_panel,Option,MinimalMenuOption
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from core.core import Core
+    from terma.core.core import Core
 
 
 @event_logger

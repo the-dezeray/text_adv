@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from ui.console import Console
+    from terma.ui.console import Console
 class DisplayQueue:
     def __init__(self, initial_list=None,console=None):
         self._data : list = list(initial_list) if initial_list else []

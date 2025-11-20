@@ -1,10 +1,10 @@
 from terma.util.logger import logger
-from ui.options import ui_text_panel,Option
+from terma.ui.options import ui_text_panel,Option
 from typing import TYPE_CHECKING
 from rich.rule import Rule
 from rich.panel import Panel
 if TYPE_CHECKING:
-      from core.core import Core
+      from terma.core.core import Core
 def skill_check(core:"Core", skill:str = "",limit:int = 0,on_success =None,on_sucess = None,on_fail = None) -> None:
     notices = [""]
 

@@ -1,26 +1,26 @@
-from ui.options import VolumeOption
+from terma.ui.options import VolumeOption
 from numpy._core.defchararray import title
 from rich.padding import Padding
 from PIL.ImageMath import lambda_eval
 from typing import TYPE_CHECKING , List
-from ui.options import Option
+from terma.ui.options import Option
 from rich.panel import Panel
-from ui.options import MenuOption,Option,MinimalMenuOption,MinimalTextOption, StoryTextOption,MinimalKeyboardOption
-from ui.window import window
-from ui.menus.keybindings_menu import show_keybindings_menu_options
-from ui.menus.languagues import show_language_menu
-from ui.menus.api_keys  import show_api_keys_settings
-from ui.menus.visuals_options import show_visuals_settings
-from ui.menus.clear_data import show_clear_data_menu
+from terma.ui.options import MenuOption,Option,MinimalMenuOption,MinimalTextOption, StoryTextOption,MinimalKeyboardOption
+from terma.ui.window import window
+from terma.ui.menus.keybindings_menu import show_keybindings_menu_options
+from terma.ui.menus.languagues import show_language_menu
+from terma.ui.menus.api_keys  import show_api_keys_settings
+from terma.ui.menus.visuals_options import show_visuals_settings
+from terma.ui.menus.clear_data import show_clear_data_menu
 if TYPE_CHECKING:
-    from ui.console import Console
-    from core.core import Core
+    from terma.ui.console import Console
+    from terma.core.core import Core
 
 
 @window
 def show_settings_menu(core):
     console = core.console
-    from ui.options import MinimalMenuOption
+    from terma.ui.options import MinimalMenuOption
     list_of_options = {
         "keybindings and shorcuts": lambda: show_keybindings_menu_options(core),
         "language preference": lambda: show_language_menu(core),

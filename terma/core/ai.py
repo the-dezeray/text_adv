@@ -1,4 +1,4 @@
-from ui.options import ui_text_panel
+from terma.ui.options import ui_text_panel
 from typing import TYPE_CHECKING,Callable
 import os
 from google import genai
@@ -12,7 +12,7 @@ load_dotenv()
 from pydantic import BaseModel
 
 if TYPE_CHECKING:
-    from core.core import Core
+    from terma.core.core import Core
 class Choice(BaseModel):
     text: str
     next_node: int

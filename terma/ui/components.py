@@ -7,7 +7,7 @@ from rich.console import group
 from typing import List,TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from core.core import Core
+    from terma.core.core import Core
 def stats_tab(player)-> Table:
     stat_grid = Table.grid(padding=(0, 2))
     stat_grid.add_column(justify="left", style="bold yellow")

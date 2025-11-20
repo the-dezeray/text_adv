@@ -1,10 +1,10 @@
 from terma.util.file_handler import load_yaml_file
 from terma.util.logger import logger
-from ui.options import Option , ui_text_panel
+from terma.ui.options import Option , ui_text_panel
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from core.core import Core
+    from terma.core.core import Core
 def interact(core:"Core",entity: str = ""):
     interactions_dict = load_yaml_file("data/interactions.yaml")
     interaction = interactions_dict[entity]

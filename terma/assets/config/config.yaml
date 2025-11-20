@@ -3,6 +3,7 @@ attempted_stories:
 - id: 1
 current_stories:
 - current_node: 1
+  file_path: gemini_story.yaml
   id: 1
 - current_node: '9'
   file_path: gemini_story.yaml

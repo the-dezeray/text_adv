@@ -2,8 +2,8 @@
 
 import pytest
 from unittest.mock import Mock, patch
-from core.core import Core
-from core.events import *
+from terma.core.core import Core
+from terma.core.events import *
 
 @pytest.fixture
 def mock_core():

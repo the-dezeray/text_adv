@@ -1,7 +1,7 @@
 import yaml
 import pytest
 from pathlib import Path
-from core.story import GameEngine
+from terma.core.story import GameEngine
 
 
 def _load_yaml_file(file_path):

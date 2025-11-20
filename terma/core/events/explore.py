@@ -1,4 +1,4 @@
-from ui.options import CustomRenderable, ui_text_panel, Option
+from terma.ui.options import CustomRenderable, ui_text_panel, Option
 from terma.util.logger import logger, event_logger
 from terma.util.file_handler import load_yaml_file
 import random

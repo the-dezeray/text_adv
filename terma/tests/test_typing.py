@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Test script for the typing feature"""
 
-from ui.options import TyperWritter
+from terma.ui.options import TyperWritter
 import time
 
 def test_typing():

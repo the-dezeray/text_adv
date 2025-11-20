@@ -6,7 +6,9 @@ from rich.layout import Layout
 from terma.objects.entities import Entities
 from terma.objects.item import ItemFactory
 from terma.objects.player import Player
+from terma.util.paths import asset 
 from terma.util.logger import logger
+from terma.util.paths import asset
 from rich.padding import Padding
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
@@ -17,19 +19,19 @@ import sys
 import time
 import yaml
 from pathlib import Path
-from core.story import GameEngine
-from core.keyboard import KeyboardControl
-from ui.console import Console as MainConsole
-from core.non_blocking_input import NonBlockingInput
-from core.ai import AI as OFFLINE_AI
+from terma.core.story import GameEngine
+from terma.core.keyboard import KeyboardControl
+from terma.ui.console import Console as MainConsole
+from terma.core.non_blocking_input import NonBlockingInput
+from terma.core.ai import AI as OFFLINE_AI
 from collections import deque
 
-from ui.menus.main_menu import show_main_menu
+from terma.ui.menus.main_menu import show_main_menu
 # Import event handlers
-from core.events import *
+from terma.core.events import *
 from rich.live import Live
 import traceback
-from core.atypes import Story
+from terma.core.atypes import Story
 class Config(TypedDict):
     chapter_id: str
     story: str
@@ -88,7 +90,7 @@ class Core:
         self._disable_command_mode: bool = False
         self.ai : AI
         # Story and Progress
-        self.game_engine = GameEngine()
+        self.game_engine = GameEngine(story_path=asset("stories","gemini_story.yaml"))
 
         self.next_node: Optional[str] = None
         self.current_entry_text: str = ""
@@ -153,24 +155,24 @@ class Core:
         
         if self.sound_enabled:
             a = 0
-            from core.sound_player import SoundPlayer
+            from terma.core.sound_player import SoundPlayer
             self.sound_player = SoundPlayer()
-            self.sound_player.load_music_track("cin","data/cin1.mp3")
-            self.sound_player.load_sound_effect("awekening","assets/sound/awekening.mp3")
+            self.sound_player.load_music_track("intro", asset("sound","tracks","intro.mp3"))
+            self.sound_player.load_sound_effect("awakening", asset("sound","effects","awekening.mp3"))
             #self.sound_player.play_music("cin")
         current_time = datetime.datetime.now()
-        logger.info(f"New game instance {current_time}")
+        logger.info(f"New game instance {current_time}")    
         self.load_config_file()
         self.ai = OFFLINE_AI(core=self)
         self.game_engine.validate_story()
         self.keyboard_controller = KeyboardControl(core=self)
     def load_config_file(self)->None:
-        config: dict= load_yaml_file("data/config.yaml")
+        config: dict= load_yaml_file(asset("config","config.yaml"))
         
         if self.validate_config(config):
             from typing import cast
             self.config = cast(Config, config)
-            saved_game = load_yaml_file("data/save_game.yaml")
+            saved_game = load_yaml_file(asset("saves","save_game.yaml"))
             self.player = Player(saved_game["player"])
 
 
@@ -302,7 +304,7 @@ class Core:
         self.console.print(Padding(ui_text))
         
         # Display choices
-        from ui.options import Option,CHOICE
+        from terma.ui.options import Option,CHOICE
 
         self.console.print(GRID(ary=current_node.choices,renderItem=CHOICE))
         
@@ -358,7 +360,7 @@ class Core:
                 screen=True,
                 console=self.rich_console,
             ) as self.rich_live_instance:
-                from ui.layouts.factory import LayoutType
+                from terma.ui.layouts.factory import LayoutType
                 self.console._transtion_layout(LayoutType.IN_GAME)
                 self.console.refresh()
                 if self.menu:
@@ -459,7 +461,7 @@ class Core:
                     'failed_events': len(failed_events),
                     'failures': failed_events
                 }
-                from ui.options import ui_text_panel
+                from terma.ui.options import ui_text_panel
                 # Print test results
                 self.console.clear_display()
                 self.console.print(ui_text_panel(text=f"\n=== Story Event Test Results ==="))

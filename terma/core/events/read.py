@@ -1,4 +1,4 @@
-from ui.options import CustomRenderable, Option
+from terma.ui.options import CustomRenderable, Option
 from terma.util.logger import logger, event_logger
 from rich.panel import Panel
 from rich.table import Table
@@ -12,10 +12,10 @@ from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
 from rich.table import Table
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from core.core import Core
-from ui.options import ui_text_panel
+    from terma.core.core import Core
+from terma.ui.options import ui_text_panel
 texts: dict[str,str] = {
-    "ancient_scroll": "You unroll the brittle parchment, the faint scent of dust and something akin to ozone filling your nostrils \n The script, a swirling, alien calligraphy, seems to writhe before your eyes \n As you focus, the words resolve, not into legible text, but into a series of fractured images \n You see… a vast, starless sky, split by a crackling, violet fissure\n You see… a city of obsidian towers, their surfaces reflecting distorted, fleeting faces\n You see… your own hand, aged and withered, clutching a blackened, broken shard\n You see… a pair of luminous, yellow eyes, watching you from the depths of a suffocating darkness\n The images flicker and change, a chaotic slideshow of unsettling visions\n A chill creeps up your spine, and you feel a prickling sensation, as if unseen eyes are now fixed upon you, both within and beyond the scroll's strange depths\n Do you dare to continue deciphering these fractured glimpses, or do you quickly roll the scroll shut, hoping to banish the unsettling visions?",
+    "ancient_scroll": "You unroll the brittle parchment, the faint scent of dust and something akin to ozone filling your nostrils \n The script, a swirling, alien calligraphy, seems to writhe before your eyes \n As you focus, the words resolve, not into legible text, but into a series of fractured images \n You see… a vast, starless sky, split by a crackling, violet fissure\n You see… a city of obsidian towers, their surfaces reflecting distorted, fleeting faces\n You see… your own hand, aged and withered, clutching a blackened, broken shard\n You see… a pair of luminous, yellow eyes, watching you from the depths of a suffocating darkness\n The images flicker and change, a chaotic slideshow of unsettling visions\n A chill creeps up your spine, and you feel a prickling sensation, as if unseen eyes are now fixed upon you, both within and beyond the scroll's strange depths\n Do you dare to 33 deciphering these fractured glimpses, or do you quickly roll the scroll shut, hoping to banish the unsettling visions?",
 "well": "You look into the well and see your reflection. You are a young man with a beard and a scar on your face. You are wearing a cloak and a sword. You are standing in a forest. You are looking at the well."
 }
 

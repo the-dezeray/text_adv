@@ -1,11 +1,11 @@
-from ui.options import ui_text_panel, Option
+from terma.ui.options import ui_text_panel, Option
 import random
 from  terma.objects.item import ItemFactory
 from terma.objects.weapon import WeaponFactory
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from core.core import Core
+    from terma.core.core import Core
 def receive_item( core :"Core",item: str | list[str],text = None | str) -> None:
 
 

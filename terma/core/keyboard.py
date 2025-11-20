@@ -1,22 +1,22 @@
 from __future__ import annotations  
 
-from ui.options import VolumeOption
+from terma.ui.options import VolumeOption
 
 
 """Handles keyboard input and control for the game."""
 
 from terma.util.logger import logger
-from ui.options import  CustomRenderable
+from terma.ui.options import  CustomRenderable
 from typing import TYPE_CHECKING, Dict, Callable, Optional, Any,List
 from readchar import readkey
 from readchar import key as KEY
-from ui.menus.main_menu import show_main_menu
-from ui.menus.help import show_help
-from ui.menus.inventory import show_inventory
-from ui.menus.log import show_log
-from ui.menus.keybindings_menu import show_keybindings_menu_options
+from terma.ui.menus.main_menu import show_main_menu
+from terma.ui.menus.help import show_help
+from terma.ui.menus.inventory import show_inventory
+from terma.ui.menus.log import show_log
+from terma.ui.menus.keybindings_menu import show_keybindings_menu_options
 if TYPE_CHECKING:
-    from core.core import Core
+    from terma.core.core import Core
 
 
 class KeyboardControl:

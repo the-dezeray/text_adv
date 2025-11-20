@@ -1,10 +1,10 @@
 from terma.util.logger import logger, event_logger
-from ui.options import CustomRenderable,ui_text_panel,Option
+from terma.ui.options import CustomRenderable,ui_text_panel,Option
 from rich.panel import Panel
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from core.core import Core
+    from terma.core.core import Core
 
 
 @event_logger

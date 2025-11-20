@@ -7,7 +7,7 @@ from rich.align import Align
 from rich import box
 from rich.rule import Rule
 from rich.layout import Layout
-from ui.options import (
+from terma.ui.options import (
     CustomRenderable,
  
     GRID,
@@ -18,24 +18,24 @@ from ui.options import (
 )
 
 
-from ui.window import window
-from ui.components import player_tab
+from terma.ui.window import window
+from terma.ui.components import player_tab
 from rich.console import ConsoleRenderable, group, RichCast
-from ui.display_queue import DisplayQueue
+from terma.ui.display_queue import DisplayQueue
 from rich.console import group
 from typing import TYPE_CHECKING, Tuple, Optional, Literal, List
 from enum import Enum
-from ui.options import Option ,WeaponOption
-from ui.components import stats_tab
+from terma.ui.options import Option ,WeaponOption
+from terma.ui.components import stats_tab
 import time
 if TYPE_CHECKING:
-    from core.core import Core
+    from terma.core.core import Core
     from terma.objects.weapon import Weapon
 
 from terma.util.logger import logger
 from collections import deque
-from ui.layouts.custom_layout import CustomLayout
-from ui.layouts.default import LayoutDefault
+from terma.ui.layouts.custom_layout import CustomLayout
+from terma.ui.layouts.default import LayoutDefault
 class DummyTable(Table):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -50,7 +50,7 @@ class DummyTable(Table):
 
 class Console:
     def __init__(self, core: "Core"):
-        from ui.layouts.default import LayoutDefault
+        from terma.ui.layouts.default import LayoutDefault
         self.core = core
         self.table_count = 0
         self.table: DummyTable = DummyTable()
@@ -244,7 +244,7 @@ class Console:
     layout_list =Literal["MENU","ABOUT_US","AI_STUDIO","INGAME","SHOP","STATS","INVENTORY","SCROLL_READING","FIGHT","SETTINGS","AI_STUDY","ABOUT","CHARACTER_SELECTION","DEFAULT","LOADING","SELECTSTORY"]
     def _transtion_layout(self, layout):
         self.core.console.clear_display()
-        from ui.layouts.factory import LayoutType,LayoutFactory
+        from terma.ui.layouts.factory import LayoutType,LayoutFactory
         self.current_layout = LayoutFactory.create_layout(layout_type=layout,core=self.core)
 
 

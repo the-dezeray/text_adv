@@ -5,7 +5,8 @@ from typing import Dict, Any, Optional, List, Union
 from terma.util.logger import logger
 from terma.util.file_handler import load_yaml_file
 from pathlib import Path
-from core.atypes import Story
+from terma.util.paths import asset
+from terma.core.atypes import Story
 class FilePath(Enum):
     """Enum for file paths used in the game."""
     STORIES = "data/stories/"
@@ -87,15 +88,25 @@ class StoryGraph:
 
 class GameEngine:
     """Manages the game's story and state."""
-    def __init__(self, story_path: str = "data/gemini_story.yaml"):
-        self.story_data = self.load_story(story_path)
+    def __init__(self, story_path: str | Path):
+        story_path = asset("stories","gemini_story.yaml")
+        self.story_data = self.load_yaml(story_path)
         self.metadata = self.story_data.pop("metadata", {})
         self.story_name = "the path"
         self.story = StoryGraph(self.story_data)
         self.current_node_id = "0"  # Default starting point
         self.temp_story: Optional[StoryGraph] = None
-        
-    def load_story(self, story_path: Union[str,Story]) -> Dict[str, Any]:
+    def load_save(self, save: Story) -> Dict[str, Any]:
+        try: 
+            file_name = save["file_path"]
+            story_path = asset("stories",file_name)
+            data = self.load_yaml(story_path = story_path)
+            logger.info(f"Story loaded successfully from {save}")
+            return data
+        except Exception as e:
+            logger.error(f"Error loading story from {save}: {e}")
+            return {}
+    def load_yaml(self, story_path:str| Path) -> Dict[str, Any]:
         """Load the story from YAML file.
         
         Args:
@@ -105,12 +116,9 @@ class GameEngine:
             Dict[str, Any]: The loaded story data
         """
         try:
-            if isinstance(story_path, dict) and "file_path" in story_path:
-                story_path =  FilePath.STORIES +story_path["file_path"]
-            path = Path(str(story_path))
-            if not path.exists():
-                raise FileNotFoundError(f"Story file not found: {story_path}")
-            data = load_yaml_file(str(path))
+            if isinstance(story_path, str):
+                story_path = Path(story_path)
+            data = load_yaml_file(story_path)
             logger.info(f"Loaded story data: {data}")
             return data
         except Exception as e:

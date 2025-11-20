@@ -1,4 +1,4 @@
-from ui.options import ui_text_panel,Option
+from terma.ui.options import ui_text_panel,Option
 def attempt_escape(core, type:str ="",difficulty =None) -> None:
     core.console.clear_display()
     text = "try to escape"
