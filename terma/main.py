@@ -46,7 +46,7 @@ def main(**kwargs) -> None:
         core.menu = config["menu"]
        
         
-        install(show_locals=True, console=core.rich_console)
+        install(show_locals=True, console=core.console.rich_console)
         core.chapter_id = config["chapter_id"]
         #core.rich_console.force_terminal = True
         # core.rich_console.force_interactive = True

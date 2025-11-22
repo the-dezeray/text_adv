@@ -10,19 +10,19 @@ current_stories:
   id: the path
   last_accessed: 1763643828
 keymaps:
-  backspace: "\x7F"
+  backspace: "backspace"
   command_mode: ':'
-  enter: "\r"
+  enter: "enter"
   go_back: p
   help: H
   i: a
   keybindings: '?'
   log: L
   menu: m
-  move_down: "\0P"
-  move_left: "\0K"
-  move_right: "\0M"
-  move_up: "\0H"
+  move_down: "down"
+  move_left: "left"
+  move_right: "right"
+  move_up: "up"
   quit: q
   show_inventory: i
 settings:

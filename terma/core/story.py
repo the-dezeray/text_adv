@@ -7,6 +7,10 @@ from terma.util.file_handler import load_yaml_file
 from pathlib import Path
 from terma.util.paths import asset
 from terma.core.atypes import Story
+def get_user_stories():
+    #TODO implement get user stories from path 
+    return ["the story of the lost city"," A Lost city","Dying Angel","The dungeaon of death","Solace"," Missing the rage"]
+
 class FilePath(Enum):
     """Enum for file paths used in the game."""
     STORIES = "data/stories/"
@@ -49,7 +53,7 @@ class StoryGraph:
     def get_node(self, node_id: Union[str, int]) -> Optional[StoryNode]:
         """Get a node by its ID."""
         return self.nodes.get(str(node_id))
-        
+
     def validate(self) -> List[str]:
         """Validate the story graph, returning a list of errors."""
         errors = []

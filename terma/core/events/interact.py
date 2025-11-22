@@ -2,7 +2,7 @@ from terma.util.file_handler import load_yaml_file
 from terma.util.logger import logger
 from terma.ui.options import Option , ui_text_panel
 from typing import TYPE_CHECKING
-
+from terma.core.function_runner import execute_string
 if TYPE_CHECKING:
     from terma.core.core import Core
 def interact(core:"Core",entity: str = ""):
@@ -26,7 +26,7 @@ def interact(core:"Core",entity: str = ""):
             
             core.console.print(
             
-            Option(text=response["text"], func=lambda f=rfunction:core.execute_yaml_function(f)  )
+            Option(text=response["text"], func=lambda f=rfunction,core=core:execute_string(core, f)  )
             )
 
         

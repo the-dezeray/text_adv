@@ -9,6 +9,7 @@ from rich.panel import Panel
 from terma.ui.layouts.factory import LayoutType
 from terma.ui.options import MenuOption,Option,MinimalMenuOption,MinimalTextOption, StoryTextOption,MinimalKeyboardOption
 from terma.ui.window import window
+from terma.core.api import get_community_stories
 if TYPE_CHECKING:
     from terma.ui.console import Console
     from terma.core.core import Core
@@ -23,7 +24,7 @@ def show_community_stories(core: "Core"):
 
     console.table.show_lines = False
     try:
-        stories = core.get_community_stories()
+        stories = get_community_stories()
     except Exception as e:
         console.clear_display()
         console.print(Panel(renderable=f"Error fetching community stories: {e}", style="red",title="Error"))  
