@@ -5,6 +5,9 @@ from rich.padding import Padding
 from rich.panel import Panel
 from rich.align import Align
 from rich import box
+from rich.console import Console as RichConsole
+from rich.live import Live
+
 from rich.rule import Rule
 from rich.layout import Layout
 from terma.ui.options import (
@@ -57,6 +60,9 @@ class Console:
         self._layout  : CustomLayout = LayoutDefault(core=self.core)
         self.right :Optional[ConsoleRenderable] = ""
         self.state: Literal["MAIN", "INVENTORY"] = "MAIN"
+        self.rich_console = RichConsole(color_system="truecolor", style="bold black", quiet=True)
+        self.rich_console.stderr = True
+        self.rich_console.quiet = False
         self.left_tab: Optional[ConsoleRenderable] = None
         self.temp_right_tab: Optional[ConsoleRenderable] =None
         self.current_layout : CustomLayout = LayoutDefault(core=self.core)
@@ -72,7 +78,7 @@ class Console:
     def show_weapon(self):
         from rich_pixels import Pixels
 
- 
+    
         self.right = Panel("ds")
 
     def toggle_command_mode(self):
@@ -279,4 +285,18 @@ class Console:
                 selectable_list.append(item)
             # Add checks for other potential container types if needed
         return selectable_list
+
+    def create_live_context(self,core) -> Live:
+        return Live(
+                    Layout(),
+                    refresh_per_second=10,
+                    screen=True,
+                    console=self.rich_console,
+                ) 
+    
+    def update_live(self, layout):
+        """Update the live display safely."""
+        if self.core.rich_live_instance:
+             self.core.rich_live_instance.update(layout)
+
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from terma.ui.options import VolumeOption
 
-
+from terma.core.function_runner import execute_string
 """Handles keyboard input and control for the game."""
 
 from terma.util.logger import logger
@@ -10,10 +10,12 @@ from terma.ui.options import  CustomRenderable
 from typing import TYPE_CHECKING, Dict, Callable, Optional, Any,List
 from readchar import readkey
 from readchar import key as KEY
+from terma.core.non_blocking_input import NonBlockingInput
 from terma.ui.menus.main_menu import show_main_menu
 from terma.ui.menus.help import show_help
 from terma.ui.menus.inventory import show_inventory
 from terma.ui.menus.log import show_log
+
 from terma.ui.menus.keybindings_menu import show_keybindings_menu_options
 if TYPE_CHECKING:
     from terma.core.core import Core
@@ -33,8 +35,10 @@ class KeyboardControl:
             core: The game's core instance
         """
         self.core = core
+        self.input_block: NonBlockingInput = NonBlockingInput()
         self.current_entry_text = ""
         self._setup_key_actions()
+    
         self.nkey = ""
         self.refresh_on_key = False
         logger.info("Keyboard controller initialized")
@@ -253,7 +257,8 @@ class KeyboardControl:
             option: The selected option containing the function
         """
         self.core.next_node = option.next_node
-        self.core.execute_yaml_function(option.func)
+        execute_string(self.core, option.func)
+    
 
     def _execute_callable_function(self, option: CustomRenderable) -> None:
         """Execute a callable function.
@@ -291,3 +296,10 @@ class KeyboardControl:
             self.core.show_settings()
         except Exception as e:
             logger.error(f"Error showing settings: {e}")
+    def update(self) -> None:
+        key = self.input_block.get_key()
+        if key:
+            self.execute_on_key(key)
+    def stop(self) -> None:
+        if self.input_block:
+            self.input_block.stop()

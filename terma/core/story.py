@@ -42,7 +42,7 @@ class StoryGraph:
     def get_node(self, node_id: Union[str, int]) -> Optional[StoryNode]:
         """Get a node by its ID."""
         return self.nodes.get(str(node_id))
-        
+
     def validate(self) -> List[str]:
         """Validate the story graph, returning a list of errors."""
         errors = []
