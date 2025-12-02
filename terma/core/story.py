@@ -6,15 +6,8 @@ from terma.util.logger import logger
 from terma.util.file_handler import load_yaml_file
 from pathlib import Path
 from terma.util.paths import asset
-from terma.core.atypes import Story
-class FilePath(Enum):
-    """Enum for file paths used in the game."""
-    STORIES = "data/stories/"
-    DEFAULT_STORY = "data/story.yaml"
-    CONFIG = "data/config.yaml"
-    gemini_story = "data/gemini_story.yaml"
-    gemini_story_temp = "data/gemini_story_temp.yaml"
-    gemini_story_temp2 = "data/gemini_story_temp2.yaml"
+from terma.types import Story
+
 class StoryNode:
     """Represents a single node in the game story."""
     def __init__(self, node_id: Union[str, int], data: Dict[str, Any]):

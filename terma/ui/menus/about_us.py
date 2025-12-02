@@ -7,6 +7,7 @@ from terma.ui.options import Option
 from rich.panel import Panel
 from terma.ui.options import MenuOption,Option,MinimalMenuOption,MinimalTextOption, StoryTextOption,MinimalKeyboardOption
 from terma.ui.window import window
+from terma.ui.layouts.factory import LayoutType
 
 if TYPE_CHECKING:
     from terma.ui.console import Console
@@ -33,7 +34,7 @@ def show_about_us_menu(core: "Core"):
         ))
     
     about_me_text  = "I am desiree creator of this project feel free to by me a coffe PS:saving to get a decent laptop"
-    core.console._transtion_layout("ABOUT_US")
+    core.console._transtion_layout(LayoutType.ABOUT_US)
     core.console.clear_display()
     core.console.print(Panel("image to be rended"))
     core.console.print(Panel(about_me_text))

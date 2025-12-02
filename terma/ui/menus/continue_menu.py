@@ -8,7 +8,7 @@ from terma.ui.options import Option
 from rich.panel import Panel
 from terma.ui.options import MenuOption,Option,MinimalMenuOption,MinimalTextOption, StoryTextOption,MinimalKeyboardOption
 from terma.ui.window import window
-from terma.core.atypes import Story
+from terma.types import Story
 from terma.ui.layouts.factory import LayoutType
 if TYPE_CHECKING:
     from terma.ui.console import Console

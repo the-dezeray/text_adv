@@ -32,7 +32,7 @@ from terma.ui.menus.main_menu import show_main_menu
 from terma.core.events import *
 from rich.live import Live
 import traceback
-from terma.core.atypes import Story
+from terma.types import Story
 class Config(TypedDict):
     chapter_id: str
     story: str
@@ -89,7 +89,7 @@ class Core:
         self._state: str = "INGAME"
         self._command_mode: bool = False
         self._disable_command_mode: bool = False
-        self.ai : AI
+        self.ai : OFFLINE_AI
         # Story and Progress
         self.game_engine = GameEngine(story_path=asset("stories","gemini_story.yaml"))
 
