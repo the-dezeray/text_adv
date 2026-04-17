@@ -45,11 +45,13 @@ def main(**kwargs) -> None:
         core = Core(sound_enabled=True)
         core.menu = config["menu"]
        
-        
+        core.rich_live_instance = 38
+        core_items_list = config.keys()
+        print(core_items_list)
         install(show_locals=True, console=core.console.rich_console)
         core.chapter_id = config["chapter_id"]
         #core.rich_console.force_terminal = True
-        # core.rich_console.force_interactive = True
+        #core.rich_console.force_interactive = True
         core.run()
       
     except Exception as error:

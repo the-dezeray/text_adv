@@ -9,7 +9,7 @@ from terma.objects.player import Player
 from terma.util.paths import asset 
 from terma.util.logger import logger
 from terma.util.paths import asset
-from rich.padding import Padding
+from rich.padding import Padding  
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
 from rich.console import Console as RichConsole

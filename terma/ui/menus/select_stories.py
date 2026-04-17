@@ -9,7 +9,7 @@ from terma.ui.layouts.factory import LayoutType
 from rich.panel import Panel
 from terma.ui.options import MenuOption,Option,MinimalMenuOption,MinimalTextOption, StoryTextOption,MinimalKeyboardOption
 from terma.ui.window import window
-from terma.core.story import get_user_stories
+
 if TYPE_CHECKING:
     from terma.ui.console import Console
     from terma.core.core import Core
@@ -20,6 +20,9 @@ if TYPE_CHECKING:
 def show_story_selection_menu(core):
     console = core.console
     console.table.show_lines = False
+    def get_user_stories():
+        #TODO implement get user stories from path 
+        return ["the story of the lost city"," A Lost city","Dying Angel","The dungeaon of death","Solace"," Missing the rage"]
 
     stories = get_user_stories()
     menu = []
