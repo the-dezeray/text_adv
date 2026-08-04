@@ -1,5 +1,7 @@
 from terma.util.logger import logger
 from typing import Any
+
+
 def execute_string(core, string: str) -> Any:
     """Execute a function defined in YAML.
     
@@ -13,7 +15,11 @@ def execute_string(core, string: str) -> Any:
     local_scope = {"core": core}
     
     try:
-        return exec(string, globals(), local_scope)
+        from terma.core import events
+
+        execution_globals = dict(globals())
+        execution_globals.update(vars(events))
+        return exec(string, execution_globals, local_scope)
     except Exception as e:
         logger.error(f"Error executing function {string}: {e}")
         raise
