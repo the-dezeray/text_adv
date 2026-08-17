@@ -1,4 +1,5 @@
 from terma.util.file_handler import load_yaml_file
+from terma.util.paths import world_asset
 from terma.util.logger import logger
 from terma.ui.options import Option , ui_text_panel
 from typing import TYPE_CHECKING
@@ -6,7 +7,7 @@ from terma.core.function_runner import execute_string
 if TYPE_CHECKING:
     from terma.core.core import Core
 def interact(core:"Core",entity: str = ""):
-    interactions_dict = load_yaml_file("data/interactions.yaml")
+    interactions_dict = load_yaml_file(world_asset("interactions.yaml"))
     interaction = interactions_dict[entity]
 
     if not interaction:

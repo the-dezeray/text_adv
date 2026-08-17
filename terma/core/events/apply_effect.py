@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from terma.core.core import Core
 
-def apply_effect(core: "Core" , effect=None, duration=None , str=None) -> None:
+def apply_effect(core: "Core" , effect=None, duration=None , text=None) -> None:
 
     # Effect data
     effect_name = "Frost"
@@ -56,6 +56,6 @@ def apply_effect(core: "Core" , effect=None, duration=None , str=None) -> None:
     
     core.goto_next()
 
-def remove_effect(core: "Core", effect=None, duration=None, str: str="") -> None:
-    core.console.print(ui_text_panel(text=str))
+def remove_effect(core: "Core", effect=None, duration=None, text: str="") -> None:
+    core.console.print(ui_text_panel(text=text))
     core.goto_next()

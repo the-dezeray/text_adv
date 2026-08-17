@@ -1,7 +1,7 @@
 """heheheh"""
 
 import argparse
-from main import main
+from terma.main import main
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -23,5 +23,7 @@ parser.add_argument('--menu', dest='menu', action='store_true', help="show menu"
 parser.add_argument('--no-menu', dest='menu', action='store_false', help="hide menu")
 parser.set_defaults(menu=True)  # or False if you prefer hidden by default
 args = parser.parse_args()
-chapter = args.chatper
-main(chapter_id= int(chapter),menu=args.menu)
+kwargs = {"menu": args.menu}
+if args.chapter:
+    kwargs["chapter_id"] = int(args.chapter)
+main(**kwargs)

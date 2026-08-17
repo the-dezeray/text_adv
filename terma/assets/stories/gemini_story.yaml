@@ -26,7 +26,7 @@ metdata:
   choices:
     - text: "Trace the glowing veins deeper into the rock."
       next_node: 2
-      function: "apply_effect(effect='cold', duration='medium', core=core, str='you are charmed and cannot resist the cold')"
+      function: "apply_effect(effect='cold', duration='medium', core=core, text='you are charmed and cannot resist the cold')"
     - text: "Focus, try to understand the whispers."
       next_node: 3
       function: "skill_check(skill='hp',limit=2, core=core)"
@@ -155,13 +155,13 @@ metdata:
   choices:
     - text: "Pull the Serpent Lever."
       next_node: 15
-      function: "trigger_trap(core=core, type='flames', lvl=2, str='poison comes upon you and you nearly die')"
+      function: "trigger_trap(core=core, type='flames', lvl=2, text='poison comes upon you and you nearly die')"
     - text: "Pull the Weeping Eye Lever."
       next_node: 15
-      function: "apply_effect(effect='blindness', duration='medium', core=core, str='you are blinded and cannot see')"
+      function: "apply_effect(effect='blindness', duration='medium', core=core, text='you are blinded and cannot see')"
     - text: "Pull the Silent Moon Lever."
       next_node: 15
-      function: "display_text(text='nothing happens')"
+      function: "display_text(core=core, text='nothing happens')"
 
 12:
   location: "The Maddening Echoes"
@@ -194,7 +194,7 @@ metdata:
       function: "challenge(quest='LabyrinthHeart', status='active', core=core)"
     - text: "Examine the Obsidian Idol in the corner."
       next_node: 15
-      function: "apply_effect(effect='charm', duration='medium', core=core, str='you are charmed and cannot resist the idol')"
+      function: "apply_effect(effect='charm', duration='medium', core=core, text='you are charmed and cannot resist the idol')"
     - text: "[If Idol Examined & Quest Offered by Idol's text update]: 'I will seek the Echoing Crystals.' (Accept Sidequest)"
       next_node: 17
       function: "load_sidequest(quest_id='EchoingCrystals', objective='Find 3 Echoing Crystals', reward_location_node='-2', core=core)"
@@ -214,7 +214,7 @@ metdata:
       function: null
     - text: "(If Serpent/Eye Lever outcome not fatal) Endure and try another lever."
       next_node: 11
-      function: "trigger_trap(core=core, type='flames', lvl=2, str='ads')"
+      function: "trigger_trap(core=core, type='flames', lvl=2, text='ads')"
     - text: "(If Serpent/Eye Lever outcome not fatal) This is too dangerous, find another route."
       next_node: 6
       function: null
@@ -267,7 +267,7 @@ metdata:
       function: "trigger_trap(core=core, type='flames', lvl=2, text='flames comes upon you and you nearly die')"
     - text: "Pull the Weeping Eye Lever."
       next_node: 15
-      function: "apply_effect(effect='blindness', duration='medium', core=core, str='you are blinded and cannot see')"
+      function: "apply_effect(effect='blindness', duration='medium', core=core, text='you are blinded and cannot see')"
     - text: "Pull the Silent Moon Lever."
       next_node: 15
       function: "display_text(text='nothing happens',core=core)"
