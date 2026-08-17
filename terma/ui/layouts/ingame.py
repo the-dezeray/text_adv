@@ -39,7 +39,7 @@ class LayoutInGame(CustomLayout):
         layout["up"].update(top_bar())
         console = self.core.console
         layout["down"].split_row(
-            Layout(name="left", ratio=console.left_ratio, visible=True),
+            Layout(name="left", ratio=console.left_ratio, ),
             Layout(name="middle", ratio=3),
             Layout(name="right", ratio=console.right_ratio, visible=True),
         )

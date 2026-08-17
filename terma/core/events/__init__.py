@@ -17,4 +17,6 @@ from .modify_player_attribute import modify_player_attribute
 from .trigger_trap import trigger_trap
 from .chance_event import chance_event
 from .generators import show_items
+from .exit import exit_story
+from .challenge import challenge
 from .generators import (randomly_generate_weapons, randomly_generate_items,show_items)
