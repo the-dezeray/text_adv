@@ -1,4 +1,3 @@
-from numpy.lib._function_base_impl import iterable
 from terma.util.logger import logger
 from typing import Literal, TYPE_CHECKING
 

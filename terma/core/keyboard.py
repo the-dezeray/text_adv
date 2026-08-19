@@ -231,9 +231,10 @@ class KeyboardControl:
             
             if selected_option:
                 # Clear selection state
-                selected_option.selected = False
+               
                 # Disable all other selectable options
                 if hasattr(selected_option, 'disable_others') and selected_option.disable_others:
+                    selected_option.selected = False
                     for option in selectable_options:
                         option.selectable = False
                 

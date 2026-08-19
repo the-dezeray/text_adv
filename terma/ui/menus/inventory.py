@@ -1,5 +1,4 @@
 from terma.ui.options import VolumeOption
-from numpy._core.defchararray import title
 from rich.padding import Padding
 from PIL.ImageMath import lambda_eval
 from typing import TYPE_CHECKING , List

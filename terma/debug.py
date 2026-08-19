@@ -12,7 +12,7 @@ parser.add_argument(
     "--dev",
     help="run in dev therefore constant reloading of config files and story files ",
 )
-parser.add_argument("-c", "--chatper", help="Chapter to start from")
+parser.add_argument("-c", "--chapter", help="Chapter to start from")
 parser.add_argument("-p", "--place", help="Chapter to start from")
 parser.add_argument("-e", "--event", help="load event from a file")
 parser.add_argument("-m", "--mute", help="mute sound", action='store_true')

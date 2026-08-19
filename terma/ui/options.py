@@ -96,6 +96,7 @@ def WEAPON(core,data):
                     # Pass the specific weapon to deal_damage
                     func=lambda w=weapon: deal_damage(core, w),
                     preview=core.console.show_weapon ,
+                    disable_others=False,
                     core=core
     )
 def WEAPON2(core,data):
@@ -107,6 +108,7 @@ def WEAPON2(core,data):
                     # Pass the specific weapon to deal_damage
                     func=lambda w=weapon: core.player.inventory.add( w),
                     preview=core.console.show_weapon ,
+                    disable_others=False,
                     core=core
     )    
             
@@ -237,11 +239,13 @@ class MiniWeaponOption(CustomRenderable):
 def create_weapon_option(
     name: "Weapon",
     func: Callable,
+    disable_others: bool = True,
     preview: Optional[Callable] = None,
     core: Optional["Core"] = None
 ) -> "WeaponOption":
     return WeaponOption(
         text=name,
+        disable_others=disable_others,
         func=func,
         selectable=True,
         type="weapon", # Set type explicitly
@@ -250,8 +254,10 @@ def create_weapon_option(
     )
 def create_mini_weapon_option(
     weapon: "Weapon",
+    
     func: Callable,
     preview: Optional[Callable] = None,
+    disable_others: bool = True,
     core: Optional["Core"] = None
 ) -> "MiniWeaponOption":
 
@@ -261,7 +267,8 @@ def create_mini_weapon_option(
         selectable=True,
         type="weapon", # Set type explicitly
         preview=preview,
-        core=core
+        core=core,
+        disable_others=disable_others
     )
 
 
