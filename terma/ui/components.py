@@ -199,6 +199,16 @@ def command_mode_layout(core):
         yield hgrid
 
     return Panel(layout(),border_style="dim cyan1")
+
+def show_keybindings_layout(core):
+    from rich.table import Table
+    grid = Table.grid(expand=True)
+    grid.add_column()
+    for key, action in core.config["keymaps"].items():
+        grid.add_row(f"[bold cyan]{key}[/bold cyan]: {action}")
+
+    return Panel(grid, border_style="dim cyan1")
+
 def input_mode_layout(core:"Core"):
     from rich.table import Table
 

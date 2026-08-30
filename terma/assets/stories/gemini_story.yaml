@@ -90,9 +90,9 @@ metdata:
       next_node: 7
       function: >
           chance_event(
-            on_success="fight(entity=Entities.generate(type='snake', lvl=7))",
+            on_success="fight(core=core, entity=Entities.generate(type='snake', lvl=7))",
             on_fail="you fail",
-            probability=0.5,
+            probability=1.0,
             core=core
           )
 

@@ -103,14 +103,13 @@ class Core:
         self.current_entry_text: str = ""
         self.config : Config
         self.keyboard_controller :KeyboardControl
-    
         # Player and Entities
         self.player :Player 
         self.entity: Optional[Entities] = None
         self.others: List[Any] = []
         self.use_own_api_keys = True
         # Input and Control
-  
+        self.show_keybindings: bool = False
         self.key_listener = None
         self.selected_option: int = 0
         self.s: str = "options"

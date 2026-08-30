@@ -73,7 +73,7 @@ class KeyboardControl:
             "move_up": lambda: self.scroll_options(1),
             "move_down": lambda: self.scroll_options(-1),
             "enter": self.handle_enter,
-            "help": lambda: show_help(self.core),
+            "help": lambda: self.handle_show_keybindings(),
             "log":  lambda: show_log(self.core),
             "restart_app": self.core.restart_app,
             "reload_files": self.core.reload_files,
@@ -170,7 +170,10 @@ class KeyboardControl:
         """Toggle command mode on/off."""
         self.core.command_mode = not self.core.command_mode
         logger.debug(f"Command mode {'enabled' if self.core.command_mode else 'disabled'}")
-
+    def handle_show_keybindings(self) -> None:
+        """Show the keybindings menu."""
+        self.core.show_keybindings = not self.core.show_keybindings
+        logger.debug(f"Show keybindings {'enabled' if self.core.show_keybindings else 'disabled'}")
     def handle_escape(self) -> None:
         """Handle escape key press."""
         logger.info("Game termination requested")

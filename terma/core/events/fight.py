@@ -217,7 +217,7 @@ def _fight(core: "Core") -> None:
         # Player's turn
         core.console.print(ui_text_panel(text="Choose your weapon:"))
         ary = player.inventory.weapons(type="attack")
-        from terma.ui.options import GRID,WEAPON
+     
 
         core.console.print(GRID(ary=ary, core=core,renderItem=WEAPON))
         
@@ -248,8 +248,9 @@ def _fight(core: "Core") -> None:
     if entity.hp <= 0:
         core.console.clear_display()
         core.console.print(ui_text_panel(text="[bold green]Victory![/bold green] You attained the [red]sword of death![/red]"))
-        from terma.objects.weapon import Weapon
-        w = Weapon.generate(name="sword")
-        core.console.print(Option(text="Continue your journey", func=core.goto_next))
+        from terma.objects.weapon import WeaponFactory
+        w = WeaponFactory.generate(name="sword")
+        core.player.inventory.add(w)
+        core.console.print(Option(text="proceed", func=lambda: core.goto_next(), next_node=core.next_node))
         core.in_fight = False
 

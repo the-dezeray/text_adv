@@ -39,6 +39,7 @@ vim:
     back: esc
     backspace: handle_backspace
     down: j
+ 
     left: h
     quit: q
     right: l

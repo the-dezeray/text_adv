@@ -16,9 +16,11 @@ def execute_string(core, string: str) -> Any:
     
     try:
         from terma.core import events
+        from terma.objects.entities import Entities
 
         execution_globals = dict(globals())
         execution_globals.update(vars(events))
+        execution_globals["Entities"] = Entities
         return exec(string, execution_globals, local_scope)
     except Exception as e:
         logger.error(f"Error executing function {string}: {e}")

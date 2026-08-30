@@ -6,7 +6,7 @@ from rich.panel import Panel
 from rich.align import Align
 from rich.rule import Rule
 from rich import box
-from terma.ui.components import player_tab,command_mode_layout
+from terma.ui.components import player_tab,command_mode_layout ,show_keybindings_layout
 from terma.ui.options import CustomRenderable
 from rich.layout import Layout
 from typing import TYPE_CHECKING, Tuple
@@ -93,6 +93,10 @@ class LayoutInGame(CustomLayout):
                 layout["left"].visible = False
                 layout["right"].ratio = 2
                 renderable = command_mode_layout(self.core)
+            if self.core.show_keybindings:
+                layout["left"].visible = False
+                layout["right"].ratio = 2
+                renderable = show_keybindings_layout(self.core)
             layout["right"].update(renderable)
 
         #layout["right"].update(self.core.console.right)
